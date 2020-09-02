@@ -23,14 +23,19 @@
 """
 
 import os
+from urllib import parse
 
 from qgis.PyQt import QtGui, QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal, Qt, QModelIndex
 from qgis.PyQt.QtGui import QFont, QStandardItem, QStandardItemModel 
 from qgis.PyQt.QtWidgets import QApplication, QMessageBox
 
+from qgis.core import QgsRasterLayer, QgsProject
+
 from owslib.wms import WebMapService
 from .nafi_dockwidget_base import Ui_NafiDockWidgetBase
+
+NAFI_URL = "https://www.firenorth.org.au/public"
 
 class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
 
@@ -50,18 +55,19 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
 
     def loadLayers(self):
         """Add all NAFI WMS layers."""
-        nafiUrl = "https://www.firenorth.org.au/public"
+        nafiUrl = NAFI_URL
         wms = WebMapService(nafiUrl)
 
         self.treeViewModel = QStandardItemModel()
         self.treeView.setModel(self.treeViewModel)
 
         # self.treeViewModel.rootItem.setText("NAFI")
-
-        layersList = list(wms.contents)
         
-        for layerName in layersList:
-            layer = wms.contents[layerName]
+        # stash a list of OWS layer objects
+        owsLayers = [wms.contents[layerName] for layerName in list(wms.contents)]
+        self.layersList = dict(zip([layer.title for layer in owsLayers], owsLayers)) 
+
+        for layer in self.layersList.values():
             self.treeViewModel.appendRow(self.createWmsLayerNode(layer))
         
         self.treeView.pressed.connect(self.handleWmsLayerPressed)
@@ -89,7 +95,22 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
         #     return
 
         modelNode = self.treeViewModel.itemFromIndex(index)
-        QMessageBox.information(None, "Layer clicked", modelNode.text())
+        layer = self.layersList[modelNode.text()]
+        wmsLayer = self.createWmsLayer(layer)
+        QgsProject.instance().addMapLayer(wmsLayer)
+
+    def createWmsLayer(self, layer):
+        """Create a QgsRasterLayer from WMS given an OWS ContentMetadata object."""
+
+        # Weirdly true URL-encoding of the layer ID does not work correctly
+        encodedLayer = layer.id.replace(" ","%20")
+
+        # This should create "EPSG:28350" for Map Grid of Australia, "EPSG:4326" for WGS84 etc
+        encodedSrsId = f"EPSG:{QgsProject.instance().crs().postgisSrid()}"
+        wmsUrl = f"crs={encodedSrsId}&format=image/png&layers={encodedLayer}&styles&url={NAFI_URL}"
+
+        wmsLayer = QgsRasterLayer(wmsUrl, layer.title, 'wms')
+        return wmsLayer
 
     def closeEvent(self, event):
         self.closingPlugin.emit()
