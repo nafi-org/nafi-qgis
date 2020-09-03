@@ -199,7 +199,7 @@ class Nafi:
 
         for action in self.actions:
             self.iface.removePluginMenu(
-                self.tr(u'&Nafi'),
+                self.tr(u'&NAFI Maps'),
                 action)
             self.iface.removeToolBarIcon(action)
         # remove the toolbar
