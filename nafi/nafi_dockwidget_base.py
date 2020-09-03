@@ -35,6 +35,6 @@ class Ui_NafiDockWidgetBase(object):
 
     def retranslateUi(self, NafiDockWidgetBase):
         _translate = QtCore.QCoreApplication.translate
-        NafiDockWidgetBase.setWindowTitle(_translate("NafiDockWidgetBase", "NAFI Web Map Services"))
+        NafiDockWidgetBase.setWindowTitle(_translate("NafiDockWidgetBase", "NAFI Maps"))
         self.label.setText(_translate("NafiDockWidgetBase", "<html><head/><body><p><img src=\":/plugins/nafi/icon.png\"/></p></body></html>"))
 
