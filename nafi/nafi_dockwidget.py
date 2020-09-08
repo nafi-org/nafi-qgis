@@ -26,7 +26,7 @@ import os
 from urllib import parse
 
 from qgis.PyQt import QtGui, QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSignal, Qt, QModelIndex
+from qgis.PyQt.QtCore import pyqtSignal, QRegExp, QSortFilterProxyModel, Qt, QModelIndex
 from qgis.PyQt.QtGui import QFont, QStandardItem, QStandardItemModel 
 from qgis.PyQt.QtWidgets import QApplication, QMessageBox
 
@@ -40,8 +40,51 @@ from .nafi_dockwidget_base import Ui_NafiDockWidgetBase
 NAFI_URL = "https://www.firenorth.org.au/public"
 UNWANTED_LAYERS = ["NODATA_RASTER"]
 
-class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
+def groupByRootLayers(layers):
+    """Reconstruct the parent-child relationships in an OWSLib ContentMetadata tree."""
+    parents = {}
+    for layer in layers:
+        if layer.parent != None:
+            if layer.parent.title not in parents:
+                parents[layer.parent.title] = layer.parent
+                layer.parent.children = [layer]
+            elif not any(c.title == layer.title for c in parents[layer.parent.title].children): 
+                parents[layer.parent.title].children.append(layer)
+        else:
+            parents[layer.title] = layer
 
+    parentLayers = list(parents.values())
+    if (len(parentLayers) == len(layers)):
+        return parentLayers
+    else: 
+        return groupByRootLayers(parentLayers)
+
+def addLayerToViewModel(model, owsLayer, unwantedLayers = []):
+    """Add an OWSLib layer to a QStandardItemModel, potentially with descendant layers and 
+       using a list of 'blacklisted' layer names, to a QStandardItemModel."""
+    assert isinstance(model, QStandardItem) or isinstance(model, QStandardItemModel)
+    assert isinstance(owsLayer, ContentMetadata)
+
+    layersList = {}
+
+    node = QStandardItem()
+    node.setFlags(Qt.ItemIsEnabled)
+    node.setText(owsLayer.title)
+
+    if owsLayer.title not in unwantedLayers:
+        model.appendRow(node)
+        # track all these OWS ContentMetadata objects by title for a reverse lookup
+        layersList[owsLayer.title] = owsLayer
+        # add children to view model
+        for childLayer in owsLayer.children:
+            # merge layersList entries from children
+            layersList.update(addLayerToViewModel(node, childLayer, unwantedLayers))
+    else:
+        pass
+
+    return layersList
+
+class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
     closingPlugin = pyqtSignal()
 
     def __init__(self, parent=None):
@@ -50,79 +93,58 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
         
         self.setupUi(self)
         self.treeView.pressed.connect(self.handleTreeViewPressed)
+        self.lineEdit.textChanged.connect(self.searchTextChanged)
+        
         self.loadLayers()
 
     def loadLayers(self):
         """Add all NAFI WMS layers."""
         nafiUrl = NAFI_URL
-        wms = WebMapService(nafiUrl)
+        self.wms = WebMapService(nafiUrl)
 
         self.layersList = {}
+        
+        # set up base model
+        self.treeViewModel = QStandardItemModel()
 
+        # set up proxy model for filtering        
+        self.proxyModel = QSortFilterProxyModel(self.treeView)
+        self.proxyModel.setSourceModel(self.treeViewModel)
+        self.proxyModel.setRecursiveFilteringEnabled(True)
+        self.treeView.setModel(self.proxyModel)
+
+        # set up QTreeView        
         self.treeView.setHeaderHidden(True)
-        self.treeViewModel = self.createModel(wms)
-        self.treeView.setModel(self.treeViewModel)
+        self.treeView.setSortingEnabled(True)
+        self.treeView.pressed.connect(self.handleTreeViewPressed)
+        
+        # set up search signal
+        self.lineEdit.textChanged.connect(self.searchTextChanged)
+        
+        # initialise model from WMS contents
+        self.initModel(self.wms)
 
-    def createModel(self, wms):
+    def initModel(self, wms):
+        """Initialise a QStandardItemModel from the NAFI WMS."""
         # check we've got the expected WMS protocol from NAFI
         assert isinstance(wms, WebMapService_1_1_1)
-
         # this structure is not properly organised via its "children" properties, need to fix it up
         owsLayers = [wms.contents[layerName] for layerName in list(wms.contents)]
-
-        def groupByRootLayers(layers):
-            parents = {}
-            for layer in layers:
-                if layer.parent != None:
-                    if layer.parent.title not in parents:
-                        parents[layer.parent.title] = layer.parent
-                        layer.parent.children = [layer]
-                    elif not any(c.title == layer.title for c in parents[layer.parent.title].children): 
-                        parents[layer.parent.title].children.append(layer)
-                else:
-                    parents[layer.title] = layer
-
-            parentLayers = list(parents.values())
-            if (len(parentLayers) == len(layers)):
-                return parentLayers
-            else: 
-                return groupByRootLayers(parentLayers)
 
         # check we've got at least one layer
         assert (len(owsLayers) > 0)
 
-        # calculate our root layers
-        rootLayers = groupByRootLayers(owsLayers)
-
-        # traverse, updating model
-        def addLayerToViewModel(model, owsLayer):
-            assert isinstance(model, QStandardItem) or isinstance(model, QStandardItemModel)
-            assert isinstance(owsLayer, ContentMetadata)
-
-            node = QStandardItem()
-            node.setFlags(Qt.ItemIsEnabled)
-            node.setText(owsLayer.title)
-
-            if owsLayer.title not in UNWANTED_LAYERS:
-                model.appendRow(node)
-                # track all these OWS ContentMetadata objects by title for a reverse lookup
-                self.layersList[owsLayer.title] = owsLayer
-                # add children to view model
-                for childLayer in owsLayer.children:
-                    addLayerToViewModel(node, childLayer)
-
-        model = QStandardItemModel()
-
-        for rootLayer in rootLayers:
-            addLayerToViewModel(model, rootLayer)
-
-        return model
+        # calculate our root layer
+        rootLayer = groupByRootLayers(owsLayers)[0]
+        # create model
+        self.layersList = addLayerToViewModel(self.treeViewModel, rootLayer, UNWANTED_LAYERS)
 
     def handleTreeViewPressed(self, index):
         """Load a NAFI WMS layer given an index in the tree view."""
         assert isinstance(index, QModelIndex), "Supplied parameter is not a QModelIndex"
 
-        modelNode = self.treeViewModel.itemFromIndex(index)
+        realIndex = self.proxyModel.mapToSource(index)
+        modelNode = self.treeViewModel.itemFromIndex(realIndex)
         layer = self.layersList[modelNode.text()]
        
         # If we've got a WMS layer and not a layer group, add to map
@@ -143,6 +165,13 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
         wmsLayer = QgsRasterLayer(wmsUrl, owsLayer.title, 'wms')
         return wmsLayer
 
+    def searchTextChanged(self, text):
+        """Process a change in the search filter text."""
+        regex = QRegExp(text, Qt.CaseInsensitive, QRegExp.RegExp)
+        self.proxyModel.setFilterRegExp(regex)
+        self.treeView.expandAll()
+
     def closeEvent(self, event):
+        """Handle plug-in close."""
         self.closingPlugin.emit()
         event.accept()
