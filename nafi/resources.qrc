@@ -1,26 +1,26 @@
 <RCC>
     <qresource prefix="/plugins/nafi" >
-        <file>icons/backspace.png</file>
+        <file>backspace.png</file>
     </qresource>
     <qresource prefix="/plugins/nafi" >
-        <file>icons/folder.png</file>
+        <file>folder.png</file>
     </qresource>
     <qresource prefix="/plugins/nafi" >
-        <file>icons/globe.png</file>
+        <file>globe.png</file>
     </qresource>
     <qresource prefix="/plugins/nafi" >
-        <file>icons/icon.png</file>
+        <file>icon.png</file>
     </qresource>
     <qresource prefix="/plugins/nafi" >
-        <file>icons/info.png</file>
+        <file>info.png</file>
     </qresource>
     <qresource prefix="/plugins/nafi" >
-        <file>icons/map.png</file>
+        <file>map.png</file>
     </qresource>
     <qresource prefix="/plugins/nafi" >
-        <file>icons/openfolder.png</file>
+        <file>openfolder.png</file>
     </qresource>
     <qresource prefix="/plugins/nafi" >
-        <file>icons/settings.png</file>
+        <file>settings.png</file>
     </qresource>
 </RCC>

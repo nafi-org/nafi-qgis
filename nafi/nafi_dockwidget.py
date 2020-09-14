@@ -27,7 +27,7 @@ from urllib import parse
 
 from qgis.PyQt import QtGui, QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal, QRegExp, QSortFilterProxyModel, Qt, QModelIndex
-from qgis.PyQt.QtGui import QFont, QStandardItem, QStandardItemModel 
+from qgis.PyQt.QtGui import QFont, QIcon, QPixmap, QStandardItem, QStandardItemModel 
 from qgis.PyQt.QtWidgets import QApplication, QMessageBox
 
 from qgis.core import Qgis, QgsMessageLog, QgsRasterLayer, QgsProject
@@ -74,13 +74,19 @@ def addLayerToViewModel(model, owsLayer, unwantedLayers = []):
     assert isinstance(model, QStandardItem) or isinstance(model, QStandardItemModel)
     assert isinstance(owsLayer, ContentMetadata)
 
-    node = QStandardItem()
-    node.setFlags(Qt.ItemIsEnabled)
-    node.setText(owsLayer.title)
-    node.setData(owsLayer)
-
     if owsLayer.title not in unwantedLayers:
+        node = QStandardItem()
+        node.setFlags(Qt.ItemIsEnabled)
+        node.setText(owsLayer.title)
+        node.setData(owsLayer)
+    
+        if owsLayer.children: 
+            node.setIcon(QIcon(":/plugins/nafi/folder.png"))
+        else:
+            node.setIcon(QIcon(":/plugins/nafi/globe.png"))
+            
         model.appendRow(node)
+
         # add children to view model
         for childLayer in owsLayer.children:
             addLayerToViewModel(node, childLayer, unwantedLayers)
@@ -95,7 +101,7 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
         super(NafiDockWidget, self).__init__(parent)
         
         self.setupUi(self)
-        
+
         # set up QTreeView        
         self.treeView.setHeaderHidden(True)
         self.treeView.setSortingEnabled(True)
@@ -104,7 +110,13 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
         
         # set up search signal
         self.lineEdit.textChanged.connect(self.searchTextChanged)
-        
+
+        # set up clear search
+        self.clearSearchButton.clicked.connect(self.clearSearch)
+
+        # set up About … dialog
+        self.aboutButton.clicked.connect(self.showAboutDialog)
+
         # set up base model
         self.treeViewModel = QStandardItemModel()
 
@@ -131,7 +143,12 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
         addLayerToViewModel(self.treeViewModel, rootLayer, UNWANTED_LAYERS)
 
         self.proxyModel.sort(0, Qt.AscendingOrder)
+        self.expandTopLevel()        
 
+    def expandTopLevel(self):
+        # expand the very top level item
+        rootIndex = self.proxyModel.index(0, 0)
+        self.treeView.expand(rootIndex)
 
     def treeViewPressed(self, index):
         """Load a NAFI WMS layer given an index in the tree view."""
@@ -144,7 +161,12 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
         # If we've got a WMS layer and not a layer group, add to map
         if layer is not None and len(layer.children) == 0:
             wmsLayer = self.createWmsLayer(layer)
-            QgsProject.instance().addMapLayer(wmsLayer)
+            wmsLayer = QgsProject.instance().addMapLayer(wmsLayer)
+            
+            # Don't show legend initially
+            if wmsLayer is not None:
+                displayLayer = QgsProject.instance().layerTreeRoot().findLayer(wmsLayer)
+                displayLayer.setExpanded(False)
 
     def createWmsLayer(self, owsLayer):
         """Create a QgsRasterLayer from WMS given an OWS ContentMetadata object."""
@@ -165,6 +187,16 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
         self.proxyModel.setFilterRegExp(regex)
         self.treeView.expandAll()
 
+    def clearSearch(self):
+        """Clear search data."""
+        self.treeView.collapseAll()
+        self.lineEdit.setText(None)
+        self.initModel()
+
+    def showAboutDialog(self):
+        """Show an About … dialog."""
+        QMessageBox.information(self, "About Dialog", "Not yet implemented!")
+    
     def closeEvent(self, event):
         """Handle plug-in close."""
         self.closingPlugin.emit()

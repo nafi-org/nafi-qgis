@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>689</width>
-    <height>451</height>
+    <height>504</height>
    </rect>
   </property>
   <property name="font">
@@ -21,7 +21,7 @@
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="1" colspan="3">
+    <item row="0" column="1" colspan="2">
      <widget class="QLineEdit" name="lineEdit">
       <property name="font">
        <font>
@@ -34,26 +34,23 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="0" colspan="4">
-     <widget class="QTreeView" name="treeView"/>
-    </item>
     <item row="0" column="0">
      <widget class="QLabel" name="searchLabel">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
       <property name="minimumSize">
        <size>
-        <width>0</width>
+        <width>100</width>
         <height>0</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>16777215</width>
+        <width>200</width>
         <height>16777215</height>
        </size>
       </property>
@@ -75,6 +72,49 @@
      <widget class="QLabel" name="nafiLabel">
       <property name="text">
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://firenorth.org.au&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Visit the NAFI website&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="4">
+     <widget class="QTreeView" name="treeView"/>
+    </item>
+    <item row="0" column="3">
+     <widget class="QPushButton" name="clearSearchButton">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="toolTip">
+       <string>Clear Search</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="resources.qrc">
+        <normaloff>:/plugins/nafi/backspace.png</normaloff>:/plugins/nafi/backspace.png</iconset>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="3">
+     <widget class="QPushButton" name="aboutButton">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="toolTip">
+       <string>About NAFI …</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="resources.qrc">
+        <normaloff>:/plugins/nafi/info.png</normaloff>:/plugins/nafi/info.png</iconset>
       </property>
      </widget>
     </item>
