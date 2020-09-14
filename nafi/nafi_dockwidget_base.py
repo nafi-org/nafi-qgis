@@ -21,6 +21,10 @@ class Ui_NafiDockWidgetBase(object):
         self.gridLayout = QtWidgets.QGridLayout(self.dockWidgetContents)
         self.gridLayout.setObjectName("gridLayout")
         self.lineEdit = QtWidgets.QLineEdit(self.dockWidgetContents)
+        font = QtGui.QFont()
+        font.setBold(False)
+        font.setWeight(50)
+        self.lineEdit.setFont(font)
         self.lineEdit.setObjectName("lineEdit")
         self.gridLayout.addWidget(self.lineEdit, 0, 1, 1, 3)
         self.treeView = QtWidgets.QTreeView(self.dockWidgetContents)
@@ -52,7 +56,7 @@ class Ui_NafiDockWidgetBase(object):
     def retranslateUi(self, NafiDockWidgetBase):
         _translate = QtCore.QCoreApplication.translate
         NafiDockWidgetBase.setWindowTitle(_translate("NafiDockWidgetBase", "NAFI Fire Maps"))
-        self.lineEdit.setPlaceholderText(_translate("NafiDockWidgetBase", "(not implemented)"))
+        self.lineEdit.setPlaceholderText(_translate("NafiDockWidgetBase", "start typing layer title …"))
         self.searchLabel.setText(_translate("NafiDockWidgetBase", "<html><head/><body><p>Search layers</p></body></html>"))
         self.nafiLabel.setText(_translate("NafiDockWidgetBase", "<html><head/><body><p><a href=\"https://firenorth.org.au\"><span style=\" text-decoration: underline; color:#0000ff;\">Visit the NAFI website</span></a></p></body></html>"))
 
