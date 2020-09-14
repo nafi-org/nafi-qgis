@@ -110,6 +110,7 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
         
         # set up search signal
         self.lineEdit.textChanged.connect(self.searchTextChanged)
+        self.searchText = ""
 
         # set up clear search
         self.clearSearchButton.clicked.connect(self.clearSearch)
@@ -132,7 +133,9 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
     def initModel(self):
         """Initialise a QStandardItemModel from the NAFI WMS."""
         wms = WebMapService(NAFI_URL)
-        
+
+        self.treeViewModel.removeRows(0, self.treeViewModel.rowCount())
+
         # this structure is not properly organised via its "children" properties, need to fix it up
         owsLayers = [wms.contents[layerName] for layerName in list(wms.contents)]
         # check we've got at least one layer
@@ -183,14 +186,19 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
 
     def searchTextChanged(self, text):
         """Process a change in the search filter text."""
-        regex = QRegExp(text, Qt.CaseInsensitive, QRegExp.RegExp)
-        self.proxyModel.setFilterRegExp(regex)
-        self.treeView.expandAll()
+        # User adding characters and has exceeded 3 or more, or is removing characters
+        if len(text) >= 3 or len(self.searchText) > len(text):
+            regex = QRegExp(text, Qt.CaseInsensitive, QRegExp.RegExp)
+            self.proxyModel.setFilterRegExp(regex)
+            self.treeView.expandAll()
+
+        # Update last search text state 
+        self.searchText = text
 
     def clearSearch(self):
         """Clear search data."""
-        self.treeView.collapseAll()
         self.lineEdit.setText(None)
+        self.treeView.collapseAll()
         self.initModel()
 
     def showAboutDialog(self):
