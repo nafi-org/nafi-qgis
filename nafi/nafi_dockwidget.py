@@ -32,14 +32,11 @@ from qgis.PyQt.QtWidgets import QApplication, QMessageBox
 
 from qgis.core import Qgis, QgsRasterLayer, QgsProject
 
-from owslib.wms import WebMapService
-from owslib.map.wms111 import ContentMetadata 
-
-from .utils import qgsDebug
+from .utils import getNafiUrl, qgsDebug
+from .wms_item import WmsItem
 from .wms_tree_view_model import WmsTreeViewModel
 from .nafi_dockwidget_base import Ui_NafiDockWidgetBase
 
-NAFI_URL = "https://www.firenorth.org.au/public"
 
 class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
     closingPlugin = pyqtSignal()
@@ -78,11 +75,11 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
         # initialise proxied tree view model from WMS contents
         self.initModel()
 
+
     def initModel(self):
         """Initialise a QStandardItemModel from the NAFI WMS."""
-        wms = WebMapService(NAFI_URL)
         # create model
-        self.treeViewModel.setWms(wms)
+        self.treeViewModel.setWms(getNafiUrl())
         # set default sort and expansion
         self.proxyModel.sort(0, Qt.AscendingOrder)
         self.expandTopLevel()        
@@ -98,30 +95,17 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
 
         realIndex = self.proxyModel.mapToSource(index)
         modelNode = self.treeViewModel.itemFromIndex(realIndex)
-        layer = modelNode.data()
        
         # If we've got a WMS layer and not a layer group, add to map
-        if layer is not None and len(layer.children) == 0:
-            wmsLayer = self.createWmsLayer(layer)
-            wmsLayer = QgsProject.instance().addMapLayer(wmsLayer)
-            
-            # Don't show legend initially
-            if wmsLayer is not None:
-                displayLayer = QgsProject.instance().layerTreeRoot().findLayer(wmsLayer)
-                displayLayer.setExpanded(False)
+        if modelNode is not None:
+            if isinstance(modelNode, WmsItem):
+                wmsLayer = modelNode.createWmsLayer()
 
-    def createWmsLayer(self, owsLayer):
-        """Create a QgsRasterLayer from WMS given an OWS ContentMetadata object."""
-        assert isinstance(owsLayer, ContentMetadata)
-
-        # Weirdly true URL-encoding of the layer ID does not work correctly
-        encodedLayer = owsLayer.id.replace(" ","%20")
-
-        # This should create "EPSG:28350" for Map Grid of Australia, "EPSG:4326" for WGS84 etc
-        encodedSrsId = f"EPSG:{QgsProject.instance().crs().postgisSrid()}"
-        wmsUrl = f"crs={encodedSrsId}&format=image/png&layers={encodedLayer}&styles&url={NAFI_URL}"
-        wmsLayer = QgsRasterLayer(wmsUrl, owsLayer.title, 'wms')
-        return wmsLayer
+                if wmsLayer is not None:
+                    wmsLayer = QgsProject.instance().addMapLayer(wmsLayer)
+                    # Don't show legend initially
+                    displayLayer = QgsProject.instance().layerTreeRoot().findLayer(wmsLayer)
+                    displayLayer.setExpanded(False)
 
     def searchTextChanged(self, text):
         """Process a change in the search filter text."""

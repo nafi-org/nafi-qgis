@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon, QStandardItem, QStandardItemModel 
+
+from owslib.wms import WebMapService
 from owslib.map.wms111 import ContentMetadata, WebMapService_1_1_1
+
+from .wms_item import WmsItem
 
 UNWANTED_LAYERS = ["NODATA_RASTER"]
 
@@ -13,33 +17,25 @@ class WmsTreeViewModel(QStandardItemModel):
         self.unwantedLayers = unwantedLayers
         
     @staticmethod
-    def addOwsLayerToTreeViewModel(model, owsLayer, unwantedLayers = []):
+    def addOwsLayerToTreeViewModel(model, wmsUrl, owsLayer, unwantedLayers = []):
         """Add an OWSLib layer to a QStandardItemModel based structure, potentially with descendant layers and 
         using a list of 'blacklisted' layer names."""
         assert isinstance(model, QStandardItem) or isinstance(model, QStandardItemModel)
         assert isinstance(owsLayer, ContentMetadata)
 
         if owsLayer.title not in unwantedLayers:
-            node = QStandardItem()
-            node.setFlags(Qt.ItemIsEnabled)
-            node.setText(owsLayer.title)
-            node.setData(owsLayer)
-        
-            if owsLayer.children: 
-                node.setIcon(QIcon(":/plugins/nafi/folder.png"))
-            else:
-                node.setIcon(QIcon(":/plugins/nafi/globe.png"))
-                
+            node = WmsItem(wmsUrl, owsLayer)
             model.appendRow(node)
 
             # add children to view model
             for childLayer in owsLayer.children:
-                WmsTreeViewModel.addOwsLayerToTreeViewModel(node, childLayer, unwantedLayers)
+                WmsTreeViewModel.addOwsLayerToTreeViewModel(node, wmsUrl, childLayer, unwantedLayers)
         else:
             pass
 
-    def setWms(self, wms):
+    def setWms(self, wmsUrl):
         """Add an OWSLib WebMapService to this WmsTreeViewModel."""
+        wms = WebMapService(wmsUrl)
         assert isinstance(wms, WebMapService_1_1_1)
         # clear all rows
         self.removeRows(0, self.rowCount())
@@ -50,7 +46,7 @@ class WmsTreeViewModel(QStandardItemModel):
         # calculate our root layer
         rootLayer = WmsTreeViewModel.groupByRootLayers(owsLayers)[0]
         # add layey hierarchy to our tree model
-        WmsTreeViewModel.addOwsLayerToTreeViewModel(self, rootLayer, self.unwantedLayers)
+        WmsTreeViewModel.addOwsLayerToTreeViewModel(self, wmsUrl, rootLayer, self.unwantedLayers)
 
     @staticmethod
     def groupByRootLayers(layers):
