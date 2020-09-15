@@ -30,68 +30,16 @@ from qgis.PyQt.QtCore import pyqtSignal, QRegExp, QSortFilterProxyModel, Qt, QMo
 from qgis.PyQt.QtGui import QFont, QIcon, QPixmap, QStandardItem, QStandardItemModel 
 from qgis.PyQt.QtWidgets import QApplication, QMessageBox
 
-from qgis.core import Qgis, QgsMessageLog, QgsRasterLayer, QgsProject
+from qgis.core import Qgis, QgsRasterLayer, QgsProject
 
 from owslib.wms import WebMapService
-from owslib.map.wms111 import ContentMetadata, WebMapService_1_1_1
+from owslib.map.wms111 import ContentMetadata 
 
+from .utils import qgsDebug
+from .wms_tree_view_model import WmsTreeViewModel
 from .nafi_dockwidget_base import Ui_NafiDockWidgetBase
 
 NAFI_URL = "https://www.firenorth.org.au/public"
-UNWANTED_LAYERS = ["NODATA_RASTER"]
-
-def qgsDebug(message):
-    """Print a debug message."""
-    QgsMessageLog.logMessage(message, tag="Messages", level=Qgis.Info)
-
-def groupByRootLayers(layers):
-    """Reconstruct the parent-child relationships in an OWSLib ContentMetadata tree."""
-    parents = {}
-    for layer in layers:
-        parent = layer.parent
-        # process a child layer
-        if layer.parent is not None:
-            if not parent.children:
-                parent.children = []
-            if layer.parent.title not in parents:
-                parents[parent.title] = parent
-            if not any(c.title == layer.title for c in parent.children): 
-                layer.parent.children.append(layer)
-        # retain any root layers
-        else:
-            parents[layer.title] = layer
-
-    # if all parents are root layers, return
-    if all(map(lambda l: l.parent is None, parents.values())):
-        return list(parents.values())
-    # otherwise recurse
-    else:
-        return groupByRootLayers(parents.values())    
-
-def addLayerToViewModel(model, owsLayer, unwantedLayers = []):
-    """Add an OWSLib layer to a QStandardItemModel, potentially with descendant layers and 
-       using a list of 'blacklisted' layer names, to a QStandardItemModel."""
-    assert isinstance(model, QStandardItem) or isinstance(model, QStandardItemModel)
-    assert isinstance(owsLayer, ContentMetadata)
-
-    if owsLayer.title not in unwantedLayers:
-        node = QStandardItem()
-        node.setFlags(Qt.ItemIsEnabled)
-        node.setText(owsLayer.title)
-        node.setData(owsLayer)
-    
-        if owsLayer.children: 
-            node.setIcon(QIcon(":/plugins/nafi/folder.png"))
-        else:
-            node.setIcon(QIcon(":/plugins/nafi/globe.png"))
-            
-        model.appendRow(node)
-
-        # add children to view model
-        for childLayer in owsLayer.children:
-            addLayerToViewModel(node, childLayer, unwantedLayers)
-    else:
-        pass
 
 class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
     closingPlugin = pyqtSignal()
@@ -119,7 +67,7 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
         self.aboutButton.clicked.connect(self.showAboutDialog)
 
         # set up base model
-        self.treeViewModel = QStandardItemModel()
+        self.treeViewModel = WmsTreeViewModel()
 
         # set up proxy model for filtering        
         self.proxyModel = QSortFilterProxyModel(self.treeView)
@@ -133,18 +81,9 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
     def initModel(self):
         """Initialise a QStandardItemModel from the NAFI WMS."""
         wms = WebMapService(NAFI_URL)
-
-        self.treeViewModel.removeRows(0, self.treeViewModel.rowCount())
-
-        # this structure is not properly organised via its "children" properties, need to fix it up
-        owsLayers = [wms.contents[layerName] for layerName in list(wms.contents)]
-        # check we've got at least one layer
-        assert (len(owsLayers) > 0)
-        # calculate our root layer
-        rootLayer = groupByRootLayers(owsLayers)[0]
         # create model
-        addLayerToViewModel(self.treeViewModel, rootLayer, UNWANTED_LAYERS)
-
+        self.treeViewModel.setWms(wms)
+        # set default sort and expansion
         self.proxyModel.sort(0, Qt.AscendingOrder)
         self.expandTopLevel()        
 
