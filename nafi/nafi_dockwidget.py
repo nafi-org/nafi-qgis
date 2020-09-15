@@ -40,7 +40,7 @@ from .utils import getNafiUrl, qgsDebug
 from .wms_item import WmsItem
 from .wms_tree_view_model import WmsTreeViewModel
 from .nafi_dockwidget_base import Ui_NafiDockWidgetBase
-
+from .nafi_about_dialog import NafiAboutDialog
 
 class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
     closingPlugin = pyqtSignal()
@@ -139,7 +139,9 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
 
     def showAboutDialog(self):
         """Show an About … dialog."""
-        QMessageBox.information(self, "About Dialog", "Not yet implemented!")
+        # QMessageBox.information(self, "About Dialog", "Not yet implemented!")
+        aboutDialog = NafiAboutDialog()
+        aboutDialog.exec_()
     
     def closeEvent(self, event):
         """Handle plug-in close."""

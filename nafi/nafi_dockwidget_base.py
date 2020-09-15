@@ -85,3 +85,4 @@ class Ui_NafiDockWidgetBase(object):
         self.nafiLabel.setText(_translate("NafiDockWidgetBase", "<html><head/><body><p><a href=\"https://firenorth.org.au\"><span style=\" text-decoration: underline; color:#0000ff;\">Visit the NAFI website</span></a></p></body></html>"))
         self.clearSearchButton.setToolTip(_translate("NafiDockWidgetBase", "Clear Search"))
         self.aboutButton.setToolTip(_translate("NafiDockWidgetBase", "About NAFI …"))
+
