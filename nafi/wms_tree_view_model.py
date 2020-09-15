@@ -33,7 +33,7 @@ class WmsTreeViewModel(QStandardItemModel):
         else:
             pass
 
-    def setWms(self, wmsUrl):
+    def setWms(self, wmsUrl, extras=[]):
         """Add an OWSLib WebMapService to this WmsTreeViewModel."""
         wms = WebMapService(wmsUrl)
         assert isinstance(wms, WebMapService_1_1_1)
@@ -45,8 +45,23 @@ class WmsTreeViewModel(QStandardItemModel):
         assert (len(owsLayers) > 0)
         # calculate our root layer
         rootLayer = WmsTreeViewModel.groupByRootLayers(owsLayers)[0]
-        # add layey hierarchy to our tree model
+        # add layer hierarchy to our tree model
         WmsTreeViewModel.addOwsLayerToTreeViewModel(self, wmsUrl, rootLayer, self.unwantedLayers)
+        # add any specified extras
+        self.addExtras(extras)
+
+    def addExtras(self, items):
+        """Add some additional layers to this WmsTreeViewModel."""
+        extrasGroup = QStandardItem()
+        extrasGroup.setFlags(Qt.ItemIsEnabled)
+        extrasGroup.setText("Extras")
+        extrasGroup.setIcon(QIcon(":/plugins/nafi/folder.png"))
+
+        for item in items:
+            assert isinstance(item, QStandardItem)
+            extrasGroup.appendRow(item)
+
+        self.appendRow(extrasGroup)
 
     @staticmethod
     def groupByRootLayers(layers):

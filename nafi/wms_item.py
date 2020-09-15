@@ -22,7 +22,7 @@ class WmsItem(QStandardItem):
         else:
             self.setIcon(QIcon(":/plugins/nafi/globe.png"))
         
-    def createWmsLayer(self):
+    def createLayer(self):
         """Create a QgsRasterLayer from WMS given an OWS ContentMetadata object."""
         # only create a WMS layer from a child WmsItem
         if not self.owsLayer.children:

@@ -32,6 +32,10 @@ from qgis.PyQt.QtWidgets import QApplication, QMessageBox
 
 from qgis.core import Qgis, QgsRasterLayer, QgsProject
 
+from .google_xyz_item import GoogleXyzItem
+from .ibra_wms_item import IbraWmsItem
+from .oz_topo_wmts_item import OzTopoWmtsItem
+
 from .utils import getNafiUrl, qgsDebug
 from .wms_item import WmsItem
 from .wms_tree_view_model import WmsTreeViewModel
@@ -79,7 +83,11 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
     def initModel(self):
         """Initialise a QStandardItemModel from the NAFI WMS."""
         # create model
-        self.treeViewModel.setWms(getNafiUrl())
+        googSat = GoogleXyzItem()
+        ibraWms = IbraWmsItem()
+        ozTopoWmts = OzTopoWmtsItem()
+        self.treeViewModel.setWms(getNafiUrl(), [googSat, ibraWms, ozTopoWmts])
+
         # set default sort and expansion
         self.proxyModel.sort(0, Qt.AscendingOrder)
         self.expandTopLevel()        
@@ -96,16 +104,21 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
         realIndex = self.proxyModel.mapToSource(index)
         modelNode = self.treeViewModel.itemFromIndex(realIndex)
        
-        # If we've got a WMS layer and not a layer group, add to map
+        # if we've got a WMS layer and not a layer group, add to map
         if modelNode is not None:
             if isinstance(modelNode, WmsItem):
-                wmsLayer = modelNode.createWmsLayer()
+                wmsLayer = modelNode.createLayer()
 
                 if wmsLayer is not None:
                     wmsLayer = QgsProject.instance().addMapLayer(wmsLayer)
                     # Don't show legend initially
                     displayLayer = QgsProject.instance().layerTreeRoot().findLayer(wmsLayer)
                     displayLayer.setExpanded(False)
+
+            # could probably be a little more polymorphic here, but not bad
+            elif isinstance(modelNode, (GoogleXyzItem, IbraWmsItem, OzTopoWmtsItem)):
+                extraLayer = modelNode.createLayer()
+                QgsProject.instance().addMapLayer(extraLayer)
 
     def searchTextChanged(self, text):
         """Process a change in the search filter text."""
