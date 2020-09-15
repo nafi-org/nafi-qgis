@@ -42,9 +42,6 @@ class Ui_NafiDockWidgetBase(object):
         self.searchLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.searchLabel.setObjectName("searchLabel")
         self.gridLayout.addWidget(self.searchLabel, 0, 0, 1, 1)
-        self.nafiLabel = QtWidgets.QLabel(self.dockWidgetContents)
-        self.nafiLabel.setObjectName("nafiLabel")
-        self.gridLayout.addWidget(self.nafiLabel, 2, 0, 1, 1)
         self.treeView = QtWidgets.QTreeView(self.dockWidgetContents)
         self.treeView.setObjectName("treeView")
         self.gridLayout.addWidget(self.treeView, 1, 0, 1, 4)
@@ -82,7 +79,6 @@ class Ui_NafiDockWidgetBase(object):
         NafiDockWidgetBase.setWindowTitle(_translate("NafiDockWidgetBase", "NAFI Fire Maps"))
         self.lineEdit.setPlaceholderText(_translate("NafiDockWidgetBase", "start typing layer title …"))
         self.searchLabel.setText(_translate("NafiDockWidgetBase", "<html><head/><body><p>Search layers</p></body></html>"))
-        self.nafiLabel.setText(_translate("NafiDockWidgetBase", "<html><head/><body><p><a href=\"https://firenorth.org.au\"><span style=\" text-decoration: underline; color:#0000ff;\">Visit the NAFI website</span></a></p></body></html>"))
         self.clearSearchButton.setToolTip(_translate("NafiDockWidgetBase", "Clear Search"))
         self.aboutButton.setToolTip(_translate("NafiDockWidgetBase", "About NAFI …"))
 
