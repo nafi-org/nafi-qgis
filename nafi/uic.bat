@@ -17,6 +17,7 @@ cd /d %~dp0
 @ECHO ON
 ::Ui Compilation
 call pyuic5 nafi_dockwidget_base.ui -o nafi_dockwidget_base.py
+call pyuic5 nafi_about_dialog_base.ui -o nafi_about_dialog_base.py
 
 ::Resources
 call pyrcc5 resources.qrc -o resources_rc.py

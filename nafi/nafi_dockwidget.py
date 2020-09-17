@@ -40,7 +40,7 @@ from .utils import getNafiUrl, qgsDebug
 from .wms_item import WmsItem
 from .wms_tree_view_model import WmsTreeViewModel
 from .nafi_dockwidget_base import Ui_NafiDockWidgetBase
-
+from .nafi_about_dialog import NafiAboutDialog
 
 class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
     closingPlugin = pyqtSignal()
@@ -84,18 +84,21 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
         """Initialise a QStandardItemModel from the NAFI WMS."""
         # create model
         googSat = GoogleXyzItem()
-        ibraWms = IbraWmsItem()
+        # ibraWms = IbraWmsItem()
         ozTopoWmts = OzTopoWmtsItem()
-        self.treeViewModel.setWms(getNafiUrl(), [googSat, ibraWms, ozTopoWmts])
+        self.treeViewModel.setWms(getNafiUrl(), [googSat, ozTopoWmts])
 
         # set default sort and expansion
         self.proxyModel.sort(0, Qt.AscendingOrder)
         self.expandTopLevel()        
 
     def expandTopLevel(self):
-        # expand the very top level item
-        rootIndex = self.proxyModel.index(0, 0)
-        self.treeView.expand(rootIndex)
+        # expand the top level items
+        for row in range(self.proxyModel.rowCount()):
+            self.treeView.expand(self.proxyModel.index(row, 0))
+
+        # rootIndex = self.proxyModel.index(0, 0)
+        # self.treeView.expand(rootIndex)
 
     def treeViewPressed(self, index):
         """Load a NAFI WMS layer given an index in the tree view."""
@@ -139,7 +142,10 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
 
     def showAboutDialog(self):
         """Show an About … dialog."""
-        QMessageBox.information(self, "About Dialog", "Not yet implemented!")
+        # QMessageBox.information(self, "About Dialog", "Not yet implemented!")
+        aboutDialog = NafiAboutDialog()
+        # aboutDialog.adjustSize()
+        aboutDialog.exec_()
     
     def closeEvent(self, event):
         """Handle plug-in close."""
