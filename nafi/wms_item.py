@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon, QStandardItem 
+from qgis.PyQt.QtWidgets import QMessageBox
 from owslib.map.wms111 import ContentMetadata, WebMapService_1_1_1
 
-from qgis.core import QgsProject, QgsRasterLayer
+from qgis.core import QgsCoordinateReferenceSystem, QgsProject, QgsRasterLayer
 
 class WmsItem(QStandardItem):
     def __init__(self, wmsUrl, owsLayer):
@@ -29,6 +30,17 @@ class WmsItem(QStandardItem):
     def removeLayer(self):
         self.mapLayerId = None
 
+    @staticmethod
+    def setDefaultProjectCrs():
+        """Set the Project CRS to the default value of GDA94 geographic."""
+        gda94 = QgsCoordinateReferenceSystem("EPSG:4283")
+        warning = (f"Because no QGIS project CRS was set, a default coordinate system of "
+                   f"{gda94.userFriendlyIdentifier()} has been applied to interact with "
+                   f"NAFI map services.")
+
+        QMessageBox.warning(None, "NAFI Fire Maps", warning)
+        QgsProject.instance().setCrs(gda94)
+
     def addLayer(self):
         """Create a QgsRasterLayer from WMS given an OWS ContentMetadata object."""
         # only create a WMS layer from a child WmsItem
@@ -36,9 +48,16 @@ class WmsItem(QStandardItem):
         if not self.owsLayer.children and self.mapLayerId is None:
             # weirdly true that URL-encoding of the layer ID does not work correctly
             encodedLayer = self.owsLayer.id.replace(" ","%20")
+
             # this should create "EPSG:28350" for Map Grid of Australia, "EPSG:4326" for WGS84 etc
-            encodedSrsId = f"EPSG:{QgsProject.instance().crs().postgisSrid()}"
-            wmsParams = f"crs={encodedSrsId}&format=image/png&layers={encodedLayer}&styles&url={self.wmsUrl}"
+            srsId = QgsProject.instance().crs().postgisSrid()
+
+            # Make sure we've got a project CRS before proceeding further
+            if srsId == 0:
+                WmsItem.setDefaultProjectCrs()
+                srsId = QgsProject.instance().crs().postgisSrid()
+
+            wmsParams = f"crs=EPSG:{srsId}&format=image/png&layers={encodedLayer}&styles&url={self.wmsUrl}"
             wmsLayer = QgsRasterLayer(wmsParams, self.owsLayer.title, "wms")
 
             if wmsLayer is not None:

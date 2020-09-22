@@ -133,7 +133,6 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
 
     def showAboutDialog(self):
         """Show an About … dialog."""
-        # QMessageBox.information(self, "About Dialog", "Not yet implemented!")
         aboutDialog = NafiAboutDialog()
         # aboutDialog.adjustSize()
         aboutDialog.exec_()
