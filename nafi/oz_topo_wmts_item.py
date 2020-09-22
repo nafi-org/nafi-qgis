@@ -3,7 +3,7 @@ from urllib.parse import unquote, urlencode
 
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon, QStandardItem 
-from qgis.core import QgsRasterLayer, QgsProject
+from qgis.core import QgsProject, QgsRasterLayer
 
 from .utils import qgsDebug
 
@@ -18,7 +18,7 @@ class OzTopoWmtsItem(QStandardItem):
         self.setText(WMTS_LABEL)
         self.setIcon(QIcon(":/plugins/nafi/globe.png"))
         
-    def createLayer(self):
+    def addLayer(self):
         """Create a QgsRasterLayer from this one specific WMTS endpoint."""
 
         # see https://github.com/isogeo/isogeo-plugin-qgis/blob/master/tests/dev/qgis_console/dev_wmts.py
@@ -40,5 +40,5 @@ class OzTopoWmtsItem(QStandardItem):
         qgsDebug(wmtsParamsUri)
 
         wmtsLayer = QgsRasterLayer(wmtsParamsUri, WMTS_LABEL, "wms")
-
-        return wmtsLayer
+        if wmtsLayer is not None:
+            QgsProject.instance().addMapLayer(wmtsLayer)

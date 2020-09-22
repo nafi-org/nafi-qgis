@@ -84,9 +84,11 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
         """Initialise a QStandardItemModel from the NAFI WMS."""
         # create model
         googSat = GoogleXyzItem()
+        googHyb = GoogleXyzItem("y")
+        googStr = GoogleXyzItem("m")
         # ibraWms = IbraWmsItem()
         ozTopoWmts = OzTopoWmtsItem()
-        self.treeViewModel.setWms(getNafiUrl(), [googSat, ozTopoWmts])
+        self.treeViewModel.setWms(getNafiUrl(), [googSat, googHyb, googStr, ozTopoWmts])
 
         # set default sort and expansion
         self.proxyModel.sort(0, Qt.AscendingOrder)
@@ -107,21 +109,10 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
         realIndex = self.proxyModel.mapToSource(index)
         modelNode = self.treeViewModel.itemFromIndex(realIndex)
        
-        # if we've got a WMS layer and not a layer group, add to map
+        # if we've got a layer and not a layer group, add to map
         if modelNode is not None:
-            if isinstance(modelNode, WmsItem):
-                wmsLayer = modelNode.createLayer()
-
-                if wmsLayer is not None:
-                    wmsLayer = QgsProject.instance().addMapLayer(wmsLayer)
-                    # Don't show legend initially
-                    displayLayer = QgsProject.instance().layerTreeRoot().findLayer(wmsLayer)
-                    displayLayer.setExpanded(False)
-
-            # could probably be a little more polymorphic here, but not bad
-            elif isinstance(modelNode, (GoogleXyzItem, IbraWmsItem, OzTopoWmtsItem)):
-                extraLayer = modelNode.createLayer()
-                QgsProject.instance().addMapLayer(extraLayer)
+            if isinstance(modelNode, (GoogleXyzItem, IbraWmsItem, OzTopoWmtsItem, WmsItem)):
+                modelNode.addLayer()
 
     def searchTextChanged(self, text):
         """Process a change in the search filter text."""

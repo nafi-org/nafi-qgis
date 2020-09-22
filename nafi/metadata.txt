@@ -4,7 +4,7 @@
 
 [general]
 name=NAFI Fire Maps
-qgisMinimumVersion=3.0
+qgisMinimumVersion=3.4
 description=Northern Australia Fire & Rangelands Map Services
 version=1.0
 author=Tom Lynch
