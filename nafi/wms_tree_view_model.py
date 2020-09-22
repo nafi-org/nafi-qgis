@@ -54,7 +54,7 @@ class WmsTreeViewModel(QStandardItemModel):
         """Add some additional layers to this WmsTreeViewModel."""
         extrasGroup = QStandardItem()
         extrasGroup.setFlags(Qt.ItemIsEnabled)
-        extrasGroup.setText("Extras")
+        extrasGroup.setText("Base layers")
         extrasGroup.setIcon(QIcon(":/plugins/nafi/folder.png"))
 
         for item in items:

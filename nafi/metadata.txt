@@ -3,7 +3,7 @@
 # This file should be included when you package your plugin.# Mandatory items:
 
 [general]
-name=NAFI Maps
+name=NAFI Fire Maps
 qgisMinimumVersion=3.0
 description=Northern Australia Fire & Rangelands Map Services
 version=1.0
