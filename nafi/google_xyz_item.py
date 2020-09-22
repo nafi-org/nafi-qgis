@@ -29,7 +29,7 @@ class GoogleXyzItem(QStandardItem):
         # See https://gis.stackexchange.com/questions/270871/adding-google-maps-with-pyqgis
 
         googUrl = f"mt1.google.com/vt/lyrs={self.googleMapType}&x={{x}}&y={{y}}&z={{z}}" 
-        googParams = "type=xyz&zmin=0&zmax=21&url=https://" + requests.utils.quote(googUrl)
+        googParams = f"type=xyz&zmin=0&zmax=21&url=https://{requests.utils.quote(googUrl)}"
         tmsLayer = QgsRasterLayer(googParams, f"Google {LABELS[self.googleMapType]}", "wms")
 
         return tmsLayer
