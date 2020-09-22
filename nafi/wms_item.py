@@ -20,19 +20,14 @@ class WmsItem(QStandardItem):
         self.setCheckable(False)
 
         if owsLayer.children: 
-            # self.setCheckable(False)
             self.setIcon(QIcon(":/plugins/nafi/folder.png"))
         else:
-            # self.setCheckable(True)
             self.setIcon(QIcon(":/plugins/nafi/globe.png"))
         
         self.removeLayer()
 
     def removeLayer(self):
-        # if self.mapLayerId is not None:
-        #    QgsProject.instance().removeMapLayer(self.mapLayerId)
         self.mapLayerId = None
-        # self.setCheckState(Qt.Unchecked)
 
     def addLayer(self):
         """Create a QgsRasterLayer from WMS given an OWS ContentMetadata object."""
@@ -47,21 +42,9 @@ class WmsItem(QStandardItem):
             wmsLayer = QgsRasterLayer(wmsParams, self.owsLayer.title, "wms")
 
             if wmsLayer is not None:
-                # self.setCheckState(Qt.Checked)
                 wmsLayer = QgsProject.instance().addMapLayer(wmsLayer)
                 self.mapLayerId = wmsLayer.id()
                 wmsLayer.willBeDeleted.connect(self.removeLayer)
                 # Don't show legend initially
                 displayLayer = QgsProject.instance().layerTreeRoot().findLayer(wmsLayer)
                 displayLayer.setExpanded(False)
-
-    # def updateState(self):
-    #    """Update display state to match check state for a WMS layer (not layer group)."""
-    #    if not self.owsLayer.children:
-    #        checked = self.checkState()
-    #        if checked and self.mapLayerId is None:
-    #            self.addLayer()
-    #        elif not checked and self.mapLayerId is not None:
-    #            self.removeLayer()
-
-

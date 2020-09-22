@@ -16,7 +16,6 @@ class WmsTreeViewModel(QStandardItemModel):
         """Constructor."""
         super(QStandardItemModel, self).__init__()
         self.unwantedLayers = unwantedLayers
-        # self.itemChanged.connect(WmsTreeViewModel.updateItemState)
 
     @staticmethod
     def addOwsLayerToTreeViewModel(model, wmsUrl, owsLayer, unwantedLayers = []):
@@ -89,11 +88,3 @@ class WmsTreeViewModel(QStandardItemModel):
         # otherwise recurse
         else:
             return WmsTreeViewModel.groupByRootLayers(parents.values())    
-
-    # @staticmethod
-    # def updateItemState(item):
-    #    """Toggle the display state of a layer in the WMS tree view."""
-    #    if isinstance(item, WmsItem):
-    #        item.updateState()
-
-
