@@ -30,8 +30,6 @@ class OzTopoWmtsItem(QStandardItem):
         wmtsParams = getOzTopoParams()
         wmtsParamsUri = unquote(urlencode(wmtsParams))
         
-        # qgsDebug(wmtsParamsUri)
-
         wmtsLayer = QgsRasterLayer(wmtsParamsUri, WMTS_LABEL, "wms")
         if wmtsLayer is not None and wmtsLayer.isValid():
             QgsProject.instance().addMapLayer(wmtsLayer)

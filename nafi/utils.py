@@ -28,10 +28,25 @@ def getOzTopoParams():
     }
 
 def guiInformation(message):
+    """Show an info message box."""
     QMessageBox.information(None, "NAFI Fire Maps", message)
 
 def guiError(message):
+    """Show an error message box."""
     QMessageBox.critical(None, "NAFI Fire Maps", message)
 
 def guiWarning(message):
+    """Show a warning message box."""
     QMessageBox.warning(None, "NAFI Fire Maps", message)
+
+def setDefaultProjectCrs(project):
+    """Set the Project CRS to the default value of GDA94 geographic."""
+    assert isinstance(project, QgsProject)
+    
+    gda94 = QgsCoordinateReferenceSystem("EPSG:4283")
+    warning = (f"Because no QGIS project CRS was set, a default coordinate system of "
+                f"{gda94.userFriendlyIdentifier()} has been applied to interact with "
+                f"NAFI map services.")
+
+    guiWarning(warning)
+    project.setCrs(gda94)
