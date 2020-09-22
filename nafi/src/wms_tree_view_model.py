@@ -64,7 +64,7 @@ class WmsTreeViewModel(QStandardItemModel):
         extrasGroup = QStandardItem()
         extrasGroup.setFlags(Qt.ItemIsEnabled)
         extrasGroup.setText("Base layers")
-        extrasGroup.setIcon(QIcon(":/plugins/nafi/folder.png"))
+        extrasGroup.setIcon(QIcon(":/plugins/nafi/images/folder.png"))
 
         for item in items:
             assert isinstance(item, QStandardItem)

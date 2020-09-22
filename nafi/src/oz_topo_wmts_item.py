@@ -16,7 +16,7 @@ class OzTopoWmtsItem(QStandardItem):
 
         self.setFlags(Qt.ItemIsEnabled)
         self.setText(WMTS_LABEL)
-        self.setIcon(QIcon(":/plugins/nafi/globe.png"))
+        self.setIcon(QIcon(":/plugins/nafi/images/globe.png"))
         
     def addLayer(self):
         """Create a QgsRasterLayer from this one specific WMTS endpoint."""

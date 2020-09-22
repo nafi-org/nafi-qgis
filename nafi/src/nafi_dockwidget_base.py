@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'nafi_dockwidget_base.ui'
+# Form implementation generated from reading ui file 'src\nafi_dockwidget_base.ui'
 #
 # Created by: PyQt5 UI code generator 5.11.3
 #
@@ -53,7 +53,7 @@ class Ui_NafiDockWidgetBase(object):
         self.clearSearchButton.setSizePolicy(sizePolicy)
         self.clearSearchButton.setText("")
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/plugins/nafi/backspace.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/plugins/nafi/images/backspace.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.clearSearchButton.setIcon(icon)
         self.clearSearchButton.setObjectName("clearSearchButton")
         self.gridLayout.addWidget(self.clearSearchButton, 0, 3, 1, 1)
@@ -65,7 +65,7 @@ class Ui_NafiDockWidgetBase(object):
         self.aboutButton.setSizePolicy(sizePolicy)
         self.aboutButton.setText("")
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/plugins/nafi/info.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(":/plugins/nafi/images/info.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.aboutButton.setIcon(icon1)
         self.aboutButton.setObjectName("aboutButton")
         self.gridLayout.addWidget(self.aboutButton, 2, 3, 1, 1)

@@ -21,7 +21,7 @@ class IbraWmsItem(QStandardItem):
         self.setFlags(Qt.ItemIsEnabled)
         self.setText(ibraOwsLayer.title)
         self.owsLayer = ibraOwsLayer
-        self.setIcon(QIcon(":/plugins/nafi/globe.png"))
+        self.setIcon(QIcon(":/plugins/nafi/images/globe.png"))
         
     def addLayer(self):
         """Create a QgsRasterLayer from WMS given an OWS ContentMetadata object."""

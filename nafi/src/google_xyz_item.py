@@ -24,7 +24,7 @@ class GoogleXyzItem(QStandardItem):
         self.googleMapType = googleMapType
         self.setFlags(Qt.ItemIsEnabled)
         self.setText(f"Google {LABELS[googleMapType]}")
-        self.setIcon(QIcon(":/plugins/nafi/globe.png"))
+        self.setIcon(QIcon(":/plugins/nafi/images/globe.png"))
         
     def addLayer(self):
         """Create a QgsRasterLayer from Google XYZ tiles."""

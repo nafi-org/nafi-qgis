@@ -22,9 +22,9 @@ class WmsItem(QStandardItem):
         self.setCheckable(False)
 
         if owsLayer.children: 
-            self.setIcon(QIcon(":/plugins/nafi/folder.png"))
+            self.setIcon(QIcon(":/plugins/nafi/images/folder.png"))
         else:
-            self.setIcon(QIcon(":/plugins/nafi/globe.png"))
+            self.setIcon(QIcon(":/plugins/nafi/images/globe.png"))
         
         self.removeLayer()
 

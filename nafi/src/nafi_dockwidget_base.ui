@@ -87,7 +87,7 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>:/plugins/nafi/backspace.png</normaloff>:/plugins/nafi/backspace.png</iconset>
+        <normaloff>:/plugins/nafi/images/backspace.png</normaloff>:/plugins/nafi/images/backspace.png</iconset>
       </property>
      </widget>
     </item>
@@ -107,7 +107,7 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>:/plugins/nafi/info.png</normaloff>:/plugins/nafi/info.png</iconset>
+        <normaloff>:/plugins/nafi/images/info.png</normaloff>:/plugins/nafi/images/info.png</iconset>
       </property>
      </widget>
     </item>
