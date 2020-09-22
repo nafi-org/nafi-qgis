@@ -68,13 +68,6 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="nafiLabel">
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://firenorth.org.au&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Visit the NAFI website&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-     </widget>
-    </item>
     <item row="1" column="0" colspan="4">
      <widget class="QTreeView" name="treeView"/>
     </item>
@@ -93,7 +86,7 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="resources.qrc">
+       <iconset>
         <normaloff>:/plugins/nafi/backspace.png</normaloff>:/plugins/nafi/backspace.png</iconset>
       </property>
      </widget>
@@ -113,7 +106,7 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="resources.qrc">
+       <iconset>
         <normaloff>:/plugins/nafi/info.png</normaloff>:/plugins/nafi/info.png</iconset>
       </property>
      </widget>
