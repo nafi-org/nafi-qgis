@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon, QStandardItem 
-from qgis.PyQt.QtWidgets import QMessageBox
 from owslib.map.wms111 import ContentMetadata, WebMapService_1_1_1
 
 from qgis.core import QgsCoordinateReferenceSystem, QgsProject, QgsRasterLayer
+
+from .utils import guiError, guiWarning
 
 class WmsItem(QStandardItem):
     def __init__(self, wmsUrl, owsLayer):
@@ -13,7 +14,7 @@ class WmsItem(QStandardItem):
 
         assert isinstance(owsLayer, ContentMetadata)
 
-        self.wmsUrl = wmsUrl       
+        self.wmsUrl = wmsUrl
         self.setFlags(Qt.ItemIsEnabled)
         self.setText(owsLayer.title)
         self.owsLayer = owsLayer
@@ -38,7 +39,7 @@ class WmsItem(QStandardItem):
                    f"{gda94.userFriendlyIdentifier()} has been applied to interact with "
                    f"NAFI map services.")
 
-        QMessageBox.warning(None, "NAFI Fire Maps", warning)
+        guiWarning(warning)
         QgsProject.instance().setCrs(gda94)
 
     def addLayer(self):
@@ -60,10 +61,14 @@ class WmsItem(QStandardItem):
             wmsParams = f"crs=EPSG:{srsId}&format=image/png&layers={encodedLayer}&styles&url={self.wmsUrl}"
             wmsLayer = QgsRasterLayer(wmsParams, self.owsLayer.title, "wms")
 
-            if wmsLayer is not None:
+            if wmsLayer is not None and wmsLayer.isValid():
                 wmsLayer = QgsProject.instance().addMapLayer(wmsLayer)
                 self.mapLayerId = wmsLayer.id()
                 wmsLayer.willBeDeleted.connect(self.removeLayer)
                 # Don't show legend initially
                 displayLayer = QgsProject.instance().layerTreeRoot().findLayer(wmsLayer)
                 displayLayer.setExpanded(False)
+            else:
+                error = (f"An error occurred adding the layer {self.owsLayer.title} to the map.\n"
+                         f"Check your QGIS WMS message log for details.")
+                guiError(error)

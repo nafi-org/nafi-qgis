@@ -5,9 +5,9 @@ from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon, QStandardItem 
 from qgis.core import QgsProject, QgsRasterLayer
 
-from .utils import qgsDebug
+from .utils import getOzTopoParams, guiError, qgsDebug
 
-WMTS_LABEL = "Australian Topographic WMTS"
+WMTS_LABEL = "Australian Topographic Base Map"
 
 class OzTopoWmtsItem(QStandardItem):
     def __init__(self):
@@ -27,18 +27,15 @@ class OzTopoWmtsItem(QStandardItem):
         # contextualWMSLegend=0&crs=EPSG:3857&dpiMode=7&featureCount=10&format=image/jpgpng&layers=Topographic_Base_Map
         # &styles=default&tileMatrixSet=GoogleMapsCompatible
         # &url=https://services.ga.gov.au/gis/rest/services/Topographic_Base_Map/MapServer/WMTS/1.0.0/WMTSCapabilities.xml        
-        wmtsParams = {
-            "crs": "EPSG:3857",
-            "format": "image/jpgpng",
-            "layers": "Topographic_Base_Map",
-            "styles": "default",
-            "tileMatrixSet": "GoogleMapsCompatible",
-            "url": "https://services.ga.gov.au/gis/rest/services/Topographic_Base_Map/MapServer/WMTS/1.0.0/WMTSCapabilities.xml"
-        }
+        wmtsParams = getOzTopoParams()
         wmtsParamsUri = unquote(urlencode(wmtsParams))
         
-        qgsDebug(wmtsParamsUri)
+        # qgsDebug(wmtsParamsUri)
 
         wmtsLayer = QgsRasterLayer(wmtsParamsUri, WMTS_LABEL, "wms")
-        if wmtsLayer is not None:
+        if wmtsLayer is not None and wmtsLayer.isValid():
             QgsProject.instance().addMapLayer(wmtsLayer)
+        else:
+            error = (f"An error occurred adding the layer {WMTS_LABEL} to the map.\n"
+                     f"Check your QGIS WMS message log for details.")
+            guiError(error)

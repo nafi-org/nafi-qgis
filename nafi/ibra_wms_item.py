@@ -7,7 +7,7 @@ from owslib.map.wms111 import ContentMetadata, WebMapService_1_1_1
 
 from qgis.core import QgsProject, QgsRasterLayer
 
-from .utils import getIbraUrl
+from .utils import getIbraUrl, guiError
 
 class IbraWmsItem(QStandardItem):
     def __init__(self):
@@ -32,5 +32,10 @@ class IbraWmsItem(QStandardItem):
         wmsParams = f"crs={encodedSrsId}&format=image/png&layers={encodedLayer}&styles&url={self.wmsUrl}"
         wmsLayer = QgsRasterLayer(wmsParams, self.owsLayer.title, "wms")
 
-        if wmsLayer is not None:
+        if wmsLayer is not None and wmsLayer.isValid():
             QgsProject.instance().addMapLayer(wmsLayer)
+
+        else:
+            error = (f"An error occurred adding the layer {self.owsLayer.title} to the map.\n"
+                     f"Check your QGIS WMS message log for details.")
+            guiError(error)
