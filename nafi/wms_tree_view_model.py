@@ -5,6 +5,7 @@ from qgis.PyQt.QtGui import QIcon, QStandardItem, QStandardItemModel
 from owslib.wms import WebMapService
 from owslib.map.wms111 import ContentMetadata, WebMapService_1_1_1
 
+from .utils import qgsDebug
 from .wms_item import WmsItem
 
 UNWANTED_LAYERS = ["NODATA_RASTER"]
@@ -15,7 +16,8 @@ class WmsTreeViewModel(QStandardItemModel):
         """Constructor."""
         super(QStandardItemModel, self).__init__()
         self.unwantedLayers = unwantedLayers
-        
+        # self.itemChanged.connect(WmsTreeViewModel.updateItemState)
+
     @staticmethod
     def addOwsLayerToTreeViewModel(model, wmsUrl, owsLayer, unwantedLayers = []):
         """Add an OWSLib layer to a QStandardItemModel based structure, potentially with descendant layers and 
@@ -87,5 +89,11 @@ class WmsTreeViewModel(QStandardItemModel):
         # otherwise recurse
         else:
             return WmsTreeViewModel.groupByRootLayers(parents.values())    
+
+    # @staticmethod
+    # def updateItemState(item):
+    #    """Toggle the display state of a layer in the WMS tree view."""
+    #    if isinstance(item, WmsItem):
+    #        item.updateState()
 
 

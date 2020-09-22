@@ -5,7 +5,7 @@ from qgis.PyQt.QtGui import QIcon, QStandardItem
 from owslib.wms import WebMapService
 from owslib.map.wms111 import ContentMetadata, WebMapService_1_1_1
 
-from qgis.core import QgsRasterLayer, QgsProject
+from qgis.core import QgsProject, QgsRasterLayer
 
 from .utils import getIbraUrl
 
@@ -23,7 +23,7 @@ class IbraWmsItem(QStandardItem):
         self.owsLayer = ibraOwsLayer
         self.setIcon(QIcon(":/plugins/nafi/globe.png"))
         
-    def createLayer(self):
+    def addLayer(self):
         """Create a QgsRasterLayer from WMS given an OWS ContentMetadata object."""
         # weirdly true that URL-encoding of the layer ID does not work correctly
         encodedLayer = self.owsLayer.id.replace(" ","%20")
@@ -31,5 +31,6 @@ class IbraWmsItem(QStandardItem):
         encodedSrsId = f"EPSG:{QgsProject.instance().crs().postgisSrid()}"
         wmsParams = f"crs={encodedSrsId}&format=image/png&layers={encodedLayer}&styles&url={self.wmsUrl}"
         wmsLayer = QgsRasterLayer(wmsParams, self.owsLayer.title, "wms")
-        return wmsLayer
 
+        if wmsLayer is not None:
+            QgsProject.instance().addMapLayer(wmsLayer)
