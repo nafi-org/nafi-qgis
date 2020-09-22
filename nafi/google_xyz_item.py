@@ -21,7 +21,7 @@ class GoogleXyzItem(QStandardItem):
         # m - road map
         self.googleMapType = googleMapType
         self.setFlags(Qt.ItemIsEnabled)
-        self.setText("Google Imagery")
+        self.setText(f"Google {LABELS[googleMapType]}")
         self.setIcon(QIcon(":/plugins/nafi/globe.png"))
         
     def createLayer(self):

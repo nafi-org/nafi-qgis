@@ -84,9 +84,11 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
         """Initialise a QStandardItemModel from the NAFI WMS."""
         # create model
         googSat = GoogleXyzItem()
+        googHyb = GoogleXyzItem("y")
+        googStr = GoogleXyzItem("m")
         # ibraWms = IbraWmsItem()
         ozTopoWmts = OzTopoWmtsItem()
-        self.treeViewModel.setWms(getNafiUrl(), [googSat, ozTopoWmts])
+        self.treeViewModel.setWms(getNafiUrl(), [googSat, googHyb, googStr, ozTopoWmts])
 
         # set default sort and expansion
         self.proxyModel.sort(0, Qt.AscendingOrder)
