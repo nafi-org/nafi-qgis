@@ -30,6 +30,6 @@ class IbraWmsItem(QStandardItem):
         # this should create "EPSG:28350" for Map Grid of Australia, "EPSG:4326" for WGS84 etc
         encodedSrsId = f"EPSG:{QgsProject.instance().crs().postgisSrid()}"
         wmsParams = f"crs={encodedSrsId}&format=image/png&layers={encodedLayer}&styles&url={self.wmsUrl}"
-        wmsLayer = QgsRasterLayer(wmsParams, self.owsLayer.title, 'wms')
+        wmsLayer = QgsRasterLayer(wmsParams, self.owsLayer.title, "wms")
         return wmsLayer
 
