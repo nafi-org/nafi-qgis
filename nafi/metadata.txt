@@ -27,7 +27,7 @@ tags=python
 
 homepage=http://firenorth.org.au
 category=Plugins
-icon=icon.png
+icon=images/icon.png
 # experimental flag
 experimental=False
 
