@@ -175,9 +175,6 @@ class Nafi:
 
     def onClosePlugin(self):
         """Cleanup necessary items here when plugin dockwidget is closed"""
-
-        #print "** CLOSING Nafi"
-
         # disconnects
         self.dockwidget.closingPlugin.disconnect(self.onClosePlugin)
 
