@@ -24,6 +24,6 @@
         <file>settings.png</file>
     </qresource>
     <qresource prefix="/plugins/nafi" >
-        <file>firescar.png</file>
+        <file>firescar.jpg</file>
     </qresource>
 </RCC>
