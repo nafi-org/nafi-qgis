@@ -42,7 +42,7 @@ class WmsItem(QStandardItem):
             encodedLayer = self.owsLayer.id.replace(" ","%20")
 
             # this call should get "28350" for Map Grid of Australia, "4326" for WGS84 etc
-            # Make sure we've got a project CRS before proceeding further
+            # make sure we've got a project CRS before proceeding further
             srsId = project.crs().postgisSrid()
             if srsId == 0:
                 setDefaultProjectCrs(project)
@@ -56,7 +56,7 @@ class WmsItem(QStandardItem):
                 wmsLayer = project.addMapLayer(wmsLayer)
                 self.mapLayerId = wmsLayer.id()
                 wmsLayer.willBeDeleted.connect(self.unsetLayer)
-                # Don't show legend initially
+                # don't show legend initially
                 displayLayer = project.layerTreeRoot().findLayer(wmsLayer)
                 displayLayer.setExpanded(False)
             else:

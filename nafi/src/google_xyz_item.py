@@ -28,7 +28,7 @@ class GoogleXyzItem(QStandardItem):
         
     def addLayer(self):
         """Create a QgsRasterLayer from Google XYZ tiles."""
-        # See https://gis.stackexchange.com/questions/270871/adding-google-maps-with-pyqgis
+        # see https://gis.stackexchange.com/questions/270871/adding-google-maps-with-pyqgis
 
         googUrl = f"mt1.google.com/vt/lyrs={self.googleMapType}&x={{x}}&y={{y}}&z={{z}}" 
         googParams = f"type=xyz&zmin=0&zmax=21&url=https://{requests.utils.quote(googUrl)}"

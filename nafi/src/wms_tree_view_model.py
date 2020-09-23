@@ -51,10 +51,7 @@ class WmsTreeViewModel(QStandardItemModel):
     def processCapabilities(self, response, additionalItems=[]):
         """Handle the response from the WMS capabilities request."""
         if response.error() == QNetworkReply.NoError:
-            # OWSLib uses etree.readfromstring internally, and for some reason,
-            # it can't handle the XML declaration, so it gets hacked off here
             xml = response.readAll().data().decode("utf-8")
-            xml = sub("<\\?xml.*\\?>", "", xml)
             self.loadWmsXml(xml, additionalItems)
         else:
             self.connectionError(response.errorString())
@@ -68,8 +65,13 @@ class WmsTreeViewModel(QStandardItemModel):
 
     def loadWmsXml(self, wmsXml, additionalItems=[]):
         """Add an OWSLib WebMapService to this WmsTreeViewModel based on the capabilities XML."""
+        
+        # OWSLib uses etree.readfromstring internally, and for some reason,
+        # it can't handle the XML declaration, so it gets hacked off here
+        wmsXml = sub("<\\?xml.*\\?>", "", wmsXml)
         wms = WebMapService(url=self.wmsUrl, xml=wmsXml)
         assert isinstance(wms, WebMapService_1_1_1)
+        
         # clear all rows
         self.removeRows(0, self.rowCount())
         # the OWSLib structure is not properly organised via its "children" properties, need to fix it up
