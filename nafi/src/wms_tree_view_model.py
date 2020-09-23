@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-from html import escape
 from re import sub
-# from requests.exceptions import RequestException
 
 from qgis.PyQt.QtCore import Qt, QUrl
 from qgis.PyQt.QtGui import QIcon, QStandardItem, QStandardItemModel 
@@ -70,7 +68,6 @@ class WmsTreeViewModel(QStandardItemModel):
 
     def loadWmsXml(self, wmsXml, additionalItems=[]):
         """Add an OWSLib WebMapService to this WmsTreeViewModel based on the capabilities XML."""
-        # try:
         wms = WebMapService(url=self.wmsUrl, xml=wmsXml)
         assert isinstance(wms, WebMapService_1_1_1)
         # clear all rows
@@ -85,8 +82,6 @@ class WmsTreeViewModel(QStandardItemModel):
         WmsTreeViewModel.addOwsLayerToTreeViewModel(self, self.wmsUrl, rootLayer, self.unwantedLayers)
         # add some extras if present
         self.loadAdditionalItems(additionalItems)
-        # except RequestException as re:
-        #    self.connectionError(f"Error connecting to NAFI services: {str(re)}")
 
     def loadAdditionalItems(self, items):
         """Add some additional layers to this WmsTreeViewModel."""
