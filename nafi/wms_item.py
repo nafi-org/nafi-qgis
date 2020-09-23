@@ -14,21 +14,20 @@ class WmsItem(QStandardItem):
 
         assert isinstance(owsLayer, ContentMetadata)
 
-        self.wmsUrl = wmsUrl
+        self.unsetLayer()
+        
+        self.wmsUrl = wmsUrl       
         self.setFlags(Qt.ItemIsEnabled)
         self.setText(owsLayer.title)
         self.owsLayer = owsLayer
-        self.mapLayerId = None
         self.setCheckable(False)
 
         if owsLayer.children: 
             self.setIcon(QIcon(":/plugins/nafi/folder.png"))
         else:
             self.setIcon(QIcon(":/plugins/nafi/globe.png"))
-        
-        self.removeLayer()
 
-    def removeLayer(self):
+    def unsetLayer(self):
         self.mapLayerId = None
 
     def addLayer(self):
@@ -54,7 +53,7 @@ class WmsItem(QStandardItem):
             if wmsLayer is not None and wmsLayer.isValid():
                 wmsLayer = project.addMapLayer(wmsLayer)
                 self.mapLayerId = wmsLayer.id()
-                wmsLayer.willBeDeleted.connect(self.removeLayer)
+                wmsLayer.willBeDeleted.connect(self.unsetLayer)
                 # Don't show legend initially
                 displayLayer = project.layerTreeRoot().findLayer(wmsLayer)
                 displayLayer.setExpanded(False)
