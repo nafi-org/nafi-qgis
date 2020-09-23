@@ -3,6 +3,9 @@
         <file>images/backspace.png</file>
     </qresource>
     <qresource prefix="/plugins/nafi" >
+        <file>images/fire.png</file>
+    </qresource>
+    <qresource prefix="/plugins/nafi" >
         <file>images/folder.png</file>
     </qresource>
     <qresource prefix="/plugins/nafi" >

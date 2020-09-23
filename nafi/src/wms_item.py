@@ -25,9 +25,10 @@ class WmsItem(QStandardItem):
         if owsLayer.children: 
             self.setIcon(QIcon(":/plugins/nafi/images/folder.png"))
         else:
-            self.setIcon(QIcon(":/plugins/nafi/globe.png"))
+            self.setIcon(QIcon(":/plugins/nafi/images/globe.png"))
 
     def unsetLayer(self):
+        self.setIcon(QIcon(":/plugins/nafi/images/globe.png"))
         self.mapLayerId = None
 
     def addLayer(self):
@@ -51,6 +52,7 @@ class WmsItem(QStandardItem):
             wmsLayer = QgsRasterLayer(wmsParams, self.owsLayer.title, "wms")
 
             if wmsLayer is not None and wmsLayer.isValid():
+                self.setIcon(QIcon(":/plugins/nafi/images/fire.png"))
                 wmsLayer = project.addMapLayer(wmsLayer)
                 self.mapLayerId = wmsLayer.id()
                 wmsLayer.willBeDeleted.connect(self.unsetLayer)

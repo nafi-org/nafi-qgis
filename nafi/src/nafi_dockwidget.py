@@ -131,6 +131,9 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
         self.treeView.collapseAll()
         self.initModel()
 
+    def sizeHint(self):
+        return QtCore.QSize(150, 400)
+
     def showAboutDialog(self):
         """Show an About … dialog."""
         aboutDialog = NafiAboutDialog()
