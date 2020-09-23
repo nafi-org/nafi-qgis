@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
+from requests.exceptions import RequestException
+
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon, QStandardItem, QStandardItemModel 
 
 from owslib.wms import WebMapService
 from owslib.map.wms111 import ContentMetadata, WebMapService_1_1_1
 
-from .utils import qgsDebug
+from .utils import guiError, qgsDebug
 from .wms_item import WmsItem
 
 UNWANTED_LAYERS = ["NODATA_RASTER"]
@@ -36,20 +38,26 @@ class WmsTreeViewModel(QStandardItemModel):
 
     def setWms(self, wmsUrl, extras=[]):
         """Add an OWSLib WebMapService to this WmsTreeViewModel."""
-        wms = WebMapService(wmsUrl)
-        assert isinstance(wms, WebMapService_1_1_1)
-        # clear all rows
-        self.removeRows(0, self.rowCount())
-        # the OWSLib structure is not properly organised via its "children" properties, need to fix it up
-        owsLayers = [wms.contents[layerName] for layerName in list(wms.contents)]
-        # check we've got at least one layer
-        assert (len(owsLayers) > 0)
-        # calculate our root layer
-        rootLayer = WmsTreeViewModel.groupByRootLayers(owsLayers)[0]
-        # add layer hierarchy to our tree model
-        WmsTreeViewModel.addOwsLayerToTreeViewModel(self, wmsUrl, rootLayer, self.unwantedLayers)
-        # add any specified extras
-        self.addExtras(extras)
+        try:
+            wms = WebMapService(wmsUrl)
+            assert isinstance(wms, WebMapService_1_1_1)
+            # clear all rows
+            self.removeRows(0, self.rowCount())
+            # the OWSLib structure is not properly organised via its "children" properties, need to fix it up
+            owsLayers = [wms.contents[layerName] for layerName in list(wms.contents)]
+            # check we've got at least one layer
+            assert (len(owsLayers) > 0)
+            # calculate our root layer
+            rootLayer = WmsTreeViewModel.groupByRootLayers(owsLayers)[0]
+            # add layer hierarchy to our tree model
+            WmsTreeViewModel.addOwsLayerToTreeViewModel(self, wmsUrl, rootLayer, self.unwantedLayers)
+            # add any specified extras
+            self.addExtras(extras)
+        except RequestException as re:
+            error = (f"Error connecting to NAFI services!\n"
+                     f"Check the QGIS NAFI Fire Maps message log for details.")
+            guiError(error)
+            qgsDebug(f"Error connecting to NAFI services: {str(re)}")
 
     def addExtras(self, items):
         """Add some additional layers to this WmsTreeViewModel."""

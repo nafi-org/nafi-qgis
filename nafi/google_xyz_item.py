@@ -6,6 +6,8 @@ from qgis.PyQt.QtGui import QIcon, QStandardItem
 
 from qgis.core import QgsProject, QgsRasterLayer
 
+from .utils import guiError
+
 LABELS = { "s": "Satellite",
            "m": "Streets",
            "y": "Hybrid" }
@@ -30,7 +32,13 @@ class GoogleXyzItem(QStandardItem):
 
         googUrl = f"mt1.google.com/vt/lyrs={self.googleMapType}&x={{x}}&y={{y}}&z={{z}}" 
         googParams = f"type=xyz&zmin=0&zmax=21&url=https://{requests.utils.quote(googUrl)}"
-        tmsLayer = QgsRasterLayer(googParams, f"Google {LABELS[self.googleMapType]}", "wms")
 
-        if tmsLayer is not None:
+        title = f"Google {LABELS[self.googleMapType]}"
+        tmsLayer = QgsRasterLayer(googParams, title, "wms")
+
+        if tmsLayer is not None and tmsLayer.isValid():
             QgsProject.instance().addMapLayer(tmsLayer)
+        else:
+            error = (f"An error occurred adding the layer title to the map.\n"
+                     f"Check your QGIS WMS message log for details.")
+            guiError(error)
