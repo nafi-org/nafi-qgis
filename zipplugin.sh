@@ -2,9 +2,17 @@
 
 rm -f nafi-1.0.zip
 mkdir deployment
-git archive master | tar -x -C deployment
+
+# get a clean copy of the current branch in a subdirectory `deployment`
+git archive HEAD | tar -x -C deployment
 cd deployment
-zip -FSr ../nafi-1.0.zip nafi
+
+# remove bare image files—these are encoded in resources_rc anyway
+cp nafi/images/icon.png nafi/icon.png
+rm -rf nafi/images
+
+# zip up the NAFI plug-in directory only into a datestamped archive
+zip -FSr "../nafi-$(date +'%Y%m%d').zip" nafi
 cd ..
 rm -rf deployment
 

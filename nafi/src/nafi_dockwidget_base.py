@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'nafi_dockwidget_base.ui'
+# Form implementation generated from reading ui file 'ui\nafi_dockwidget_base.ui'
 #
 # Created by: PyQt5 UI code generator 5.11.3
 #
@@ -16,6 +16,9 @@ class Ui_NafiDockWidgetBase(object):
         font.setBold(True)
         font.setWeight(75)
         NafiDockWidgetBase.setFont(font)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/plugins/nafi/images/icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        NafiDockWidgetBase.setWindowIcon(icon)
         self.dockWidgetContents = QtWidgets.QWidget()
         self.dockWidgetContents.setObjectName("dockWidgetContents")
         self.gridLayout = QtWidgets.QGridLayout(self.dockWidgetContents)
@@ -52,9 +55,9 @@ class Ui_NafiDockWidgetBase(object):
         sizePolicy.setHeightForWidth(self.clearSearchButton.sizePolicy().hasHeightForWidth())
         self.clearSearchButton.setSizePolicy(sizePolicy)
         self.clearSearchButton.setText("")
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/plugins/nafi/backspace.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.clearSearchButton.setIcon(icon)
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(":/plugins/nafi/images/backspace.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.clearSearchButton.setIcon(icon1)
         self.clearSearchButton.setObjectName("clearSearchButton")
         self.gridLayout.addWidget(self.clearSearchButton, 0, 3, 1, 1)
         self.aboutButton = QtWidgets.QPushButton(self.dockWidgetContents)
@@ -64,9 +67,9 @@ class Ui_NafiDockWidgetBase(object):
         sizePolicy.setHeightForWidth(self.aboutButton.sizePolicy().hasHeightForWidth())
         self.aboutButton.setSizePolicy(sizePolicy)
         self.aboutButton.setText("")
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/plugins/nafi/info.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.aboutButton.setIcon(icon1)
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(":/plugins/nafi/images/info.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.aboutButton.setIcon(icon2)
         self.aboutButton.setObjectName("aboutButton")
         self.gridLayout.addWidget(self.aboutButton, 2, 3, 1, 1)
         NafiDockWidgetBase.setWidget(self.dockWidgetContents)
@@ -76,6 +79,7 @@ class Ui_NafiDockWidgetBase(object):
 
     def retranslateUi(self, NafiDockWidgetBase):
         _translate = QtCore.QCoreApplication.translate
+        NafiDockWidgetBase.setToolTip(_translate("NafiDockWidgetBase", "NAFI Fire Maps"))
         NafiDockWidgetBase.setWindowTitle(_translate("NafiDockWidgetBase", "NAFI Fire Maps"))
         self.lineEdit.setPlaceholderText(_translate("NafiDockWidgetBase", "start typing layer title …"))
         self.searchLabel.setText(_translate("NafiDockWidgetBase", "<html><head/><body><p>Search layers</p></body></html>"))

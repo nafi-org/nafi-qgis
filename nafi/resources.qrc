@@ -1,29 +1,32 @@
 <RCC>
     <qresource prefix="/plugins/nafi" >
-        <file>backspace.png</file>
+        <file>images/backspace.png</file>
     </qresource>
     <qresource prefix="/plugins/nafi" >
-        <file>folder.png</file>
+        <file>images/fire.png</file>
     </qresource>
     <qresource prefix="/plugins/nafi" >
-        <file>globe.png</file>
+        <file>images/folder.png</file>
     </qresource>
     <qresource prefix="/plugins/nafi" >
-        <file>icon.png</file>
+        <file>images/globe.png</file>
     </qresource>
     <qresource prefix="/plugins/nafi" >
-        <file>info.png</file>
+        <file>images/icon.png</file>
     </qresource>
     <qresource prefix="/plugins/nafi" >
-        <file>map.png</file>
+        <file>images/info.png</file>
     </qresource>
     <qresource prefix="/plugins/nafi" >
-        <file>openfolder.png</file>
+        <file>images/map.png</file>
     </qresource>
     <qresource prefix="/plugins/nafi" >
-        <file>settings.png</file>
+        <file>images/openfolder.png</file>
     </qresource>
     <qresource prefix="/plugins/nafi" >
-        <file>firescar.jpg</file>
+        <file>images/settings.png</file>
+    </qresource>
+    <qresource prefix="/plugins/nafi" >
+        <file>images/firescar.jpg</file>
     </qresource>
 </RCC>

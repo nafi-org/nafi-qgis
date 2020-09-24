@@ -16,6 +16,13 @@
     <bold>true</bold>
    </font>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../resources.qrc">
+    <normaloff>:/plugins/nafi/images/icon.png</normaloff>:/plugins/nafi/images/icon.png</iconset>
+  </property>
+  <property name="toolTip">
+   <string>NAFI Fire Maps</string>
+  </property>
   <property name="windowTitle">
    <string>NAFI Fire Maps</string>
   </property>
@@ -86,8 +93,8 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset>
-        <normaloff>:/plugins/nafi/backspace.png</normaloff>:/plugins/nafi/backspace.png</iconset>
+       <iconset resource="../resources.qrc">
+        <normaloff>:/plugins/nafi/images/backspace.png</normaloff>:/plugins/nafi/images/backspace.png</iconset>
       </property>
      </widget>
     </item>
@@ -106,8 +113,8 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset>
-        <normaloff>:/plugins/nafi/info.png</normaloff>:/plugins/nafi/info.png</iconset>
+       <iconset resource="../resources.qrc">
+        <normaloff>:/plugins/nafi/images/info.png</normaloff>:/plugins/nafi/images/info.png</iconset>
       </property>
      </widget>
     </item>

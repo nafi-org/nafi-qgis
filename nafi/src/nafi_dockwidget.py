@@ -68,27 +68,29 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
         self.aboutButton.clicked.connect(self.showAboutDialog)
 
         # set up base model
-        self.treeViewModel = WmsTreeViewModel()
+        self.treeViewModel = WmsTreeViewModel(getNafiUrl())
 
         # set up proxy model for filtering        
         self.proxyModel = QSortFilterProxyModel(self.treeView)
         self.proxyModel.setSourceModel(self.treeViewModel)
         self.proxyModel.setRecursiveFilteringEnabled(True)
         self.treeView.setModel(self.proxyModel)
-        
+
+        # restore the model whenever the dock widget is made visible again
+        self.visibilityChanged.connect(lambda visible: visible and self.initModel())
+
         # initialise proxied tree view model from WMS contents
         self.initModel()
 
-
     def initModel(self):
         """Initialise a QStandardItemModel from the NAFI WMS."""
-        # create model
+
         googSat = GoogleXyzItem()
         googHyb = GoogleXyzItem("y")
         googStr = GoogleXyzItem("m")
         # ibraWms = IbraWmsItem()
         ozTopoWmts = OzTopoWmtsItem()
-        self.treeViewModel.setWms(getNafiUrl(), [googSat, googHyb, googStr, ozTopoWmts])
+        self.treeViewModel.loadWmsUrl(additionalItems=[googSat, googHyb, googStr, ozTopoWmts])
 
         # set default sort and expansion
         self.proxyModel.sort(0, Qt.AscendingOrder)
@@ -98,9 +100,6 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
         # expand the top level items
         for row in range(self.proxyModel.rowCount()):
             self.treeView.expand(self.proxyModel.index(row, 0))
-
-        # rootIndex = self.proxyModel.index(0, 0)
-        # self.treeView.expand(rootIndex)
 
     def treeViewPressed(self, index):
         """Load a NAFI WMS layer given an index in the tree view."""
@@ -116,25 +115,26 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
 
     def searchTextChanged(self, text):
         """Process a change in the search filter text."""
-        # User adding characters and has exceeded 3 or more, or is removing characters
+        # user adding characters and has exceeded 3 or more, or is removing characters
         if len(text) >= 3 or len(self.searchText) > len(text):
             regex = QRegExp(text, Qt.CaseInsensitive, QRegExp.RegExp)
             self.proxyModel.setFilterRegExp(regex)
             self.treeView.expandAll()
 
-        # Update last search text state 
+        # update last search text state 
         self.searchText = text
 
     def clearSearch(self):
         """Clear search data."""
         self.lineEdit.setText(None)
         self.treeView.collapseAll()
-        self.initModel()
+
+    def sizeHint(self):
+        return QtCore.QSize(150, 400)
 
     def showAboutDialog(self):
         """Show an About … dialog."""
         aboutDialog = NafiAboutDialog()
-        # aboutDialog.adjustSize()
         aboutDialog.exec_()
     
     def closeEvent(self, event):

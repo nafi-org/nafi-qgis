@@ -28,7 +28,7 @@ from qgis.PyQt.QtWidgets import QAction
 from .resources_rc import *
 
 # Import the code for the DockWidget
-from .nafi_dockwidget import NafiDockWidget
+from .src.nafi_dockwidget import NafiDockWidget
 import os.path
 
 class Nafi:
@@ -164,7 +164,7 @@ class Nafi:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_path = ':/plugins/nafi/icon.png'
+        icon_path = ':/plugins/nafi/images/icon.png'
         self.add_action(
             icon_path,
             text=self.tr(u'NAFI Fire Maps'),
@@ -175,9 +175,6 @@ class Nafi:
 
     def onClosePlugin(self):
         """Cleanup necessary items here when plugin dockwidget is closed"""
-
-        #print "** CLOSING Nafi"
-
         # disconnects
         self.dockwidget.closingPlugin.disconnect(self.onClosePlugin)
 
