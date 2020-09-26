@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from qgis.PyQt.QtCore import pyqtSignal, QObject, QUrl
-from qgis.PyQt.QtNetwork import QNetworkRequest, QNetworkReply, QSslSocket
+from qgis.PyQt.QtNetwork import QNetworkReply, QNetworkRequest, QSslSocket
 
-from qgis.core import QgsNetworkAccessManager
+from qgis.core import QgsBlockingNetworkRequest
 
 from .utils import guiError, qgsDebug
 
@@ -14,7 +14,6 @@ class NafiCapabilitiesReader(QObject):
     def __init__(self):
         """Constructor."""
         super(QObject, self).__init__()
-        self.httpClient = QgsNetworkAccessManager.instance()
 
     def downloadCapabilities(self, wmsUrl):
         """Download a remote capabilities file."""
@@ -26,21 +25,20 @@ class NafiCapabilitiesReader(QObject):
         sslConfig = request.sslConfiguration()
         sslConfig.setPeerVerifyMode(QSslSocket.VerifyNone)
         request.setSslConfiguration(sslConfig)
-        
-        self.httpClient.finished.connect(self.processCapabilities)
-        self.httpClient.get(request)
 
-    def processCapabilities(self, reply):
-        """Handle the reply from the WMS capabilities request."""
-        try:
+        # use a blocking request here
+        blockingRequest = QgsBlockingNetworkRequest()
+        result = blockingRequest.get(request)
+        if result == QgsBlockingNetworkRequest.NoError:
+            reply = blockingRequest.reply()
             if reply.error() == QNetworkReply.NoError:
-                xml = reply.content().data().decode("utf-8")
+                xml = bytes(reply.content()).decode()
                 self.capabilitiesDownloaded.emit(xml)
             else:
                 self.connectionError(reply.errorString())
-        finally:
-            # doing this with QgsNetworkAccessManager turns out to be important!
-            self.httpClient.finished.disconnect()
+        else:
+            self.connectionError(blockingRequest.errorMessage())
+
 
     def connectionError(self, logMessage):
         """Raise a connection error."""

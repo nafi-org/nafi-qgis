@@ -20,11 +20,11 @@ class NafiTreeViewModel(QStandardItemModel):
 
     def loadWms(self, wmsUrl, wmsXml, additionalItems=[]):
         """Add an OWSLib WebMapService to this NafiTreeViewModel based on the capabilities XML."""
-        
+
         # OWSLib uses etree.readfromstring internally, and for some reason,
         # it can't handle the XML declaration, so it gets hacked off here
         wmsXml = re.sub("<\\?xml.*\\?>", "", wmsXml)
-        wms = WebMapService(url=wmsUrl, xml=wmsXml)
+        wms = WebMapService(url=None, xml=wmsXml)
         assert isinstance(wms, WebMapService_1_1_1)
         
         # clear all rows
