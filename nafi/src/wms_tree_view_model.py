@@ -3,7 +3,9 @@ from re import sub
 
 from qgis.PyQt.QtCore import Qt, QUrl
 from qgis.PyQt.QtGui import QIcon, QStandardItem, QStandardItemModel 
-from qgis.PyQt.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply
+from qgis.PyQt.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply, QSslSocket
+
+from qgis.core import QgsNetworkAccessManager
 
 from owslib.wms import WebMapService
 from owslib.map.wms111 import ContentMetadata, WebMapService_1_1_1
@@ -44,13 +46,21 @@ class WmsTreeViewModel(QStandardItemModel):
         # we get the WMS 1.1.1 XML because OWSLib actually works with it
         capabilitiesUrl = f"{self.wmsUrl}?request=GetCapabilities&version=1.1.1"
         request = QNetworkRequest(QUrl(capabilitiesUrl))
-        self.httpClient = QNetworkAccessManager()
+#        sslConfig = request.sslConfiguration()
+#        sslConfig.setPeerVerifyMode(QSslSocket.VerifyNone)
+#        request.setSslConfiguration(sslConfig)
+# QSslConfiguration conf = request.sslConfiguration();
+# conf.setPeerVerifyMode(QSslSocket::VerifyNone);
+# request.setSslConfiguration(conf);
+
+        self.httpClient = QNetworkAccessManager() # QgsNetworkAccessManager.instance()
         self.httpClient.finished.connect(lambda r: self.processCapabilities(r, additionalItems))
         self.httpClient.get(request)
 
     def processCapabilities(self, response, additionalItems=[]):
         """Handle the response from the WMS capabilities request."""
         if response.error() == QNetworkReply.NoError:
+            # xml = response.content().data().decode("utf-8")
             xml = response.readAll().data().decode("utf-8")
             self.loadWmsXml(xml, additionalItems)
         else:
