@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from re import sub
+import re
 
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon, QStandardItem, QStandardItemModel 
@@ -7,7 +7,6 @@ from qgis.PyQt.QtGui import QIcon, QStandardItem, QStandardItemModel
 from owslib.wms import WebMapService
 from owslib.map.wms111 import ContentMetadata, WebMapService_1_1_1
 
-from .utils import guiError, qgsDebug
 from .wms_item import WmsItem
 
 UNWANTED_LAYERS = ["NODATA_RASTER"]
@@ -24,7 +23,7 @@ class NafiTreeViewModel(QStandardItemModel):
         
         # OWSLib uses etree.readfromstring internally, and for some reason,
         # it can't handle the XML declaration, so it gets hacked off here
-        wmsXml = sub("<\\?xml.*\\?>", "", wmsXml)
+        wmsXml = re.sub("<\\?xml.*\\?>", "", wmsXml)
         wms = WebMapService(url=wmsUrl, xml=wmsXml)
         assert isinstance(wms, WebMapService_1_1_1)
         

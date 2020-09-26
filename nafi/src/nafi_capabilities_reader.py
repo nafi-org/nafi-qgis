@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from re import sub
-
 from qgis.PyQt.QtCore import pyqtSignal, QObject, QUrl
 from qgis.PyQt.QtNetwork import QNetworkRequest, QNetworkReply, QSslSocket
 
