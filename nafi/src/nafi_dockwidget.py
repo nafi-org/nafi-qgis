@@ -36,11 +36,12 @@ from .google_xyz_item import GoogleXyzItem
 from .ibra_wms_item import IbraWmsItem
 from .oz_topo_wmts_item import OzTopoWmtsItem
 
+from .nafi_about_dialog import NafiAboutDialog
+from .nafi_capabilities_reader import NafiCapabilitiesReader
+from .nafi_dockwidget_base import Ui_NafiDockWidgetBase
+from .nafi_tree_view_model import NafiTreeViewModel
 from .utils import getNafiUrl, qgsDebug
 from .wms_item import WmsItem
-from .wms_tree_view_model import WmsTreeViewModel
-from .nafi_dockwidget_base import Ui_NafiDockWidgetBase
-from .nafi_about_dialog import NafiAboutDialog
 
 class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
     closingPlugin = pyqtSignal()
@@ -68,7 +69,7 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
         self.aboutButton.clicked.connect(self.showAboutDialog)
 
         # set up base model
-        self.treeViewModel = WmsTreeViewModel(getNafiUrl())
+        self.treeViewModel = NafiTreeViewModel(getNafiUrl())
 
         # set up proxy model for filtering        
         self.proxyModel = QSortFilterProxyModel(self.treeView)
@@ -76,21 +77,28 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
         self.proxyModel.setRecursiveFilteringEnabled(True)
         self.treeView.setModel(self.proxyModel)
 
-        # restore the model whenever the dock widget is made visible again
-        self.visibilityChanged.connect(lambda visible: visible and self.initModel())
+        self.reader = NafiCapabilitiesReader()
+        self.reader.capabilitiesDownloaded.connect(lambda xml: self.initModel(xml))
+
+        # restore the view from source whenever this dock widget is made visible again
+        self.visibilityChanged.connect(lambda visible: visible and self.loadNafiWms())
 
         # initialise proxied tree view model from WMS contents
-        self.initModel()
+        self.loadNafiWms()
 
-    def initModel(self):
+    def loadNafiWms(self):
+        """Load the NAFI WMS and additional layers."""
+        self.wmsUrl = getNafiUrl()
+        self.reader.downloadCapabilities(self.wmsUrl)
+
+    def initModel(self, wmsXml):
         """Initialise a QStandardItemModel from the NAFI WMS."""
-
         googSat = GoogleXyzItem()
         googHyb = GoogleXyzItem("y")
         googStr = GoogleXyzItem("m")
         # ibraWms = IbraWmsItem()
         ozTopoWmts = OzTopoWmtsItem()
-        self.treeViewModel.loadWmsUrl(additionalItems=[googSat, googHyb, googStr, ozTopoWmts])
+        self.treeViewModel.loadWms(self.wmsUrl, wmsXml, additionalItems=[googSat, googHyb, googStr, ozTopoWmts])
 
         # set default sort and expansion
         self.proxyModel.sort(0, Qt.AscendingOrder)
