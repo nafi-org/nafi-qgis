@@ -8,7 +8,7 @@ from qgis.PyQt.QtGui import QIcon, QStandardItem, QStandardItemModel
 from owslib.etree import etree
 from owslib.map.wms111 import ContentMetadata 
 
-from .utils import qgsDebug
+from .utils import capabilitiesError, qgsDebug
 from .wms_item import WmsItem
 
 UNWANTED_LAYERS = ["NODATA_RASTER"]
@@ -26,31 +26,39 @@ class NafiTreeViewModel(QStandardItemModel):
         # etree.fromstring internally for some reason can't handle the XML declaration, 
         # so it gets hacked off here
         wmsXml = re.sub("<\\?xml.*\\?>", "", wmsXml)
-
-        parser = etree.XMLParser(dtd_validation=False, load_dtd=False, no_network=True, recover=True, resolve_entities=False)
-        capabilities = etree.fromstring(wmsXml, parser)
-
-        # recursively gather content metadata for all layer elements, this is stolen 
-        # from OWSLib because it won't let us configure the parser the way we need to
-        # to avoid unwanted network activity, entity resolutions etc
-        # see https://github.com/geopython/OWSLib/blob/8a94500c2137082dfc4e59acd15389312bcb63fb/owslib/map/wms111.py#L113
-        
-        # TODO merge this gather with the other tree manipulation functions below
         contents = OrderedDict()
+
+        try: 
+            parser = etree.XMLParser(dtd_validation=False, load_dtd=False, no_network=True, recover=True, resolve_entities=False)
+            capabilities = etree.fromstring(wmsXml, parser)
+
+            capabilityElement = capabilities.find("Capability")
+
+            if capabilityElement is None: 
+                raise RuntimeError("Missing 'Capability' Element in parsed XML capabilities")
+
+            # recursively gather content metadata for all layer elements, this is stolen 
+            # from OWSLib because it won't let us configure the parser the way we need to
+            # to avoid unwanted network activity, entity resolutions etc
+            # see https://github.com/geopython/OWSLib/blob/8a94500c2137082dfc4e59acd15389312bcb63fb/owslib/map/wms111.py#L113
+            
+            # TODO merge this gather with the other tree manipulation functions below
+            
+            def gatherLayers(parentElement, parentMetadata):
+                layers = []
+                for index, elem in enumerate(parentElement.findall('Layer')):
+                    cm = ContentMetadata(elem, parent=parentMetadata,
+                                            index=index + 1,
+                                            parse_remote_metadata=False)
+                    if cm.id:
+                        layers.append(cm)
+                        contents[cm.id] = cm
+                    cm.children = gatherLayers(elem, cm)
+                return layers
+            gatherLayers(capabilityElement, None)
         
-        def gatherLayers(parentElement, parentMetadata):
-            layers = []
-            for index, elem in enumerate(parentElement.findall('Layer')):
-                cm = ContentMetadata(elem, parent=parentMetadata,
-                                        index=index + 1,
-                                        parse_remote_metadata=False)
-                if cm.id:
-                    layers.append(cm)
-                    contents[cm.id] = cm
-                cm.children = gatherLayers(elem, cm)
-            return layers
-        
-        gatherLayers(capabilities.find("Capability"), None)
+        except (etree.ParserError, RuntimeError) as pe:
+            capabilitiesError(str(pe), wmsXml)
 
         # clear all rows
         self.removeRows(0, self.rowCount())

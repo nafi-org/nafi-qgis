@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import html
+
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.core import Qgis, QgsMessageLog
 
@@ -56,3 +58,20 @@ def setDefaultProjectCrs(project):
 
     guiWarning(warning)
     project.setCrs(gda94)
+
+def connectionError(logMessage):
+    """Raise a connection error."""
+    error = (f"Error connecting to NAFI services!\n"
+             f"Check the QGIS NAFI Fire Maps message log for details.")
+    guiError(error)
+    qgsDebug(logMessage)
+
+def capabilitiesError(errorString, capsXml):
+    """Raise an error parsing the WMS capabilities file."""
+    error = (f"Error parsing the retrieved NAFI WMS capabilities!\n"
+             f"Check the QGIS NAFI Fire Maps message log for details.")
+    guiError(error)
+    logMessage = f"Capabilities XML parse failure: {errorString}"
+    qgsDebug(logMessage)
+    logMessage = f"Capabilities XML: {html.escape(capsXml)}"
+    qgsDebug(logMessage)

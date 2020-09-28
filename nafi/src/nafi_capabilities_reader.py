@@ -4,7 +4,7 @@ from qgis.PyQt.QtNetwork import QNetworkReply, QNetworkRequest, QSslSocket
 
 from qgis.core import QgsBlockingNetworkRequest
 
-from .utils import guiError, qgsDebug
+from .utils import connectionError, guiError, qgsDebug
 
 class NafiCapabilitiesReader(QObject):
 
@@ -35,15 +35,7 @@ class NafiCapabilitiesReader(QObject):
                 xml = bytes(reply.content()).decode()
                 self.capabilitiesDownloaded.emit(xml)
             else:
-                self.connectionError(reply.errorString())
+                connectionError(reply.errorString())
         else:
-            self.connectionError(blockingRequest.errorMessage())
-
-
-    def connectionError(self, logMessage):
-        """Raise a connection error."""
-        error = (f"Error connecting to NAFI services!\n"
-                 f"Check the QGIS NAFI Fire Maps message log for details.")
-        guiError(error)
-        qgsDebug(logMessage)
+            connectionError(blockingRequest.errorMessage())
 
