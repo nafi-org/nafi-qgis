@@ -5,12 +5,17 @@ from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.core import Qgis, QgsMessageLog
 
 IBRA_URL = "http://www.environment.gov.au/mapping/services/ogc_services/IBRA7_Subregions/MapServer/WMSServer"
-NAFI_URL = "https://www.firenorth.org.au/public"
+NAFI_DATA_URL = "https://firenorth.org.au/nafi3/views/data/Download.html"
+# NAFI_URL = "https://www.firenorth.org.au/public"
+NAFI_URL = "https://www.cs.utexas.edu/~mitra/csFall2015/cs329/lectures/xml/planes.xsd.xml.txt"
 OZ_TOPO_URL = "https://services.ga.gov.au/gis/rest/services/Topographic_Base_Map/MapServer/WMTS/1.0.0/WMTSCapabilities.xml"
 
 def qgsDebug(message):
     """Print a debug message."""
     QgsMessageLog.logMessage(message, tag="NAFI Fire Maps", level=Qgis.Info)
+
+def getNafiDataUrl():
+    return NAFI_DATA_URL
 
 def getNafiUrl():
     # TODO look in QGIS settings

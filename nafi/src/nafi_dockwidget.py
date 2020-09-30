@@ -23,6 +23,7 @@
 """
 
 import os
+import webbrowser
 from urllib import parse
 
 from qgis.PyQt import QtGui, QtWidgets, uic
@@ -40,7 +41,7 @@ from .nafi_about_dialog import NafiAboutDialog
 from .nafi_capabilities_reader import NafiCapabilitiesReader
 from .nafi_dockwidget_base import Ui_NafiDockWidgetBase
 from .nafi_tree_view_model import NafiTreeViewModel
-from .utils import getNafiUrl, qgsDebug
+from .utils import getNafiDataUrl, getNafiUrl, qgsDebug
 from .wms_item import WmsItem
 
 class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
@@ -67,6 +68,9 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
 
         # set up About … dialog
         self.aboutButton.clicked.connect(self.showAboutDialog)
+
+        # set up Download NAFI data … link button
+        self.dataButton.clicked.connect(lambda: webbrowser.open(getNafiDataUrl()))
 
         # set up base model
         self.treeViewModel = NafiTreeViewModel(getNafiUrl())

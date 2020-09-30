@@ -59,6 +59,7 @@ class NafiTreeViewModel(QStandardItemModel):
         
         except (etree.ParserError, RuntimeError) as pe:
             capabilitiesError(str(pe), wmsXml)
+            return
 
         # clear all rows
         self.removeRows(0, self.rowCount())
