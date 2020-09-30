@@ -88,7 +88,7 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
         self.visibilityChanged.connect(lambda visible: visible and self.loadNafiWms())
 
         # initialise proxied tree view model from WMS contents
-        self.loadNafiWms()
+        # self.loadNafiWms()
 
     def loadNafiWms(self):
         """Load the NAFI WMS and additional layers."""
