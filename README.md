@@ -2,7 +2,7 @@
 
 North Australia & Rangelands Fire Information (NAFI) Map Services
 
-This plugin for [QGIS](https://qgis.org) adds a directory of NAFI web services which provide accurate 250m scale fire scar (burnt area) mapping across most of the Australian rangelands.
+This plug-in for [QGIS](https://qgis.org) adds a directory of NAFI web services which provide accurate 250m scale fire scar (burnt area) mapping across most of the Australian rangelands.
 
 The service provides annual and multi-year fire histories from 2000 to the present. The data are validated in the northern rangelands.
 
