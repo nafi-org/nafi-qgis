@@ -26,10 +26,24 @@ class WmsItem(QStandardItem):
             self.setIcon(QIcon(":/plugins/nafi/images/folder.png"))
         else:
             self.setIcon(QIcon(":/plugins/nafi/images/globe.png"))
+            self.restoreLayer()
 
     def unsetLayer(self):
         self.setIcon(QIcon(":/plugins/nafi/images/globe.png"))
         self.mapLayerId = None
+
+    def restoreLayer(self):
+        """Check if a layer is in the map already and set its icon if it is."""
+        # Python idiom to get first or None
+        layer = next(iter(QgsProject.instance().mapLayersByName(self.owsLayer.title)), None)
+        if layer is not None and isinstance(layer, QgsRasterLayer):
+            self.linkLayer(layer)
+
+    def linkLayer(self, layer):
+        """Associate this WMS item with an active map layer."""
+        self.setIcon(QIcon(":/plugins/nafi/images/fire.png"))
+        self.mapLayerId = layer.id()
+        layer.willBeDeleted.connect(self.unsetLayer)
 
     def addLayer(self):
         """Create a QgsRasterLayer from WMS given an OWS ContentMetadata object."""
@@ -52,10 +66,9 @@ class WmsItem(QStandardItem):
             wmsLayer = QgsRasterLayer(wmsParams, self.owsLayer.title, "wms")
 
             if wmsLayer is not None and wmsLayer.isValid():
-                self.setIcon(QIcon(":/plugins/nafi/images/fire.png"))
                 wmsLayer = project.addMapLayer(wmsLayer)
-                self.mapLayerId = wmsLayer.id()
-                wmsLayer.willBeDeleted.connect(self.unsetLayer)
+                self.linkLayer(wmsLayer) 
+                
                 # don't show legend initially
                 displayLayer = project.layerTreeRoot().findLayer(wmsLayer)
                 displayLayer.setExpanded(False)
