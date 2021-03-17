@@ -49,7 +49,14 @@ class Nafi:
         self.plugin_dir = os.path.dirname(__file__)
 
         # initialize locale
-        locale = QSettings().value('locale/userLocale')[0:2]
+        locale = QSettings().value('locale/userLocale')
+
+        # NAF-236 "QVariant object is not subscriptable" QGIS issue
+        if not locale:
+            locale = 'en'
+        else:
+            locale = locale[0:2]
+
         locale_path = os.path.join(
             self.plugin_dir,
             'i18n',

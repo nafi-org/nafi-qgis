@@ -2,7 +2,7 @@
 name=NAFI Fire Maps
 qgisMinimumVersion=3.8.1
 description=North Australia & Rangelands Fire Information (NAFI) Map Services
-version=1.0.2
+version=1.0.3
 author=Tom Lynch
 email=tom@trailmarker.io
 about=Directory of NAFI web services which provide accurate 250m scale fire scar (burnt area) mapping across most of the Australian rangelands. The service provides annual and multi-year fire histories from 2000 to the present. The data are validated in the northern rangelands. A cleaned up hotspot dataset for the rangelands back to 2000 is also provided.
@@ -16,7 +16,9 @@ experimental=False
 deprecated=False
 category=Web
 server=False
-changelog=1.0.2
+changelog=1.0.3
+          - protect against reported QVariant object is not subscriptable issue
+          1.0.2
           - plug-in tree view tracks status of NAFI layers active in the map when it is reloaded
           1.0.1
           - update plug-in metadata and icon (minimum supported QGIS is 3.8.1 now)
