@@ -32,7 +32,7 @@ def getOzTopoParams():
     # &url=https://services.ga.gov.au/gis/rest/services/Topographic_Base_Map/MapServer/WMTS/1.0.0/WMTSCapabilities.xml
     return {
         "crs": "EPSG:3857",
-        "format": "image/jpgpng",
+        "format": "image/png",
         "layers": "Topographic_Base_Map",
         "styles": "default",
         "tileMatrixSet": "GoogleMapsCompatible",
