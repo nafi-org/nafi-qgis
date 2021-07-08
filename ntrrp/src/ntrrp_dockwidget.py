@@ -35,19 +35,9 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         self.treeView.setSortingEnabled(True)
         self.treeView.setFocusPolicy(Qt.NoFocus)
         self.treeView.pressed.connect(self.treeViewPressed)
-        
-        # set up search signal
-        self.lineEdit.textChanged.connect(self.searchTextChanged)
-        self.searchText = ""
-
-        # set up clear search
-        self.clearSearchButton.clicked.connect(self.clearSearch)
 
         # set up About … dialog
         self.aboutButton.clicked.connect(self.showAboutDialog)
-
-        # set up Download NAFI data … link button
-        self.dataButton.clicked.connect(lambda: webbrowser.open(getNafiDataUrl()))
 
         # set up base model
         self.treeViewModel = NafiTreeViewModel(getNafiUrl())
