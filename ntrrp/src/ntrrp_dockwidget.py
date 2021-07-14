@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import os
-import webbrowser
 from urllib import parse
 
 from qgis.PyQt import QtGui, QtWidgets, uic
@@ -10,16 +8,13 @@ from qgis.PyQt.QtWidgets import QApplication
 
 from qgis.core import Qgis, QgsRasterLayer, QgsProject
 
-# from .google_xyz_item import GoogleXyzItem
-# from .ibra_wms_item import IbraWmsItem
-# from .oz_topo_wmts_item import OzTopoWmtsItem
-
 from .ntrrp_about_dialog import NtrrpAboutDialog
-from .nafi_capabilities_reader import NafiCapabilitiesReader
+from .ntrrp_capabilities import NtrrpCapabilities
+from .ntrrp_capabilities_reader import NtrrpCapabilitiesReader
 from .ntrrp_dockwidget_base import Ui_NtrrpDockWidgetBase
-from .nafi_tree_view_model import NafiTreeViewModel
-from .utils import getNafiDataUrl, getNafiUrl, qgsDebug
-from .wms_item import WmsItem
+from .ntrrp_item import NtrrpItem
+from .ntrrp_tree_view_model import NtrrpTreeViewModel
+from .utils import getNafiUrl, getNtrrpUrl, qgsDebug
 
 class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
     closingPlugin = pyqtSignal()
@@ -40,7 +35,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         self.aboutButton.clicked.connect(self.showAboutDialog)
 
         # set up base model
-        self.treeViewModel = NafiTreeViewModel(getNafiUrl())
+        self.treeViewModel = NtrrpTreeViewModel(getNafiUrl())
 
         # set up proxy model for filtering        
         self.proxyModel = QSortFilterProxyModel(self.treeView)
@@ -48,32 +43,31 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         self.proxyModel.setRecursiveFilteringEnabled(True)
         self.treeView.setModel(self.proxyModel)
 
-        self.reader = NafiCapabilitiesReader()
-        # self.reader.capabilitiesDownloaded.connect(lambda xml: self.initModel(xml))
+        # set up region combobox
+        self.regionComboBox.currentIndexChanged.connect(self.regionChanged)
+
+        self.reader = NtrrpCapabilitiesReader()
+        self.reader.capabilitiesParsed.connect(lambda caps: self.initModel(caps))
 
         # restore the view from source whenever this dock widget is made visible again
-        self.visibilityChanged.connect(lambda visible: visible and self.loadNafiWms())
+        self.visibilityChanged.connect(lambda visible: visible and self.loadNtrrpWms())
 
         # initialise proxied tree view model from WMS contents
-        # self.loadNafiWms()
+        self.loadNtrrpWms()
 
-    def loadNafiWms(self):
+    def loadNtrrpWms(self):
         """Load the NAFI WMS and additional layers."""
-        self.wmsUrl = getNafiUrl()
-        self.reader.downloadCapabilities(self.wmsUrl)
+        qgsDebug("Calling parseCapabilities")
+        self.wmsUrl = getNtrrpUrl()
+        self.reader.parseCapabilities(self.wmsUrl)
 
-    def initModel(self, wmsXml):
+    def initModel(self, ntrrpCapabilities):
         """Initialise a QStandardItemModel from the NAFI WMS."""
-        googSat = GoogleXyzItem()
-        googHyb = GoogleXyzItem("y")
-        googStr = GoogleXyzItem("m")
-        # ibraWms = IbraWmsItem()
-        ozTopoWmts = OzTopoWmtsItem()
-        self.treeViewModel.loadWms(self.wmsUrl, wmsXml, additionalItems=[googSat, googHyb, googStr, ozTopoWmts])
-
-        # set default sort and expansion
-        self.proxyModel.sort(0, Qt.AscendingOrder)
-        self.expandTopLevel()        
+        # stash the parsed capabilities and set up the region combobox
+        self.ntrrpCapabilities = ntrrpCapabilities
+        self.regionComboBox.clear()
+        self.regionComboBox.addItems(ntrrpCapabilities.regions)
+        self.treeViewModel.setRegion(ntrrpCapabilities.regions[0], ntrrpCapabilities)
 
     def expandTopLevel(self):
         # expand the top level items
@@ -89,31 +83,22 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
        
         # if we've got a layer and not a layer group, add to map
         if modelNode is not None:
-            if isinstance(modelNode, (GoogleXyzItem, IbraWmsItem, OzTopoWmtsItem, WmsItem)):
+            if isinstance(modelNode, NtrrpItem):
                 modelNode.addLayer()
 
-    def searchTextChanged(self, text):
-        """Process a change in the search filter text."""
-        # user adding characters and has exceeded 3 or more, or is removing characters
-        if len(text) >= 3 or len(self.searchText) > len(text):
-            regex = QRegExp(text, Qt.CaseInsensitive, QRegExp.RegExp)
-            self.proxyModel.setFilterRegExp(regex)
-            self.treeView.expandAll()
-
-        # update last search text state 
-        self.searchText = text
-
-    def clearSearch(self):
-        """Clear search data."""
-        self.lineEdit.setText(None)
-        self.treeView.collapseAll()
+    def regionChanged(self, regionIndex):
+        """Switch the active region."""
+        self.treeViewModel.setRegion(self.regionComboBox.itemText(regionIndex), self.ntrrpCapabilities)
+        # set default sort and expansion
+        self.proxyModel.sort(0, Qt.AscendingOrder)
+        self.expandTopLevel()        
 
     def sizeHint(self):
         return QtCore.QSize(150, 400)
 
     def showAboutDialog(self):
         """Show an About … dialog."""
-        aboutDialog = NafiAboutDialog()
+        aboutDialog = NtrrpAboutDialog()
         aboutDialog.exec_()
     
     def closeEvent(self, event):

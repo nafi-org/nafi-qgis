@@ -7,6 +7,9 @@ from qgis.core import Qgis, QgsMessageLog
 IBRA_URL = "http://www.environment.gov.au/mapping/services/ogc_services/IBRA7_Subregions/MapServer/WMSServer"
 NAFI_DATA_URL = "https://firenorth.org.au/nafi3/views/data/Download.html"
 NAFI_URL = "https://www.firenorth.org.au/public"
+NTRRP_URL = "https://test.firenorth.org.au/mapserver/ntrrp_test/wms"
+# /wms?service=WMS&version=1.1.0&request=GetCapabilities&layers=ntrrp_test%3AT1T2_darwin_dMIRB
+# https://test.firenorth.org.au/mapserver/ntrrp/wms?service=WMS&version=1.1.0&request=GetMap&layers=ntrrp%3AFSHDRW_CURRENT&bbox=-222099.563500943%2C-1441352.91373074%2C-42069.56350094339%2C-1263222.91373074&width=768&height=759&srs=EPSG%3A3577&format=application/openlayers
 OZ_TOPO_URL = "https://services.ga.gov.au/gis/rest/services/Topographic_Base_Map/MapServer/WMTS/1.0.0/WMTSCapabilities.xml"
 
 def qgsDebug(message, level=Qgis.Info):
@@ -19,6 +22,9 @@ def getNafiDataUrl():
 def getNafiUrl():
     # TODO look in QGIS settings
     return NAFI_URL
+
+def getNtrrpUrl():
+    return NTRRP_URL
 
 def getIbraUrl():
     return IBRA_URL

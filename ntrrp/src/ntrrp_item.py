@@ -5,9 +5,10 @@ from owslib.map.wms111 import ContentMetadata, WebMapService_1_1_1
 
 from qgis.core import QgsCoordinateReferenceSystem, QgsProject, QgsRasterLayer
 
+from .ntrrp_capabilities import NtrrpCapabilities
 from .utils import guiError, guiWarning, setDefaultProjectCrs
 
-class WmsItem(QStandardItem):
+class NtrrpItem(QStandardItem):
     def __init__(self, wmsUrl, owsLayer):
         """Constructor."""
         super(QStandardItem, self).__init__()
@@ -18,7 +19,9 @@ class WmsItem(QStandardItem):
         
         self.wmsUrl = wmsUrl       
         self.setFlags(Qt.ItemIsEnabled)
-        self.setText(owsLayer.title)
+
+        description = NtrrpCapabilities.parseNtrrpLayerDescription(owsLayer)
+        self.setText(description)
         self.owsLayer = owsLayer
         self.setCheckable(False)
 
@@ -47,8 +50,8 @@ class WmsItem(QStandardItem):
 
     def addLayer(self):
         """Create a QgsRasterLayer from WMS given an OWS ContentMetadata object."""
-        # only create a WMS layer from a child WmsItem
-        # WmsItem keeps a reference to any active QgsMapLayer in order to avoid being added twice
+        # only create a WMS layer from a child
+        # NtrrpItem keeps a reference to any active QgsMapLayer in order to avoid being added twice
         if not self.owsLayer.children and self.mapLayerId is None:
             project = QgsProject.instance()
             

@@ -44,7 +44,7 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>:/plugins/ntrrp/images/greenglobe.png</normaloff>:/plugins/ntrrp/images/greenglobe.png</iconset>
+        <normaloff>:/plugins/ntrrp/images/refresh.png</normaloff>:/plugins/ntrrp/images/refresh.png</iconset>
       </property>
      </widget>
     </item>
@@ -64,7 +64,7 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>:/plugins/ntrrp/images/greenglobe.png</normaloff>:/plugins/ntrrp/images/greenglobe.png</iconset>
+        <normaloff>:/plugins/ntrrp/images/download.png</normaloff>:/plugins/ntrrp/images/download.png</iconset>
       </property>
      </widget>
     </item>
@@ -84,7 +84,7 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>:/plugins/ntrrp/images/greenglobe.png</normaloff>:/plugins/ntrrp/images/greenglobe.png</iconset>
+        <normaloff>:/plugins/ntrrp/images/approve.png</normaloff>:/plugins/ntrrp/images/approve.png</iconset>
       </property>
      </widget>
     </item>
@@ -104,7 +104,7 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>:/plugins/ntrrp/images/greenglobe.png</normaloff>:/plugins/ntrrp/images/greenglobe.png</iconset>
+        <normaloff>:/plugins/ntrrp/images/upload.png</normaloff>:/plugins/ntrrp/images/upload.png</iconset>
       </property>
      </widget>
     </item>

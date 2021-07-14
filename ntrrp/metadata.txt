@@ -16,5 +16,15 @@ experimental=False
 deprecated=False
 category=Web
 server=False
-changelog=0.1.0
+changelog=1.0.4
+          - alter image format specification to get Geoscience Australia topographic basemap working again
+          1.0.3
+          - protect against reported QVariant object is not subscriptable issue
+          1.0.2
+          - plug-in tree view tracks status of NAFI layers active in the map when it is reloaded
+changelog=0.3.0
+          - parse and load NTRRP regions and allow switching, add missing icons
+          0.2.0
+          - load NTRRP layers in dock widget, add non-working UX
+          0.1.0
           - creating empty scaffolding based on NAFI Fire Maps plug-in

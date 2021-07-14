@@ -1,6 +1,8 @@
 <RCC>
   <qresource prefix="/plugins/ntrrp">
+    <file>images/approve.png</file>
     <file>images/backspace.png</file>
+    <file>images/download.png</file>
     <file>images/fire.png</file>
     <file>images/folder.png</file>
     <file>images/globe.png</file>
@@ -9,7 +11,9 @@
     <file>images/info.png</file>
     <file>images/map.png</file>
     <file>images/openfolder.png</file>
+    <file>images/refresh.png</file>
     <file>images/settings.png</file>
+    <file>images/upload.png</file>
     <file>images/firescar.jpg</file>
   </qresource>
 </RCC>
