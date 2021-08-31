@@ -22,11 +22,15 @@ class NtrrpTreeViewModel(QStandardItemModel):
         super(QStandardItemModel, self).__init__()
         self.unwantedLayers = unwantedLayers
         self.owsLayers = []
+        self.region = ""
 
     def setRegion(self, region, ntrrpCapabilities):
         """Set the current region for the NTRRP layer model."""
         assert isinstance(ntrrpCapabilities, NtrrpCapabilities)
         assert isinstance(region, str)
+
+        self.region = region
+
         # clear all rows
         self.removeRows(0, self.rowCount())
         # calculate our root layer
@@ -34,7 +38,6 @@ class NtrrpTreeViewModel(QStandardItemModel):
         # recursively add layer hierarchy to our tree model
         for childLayer in rootLayer.children:
             NtrrpTreeViewModel.addOwsLayerToTreeViewModel(self, region, ntrrpCapabilities.wmsUrl, childLayer, self.unwantedLayers)
-        # self.setRegion(region, ntrrpCapabilities)
 
     @staticmethod
     def addOwsLayerToTreeViewModel(model, region, wmsUrl, owsLayer, unwantedLayers = []):

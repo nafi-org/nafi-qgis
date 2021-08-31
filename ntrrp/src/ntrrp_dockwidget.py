@@ -11,6 +11,7 @@ from qgis.core import Qgis, QgsRasterLayer, QgsProject
 from .ntrrp_about_dialog import NtrrpAboutDialog
 from .ntrrp_capabilities import NtrrpCapabilities
 from .ntrrp_capabilities_reader import NtrrpCapabilitiesReader
+from .ntrrp_data_client import NtrrpDataClient
 from .ntrrp_dockwidget_base import Ui_NtrrpDockWidgetBase
 from .ntrrp_item import NtrrpItem
 from .ntrrp_tree_view_model import NtrrpTreeViewModel
@@ -45,6 +46,10 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
 
         # set up region combobox
         self.regionComboBox.currentIndexChanged.connect(self.regionChanged)
+
+        # set up download button
+        self.dataClient = NtrrpDataClient()
+        self.downloadButton.clicked.connect(lambda: self.dataClient.downloadData(self.treeViewModel.region))
 
         self.reader = NtrrpCapabilitiesReader()
         self.reader.capabilitiesParsed.connect(lambda caps: self.initModel(caps))
