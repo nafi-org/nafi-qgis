@@ -12,7 +12,11 @@ NTRRP_DATA_URL = f"https://test.firenorth.org.au/ntrrp/downloads/drw/area1.zip"
 def getSetting(setting, default = None):
     """Retrieve an NTRRP setting."""
     settings = QgsSettings()
-    return settings.value(f"NTRRP/{setting}", default)
+    current = settings.value(f"NTRRP/{setting}", default)
+
+    if current == default:
+        settings.setValue(f"NTRRP/{setting}", current)
+    return current
 
 def getNtrrpWmtsUrl():
     return getSetting("WMTS_URL", NTRRP_URL)
