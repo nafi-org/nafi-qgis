@@ -2,48 +2,27 @@
 import html
 
 from qgis.PyQt.QtWidgets import QMessageBox
-from qgis.core import Qgis, QgsMessageLog
+from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsMessageLog, QgsProject, QgsSettings
 
-IBRA_URL = "http://www.environment.gov.au/mapping/services/ogc_services/IBRA7_Subregions/MapServer/WMSServer"
-NAFI_DATA_URL = "https://firenorth.org.au/nafi3/views/data/Download.html"
-NAFI_URL = "https://www.firenorth.org.au/public"
-NTRRP_URL = "https://test.firenorth.org.au/mapserver/ntrrp_test/wms"
+NTRRP_URL = "https://test.firenorth.org.au/mapserver/ntrrp/wms"
+NTRRP_DATA_URL = f"https://test.firenorth.org.au/ntrrp/downloads/drw/area1.zip"
 # /wms?service=WMS&version=1.1.0&request=GetCapabilities&layers=ntrrp_test%3AT1T2_darwin_dMIRB
 # https://test.firenorth.org.au/mapserver/ntrrp/wms?service=WMS&version=1.1.0&request=GetMap&layers=ntrrp%3AFSHDRW_CURRENT&bbox=-222099.563500943%2C-1441352.91373074%2C-42069.56350094339%2C-1263222.91373074&width=768&height=759&srs=EPSG%3A3577&format=application/openlayers
-OZ_TOPO_URL = "https://services.ga.gov.au/gis/rest/services/Topographic_Base_Map/MapServer/WMTS/1.0.0/WMTSCapabilities.xml"
+
+def getSetting(setting, default = None):
+    """Retrieve an NTRRP setting."""
+    settings = QgsSettings()
+    return settings.value(f"NTRRP/{setting}", default)
+
+def getNtrrpWmtsUrl():
+    return getSetting("WMTS_URL", NTRRP_URL)
+
+def getNtrrpDataUrl():
+    return getSetting("NTRRP_DATA_URL", NTRRP_DATA_URL)
 
 def qgsDebug(message, level=Qgis.Info):
     """Print a debug message."""
     QgsMessageLog.logMessage(message, tag="NT Risk Reduction Program", level=level)
-
-def getNafiDataUrl():
-    return NAFI_DATA_URL
-
-def getNafiUrl():
-    # TODO look in QGIS settings
-    return NAFI_URL
-
-def getNtrrpUrl():
-    return NTRRP_URL
-
-def getIbraUrl():
-    return IBRA_URL
-
-def getOzTopoParams():
-    # see https://github.com/isogeo/isogeo-plugin-qgis/blob/master/tests/dev/qgis_console/dev_wmts.py
-
-    # cut and pasted from QGIS layer properties after manual add:
-    # contextualWMSLegend=0&crs=EPSG:3857&dpiMode=7&featureCount=10&format=image/jpgpng&layers=Topographic_Base_Map
-    # &styles=default&tileMatrixSet=GoogleMapsCompatible
-    # &url=https://services.ga.gov.au/gis/rest/services/Topographic_Base_Map/MapServer/WMTS/1.0.0/WMTSCapabilities.xml
-    return {
-        "crs": "EPSG:3857",
-        "format": "image/png",
-        "layers": "Topographic_Base_Map",
-        "styles": "default",
-        "tileMatrixSet": "GoogleMapsCompatible",
-        "url": OZ_TOPO_URL
-    }
 
 def guiInformation(message):
     """Show an info message box."""
@@ -60,7 +39,7 @@ def guiWarning(message):
 def setDefaultProjectCrs(project):
     """Set the Project CRS to the default value of GDA94 geographic."""
     assert isinstance(project, QgsProject)
-    
+
     gda94 = QgsCoordinateReferenceSystem("EPSG:4283")
     warning = (f"Because no QGIS project CRS was set, a default coordinate system of "
                 f"{gda94.userFriendlyIdentifier()} has been applied to interact with "

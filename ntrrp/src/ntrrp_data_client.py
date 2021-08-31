@@ -10,7 +10,7 @@ from qgis.PyQt.QtCore import pyqtSignal, QEventLoop, QObject, QUrl
 from qgis.core import QgsFileDownloader
 
 from .ntrrp_data_layer import NtrrpDataLayer
-from .utils import qgsDebug
+from .utils import getNtrrpDataUrl, qgsDebug
 
 class NtrrpDataClient(QObject):
 
@@ -22,7 +22,7 @@ class NtrrpDataClient(QObject):
 
     def getUrl(self, regionName):
         """Set up the download URL based on the region name."""
-        return f"https://test.firenorth.org.au/ntrrp/downloads/drw/area1.zip"
+        return getNtrrpDataUrl()
 
     def downloadData(self, regionName):
         """Download, unzip and process remote data file."""

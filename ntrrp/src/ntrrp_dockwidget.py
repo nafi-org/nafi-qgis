@@ -15,7 +15,7 @@ from .ntrrp_data_client import NtrrpDataClient
 from .ntrrp_dockwidget_base import Ui_NtrrpDockWidgetBase
 from .ntrrp_item import NtrrpItem
 from .ntrrp_tree_view_model import NtrrpTreeViewModel
-from .utils import getNafiUrl, getNtrrpUrl, qgsDebug
+from .utils import getNtrrpWmtsUrl, qgsDebug
 
 class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
     closingPlugin = pyqtSignal()
@@ -36,7 +36,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         self.aboutButton.clicked.connect(self.showAboutDialog)
 
         # set up base model
-        self.treeViewModel = NtrrpTreeViewModel(getNafiUrl())
+        self.treeViewModel = NtrrpTreeViewModel(getNtrrpWmtsUrl())
 
         # set up proxy model for filtering        
         self.proxyModel = QSortFilterProxyModel(self.treeView)
@@ -63,7 +63,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
     def loadNtrrpWms(self):
         """Load the NAFI WMS and additional layers."""
         qgsDebug("Calling parseCapabilities")
-        self.wmsUrl = getNtrrpUrl()
+        self.wmsUrl = getNtrrpWmtsUrl()
         self.reader.parseCapabilities(self.wmsUrl)
 
     def initModel(self, ntrrpCapabilities):

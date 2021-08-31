@@ -19,9 +19,10 @@ class NtrrpDataLayer(QObject):
         self.region = segments[1].capitalize()
         self.endDate = dateutil.parser.parse(segments[2])
         self.startDate = dateutil.parser.parse(segments[3])
+        self.subArea = segments[5][2:]
         self.threshold = segments[6][1:]
         self.layerName = f"Threshold {self.threshold}"
-        self.regionGroup = f"{self.region} Burnt Areas"
+        self.regionGroup = f"{self.region} Burnt Areas (Area {self.subArea})"
         self.differenceGroup = f"{self.difference} Differences ({self.startDate.strftime('%b %d')}–{self.endDate.strftime('%b %d')})"
 
     def getRegionGroup(self):
