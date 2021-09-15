@@ -1,12 +1,5 @@
 # -*- coding: utf-8 -*-
-# from collections import OrderedDict
-# import re
-from .ntrrp_capabilities import NtrrpCapabilities
-
-from qgis.PyQt.QtCore import Qt
-from qgis.PyQt.QtGui import QIcon, QStandardItem, QStandardItemModel
-
-from owslib.etree import etree
+from qgis.PyQt.QtGui import QStandardItem, QStandardItemModel
 from owslib.map.wms111 import ContentMetadata
 
 from .ntrrp_capabilities import NtrrpCapabilities
