@@ -15,7 +15,7 @@ from .ntrrp_data_client import NtrrpDataClient
 from .ntrrp_dockwidget_base import Ui_NtrrpDockWidgetBase
 from .ntrrp_item import NtrrpItem
 from .ntrrp_tree_view_model import NtrrpTreeViewModel
-from .utils import getNtrrpWmtsUrl, qgsDebug
+from .utils import getNtrrpWmsUrl, qgsDebug
 
 class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
     closingPlugin = pyqtSignal()
@@ -36,7 +36,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         self.aboutButton.clicked.connect(self.showAboutDialog)
 
         # set up base model
-        self.treeViewModel = NtrrpTreeViewModel(getNtrrpWmtsUrl())
+        self.treeViewModel = NtrrpTreeViewModel(getNtrrpWmsUrl())
 
         # set up proxy model for filtering        
         self.proxyModel = QSortFilterProxyModel(self.treeView)
@@ -63,7 +63,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
     def loadNtrrpWms(self):
         """Load the NAFI WMS and additional layers."""
         qgsDebug("Calling parseCapabilities")
-        self.wmsUrl = getNtrrpWmtsUrl()
+        self.wmsUrl = getNtrrpWmsUrl()
         self.reader.parseCapabilities(self.wmsUrl)
 
     def initModel(self, ntrrpCapabilities):
@@ -89,7 +89,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         # if we've got a layer and not a layer group, add to map
         if modelNode is not None:
             if isinstance(modelNode, NtrrpItem):
-                modelNode.addLayer()
+                modelNode.addWmtsLayer()
 
     def regionChanged(self, regionIndex):
         """Switch the active region."""
