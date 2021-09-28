@@ -1,250 +1,270 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>NtrrpDockWidgetBase</class>
- <widget class="QDockWidget" name="NtrrpDockWidgetBase">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>571</width>
-    <height>504</height>
-   </rect>
-  </property>
-  <property name="font">
-   <font>
-    <weight>75</weight>
-    <bold>true</bold>
-   </font>
-  </property>
-  <property name="windowIcon">
-   <iconset>
-    <normaloff>:/plugins/ntrrp/images/icon.png</normaloff>:/plugins/ntrrp/images/icon.png</iconset>
-  </property>
-  <property name="toolTip">
-   <string>NAFI Burnt Areas Mapping</string>
-  </property>
-  <property name="windowTitle">
-   <string>NAFI Burnt Areas Mapping</string>
-  </property>
-  <widget class="QWidget" name="dockWidgetContents">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="2" column="3">
-     <widget class="QPushButton" name="refreshButton">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="toolTip">
-       <string>Refresh Region Layers</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset>
-        <normaloff>:/plugins/ntrrp/images/refresh.png</normaloff>:/plugins/ntrrp/images/refresh.png</iconset>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="4">
-     <widget class="QPushButton" name="downloadButton">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="toolTip">
-       <string>Download Burnt Areas</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset>
-        <normaloff>:/plugins/ntrrp/images/download.png</normaloff>:/plugins/ntrrp/images/download.png</iconset>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="5">
-     <widget class="QPushButton" name="approveButton">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="toolTip">
-       <string>Approve Selected Burnt Areas</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset>
-        <normaloff>:/plugins/ntrrp/images/approve.png</normaloff>:/plugins/ntrrp/images/approve.png</iconset>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="6">
-     <widget class="QPushButton" name="uploadButton">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="toolTip">
-       <string>Upload Burnt Areas</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset>
-        <normaloff>:/plugins/ntrrp/images/upload.png</normaloff>:/plugins/ntrrp/images/upload.png</iconset>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QPushButton" name="aboutButton">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="toolTip">
-       <string>About NTRRP …</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset>
-        <normaloff>:/plugins/ntrrp/images/info.png</normaloff>:/plugins/ntrrp/images/info.png</iconset>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0" colspan="7">
-     <widget class="QTreeView" name="treeView"/>
-    </item>
-    <item row="0" column="2" colspan="5">
-     <widget class="QComboBox" name="regionComboBox"/>
-    </item>
-    <item row="0" column="1">
-     <widget class="QLabel" name="regionLabel">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>100</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>200</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
+  <class>NtrrpDockWidgetBase</class>
+  <widget class="QDockWidget" name="NtrrpDockWidgetBase">
+    <property name="geometry">
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>571</width>
+        <height>504</height>
+      </rect>
+    </property>
+    <property name="font">
+      <font>
         <weight>75</weight>
         <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Current region&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="2" colspan="5">
-     <widget class="QComboBox" name="sourceFeaturesComboBox"/>
-    </item>
-    <item row="3" column="1">
-     <widget class="QLabel" name="sourceFeaturesLabel">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>100</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>200</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Source features&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="2" colspan="5">
-     <widget class="QComboBox" name="finalFeaturesComboBox"/>
-    </item>
-    <item row="4" column="1">
-     <widget class="QLabel" name="finalFeaturesLabel">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>100</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>200</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Final features&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-      </property>
-     </widget>
-    </item>
-   </layout>
+      </font>
+    </property>
+    <property name="windowIcon">
+      <iconset>
+        <normaloff>:/plugins/ntrrp/images/icon.png</normaloff>:/plugins/ntrrp/images/icon.png</iconset>
+    </property>
+    <property name="toolTip">
+      <string>NAFI Burnt Areas Mapping</string>
+    </property>
+    <property name="windowTitle">
+      <string>NAFI Burnt Areas Mapping</string>
+    </property>
+    <widget class="QWidget" name="dockWidgetContents">
+      <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="1">
+          <widget class="QLabel" name="regionLabel">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="minimumSize">
+              <size>
+                <width>100</width>
+                <height>0</height>
+              </size>
+            </property>
+            <property name="maximumSize">
+              <size>
+                <width>200</width>
+                <height>16777215</height>
+              </size>
+            </property>
+            <property name="font">
+              <font>
+                <weight>75</weight>
+                <bold>true</bold>
+              </font>
+            </property>
+            <property name="text">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Current region&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+          </widget>
+        </item>
+        <item row="0" column="2" colspan="6">
+          <widget class="QComboBox" name="regionComboBox"/>
+        </item>
+        <item row="1" column="0" colspan="8">
+          <widget class="QTreeView" name="treeView"/>
+        </item>
+        <item row="2" column="0">
+          <widget class="QPushButton" name="aboutButton">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="toolTip">
+              <string>About NTRRP …</string>
+            </property>
+            <property name="text">
+              <string/>
+            </property>
+            <property name="icon">
+              <iconset>
+                <normaloff>:/plugins/ntrrp/images/info.png</normaloff>:/plugins/ntrrp/images/info.png</iconset>
+            </property>
+          </widget>
+        </item>
+        <item row="2" column="3">
+          <widget class="QPushButton" name="refreshButton">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="toolTip">
+              <string>Refresh Region Layers</string>
+            </property>
+            <property name="text">
+              <string/>
+            </property>
+            <property name="icon">
+              <iconset>
+                <normaloff>:/plugins/ntrrp/images/refresh.png</normaloff>:/plugins/ntrrp/images/refresh.png</iconset>
+            </property>
+          </widget>
+        </item>
+        <item row="2" column="4">
+          <widget class="QPushButton" name="downloadButton">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="toolTip">
+              <string>Download Burnt Areas</string>
+            </property>
+            <property name="text">
+              <string/>
+            </property>
+            <property name="icon">
+              <iconset>
+                <normaloff>:/plugins/ntrrp/images/download.png</normaloff>:/plugins/ntrrp/images/download.png</iconset>
+            </property>
+          </widget>
+        </item>
+        <item row="2" column="5">
+          <widget class="QPushButton" name="createButton">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="toolTip">
+              <string>Create Working Burnt Areas Layer</string>
+            </property>
+            <property name="text">
+              <string/>
+            </property>
+            <property name="icon">
+              <iconset>
+                <normaloff>:/plugins/ntrrp/images/edit.png</normaloff>:/plugins/ntrrp/images/edit.png</iconset>
+            </property>
+          </widget>
+        </item>
+        <item row="2" column="6">
+          <widget class="QPushButton" name="approveButton">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="toolTip">
+              <string>Approve Selected Burnt Areas</string>
+            </property>
+            <property name="text">
+              <string/>
+            </property>
+            <property name="icon">
+              <iconset>
+                <normaloff>:/plugins/ntrrp/images/approve.png</normaloff>:/plugins/ntrrp/images/approve.png</iconset>
+            </property>
+          </widget>
+        </item>
+        <item row="2" column="7">
+          <widget class="QPushButton" name="uploadButton">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="toolTip">
+              <string>Upload Burnt Areas</string>
+            </property>
+            <property name="text">
+              <string/>
+            </property>
+            <property name="icon">
+              <iconset>
+                <normaloff>:/plugins/ntrrp/images/upload.png</normaloff>:/plugins/ntrrp/images/upload.png</iconset>
+            </property>
+          </widget>
+        </item>
+        <item row="3" column="2" colspan="6">
+          <widget class="QComboBox" name="sourceLayerComboBox"/>
+        </item>
+        <item row="3" column="1">
+          <widget class="QLabel" name="sourceLayerLabel">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="minimumSize">
+              <size>
+                <width>100</width>
+                <height>0</height>
+              </size>
+            </property>
+            <property name="maximumSize">
+              <size>
+                <width>200</width>
+                <height>16777215</height>
+              </size>
+            </property>
+            <property name="font">
+              <font>
+                <weight>75</weight>
+                <bold>true</bold>
+              </font>
+            </property>
+            <property name="text">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Source layer&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+          </widget>
+        </item>
+        <item row="4" column="2" colspan="6">
+          <widget class="QComboBox" name="workingLayerComboBox"/>
+        </item>
+        <item row="4" column="1">
+          <widget class="QLabel" name="workingLayerLabel">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="minimumSize">
+              <size>
+                <width>100</width>
+                <height>0</height>
+              </size>
+            </property>
+            <property name="maximumSize">
+              <size>
+                <width>200</width>
+                <height>16777215</height>
+              </size>
+            </property>
+            <property name="font">
+              <font>
+                <weight>75</weight>
+                <bold>true</bold>
+              </font>
+            </property>
+            <property name="text">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Working layer&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+          </widget>
+        </item>
+      </layout>
+    </widget>
   </widget>
- </widget>
- <resources/>
- <connections/>
+  <resources/>
+  <connections/>
 </ui>
