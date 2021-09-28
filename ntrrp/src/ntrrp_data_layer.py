@@ -5,12 +5,10 @@ import dateutil
 from qgis.PyQt.QtCore import pyqtSignal, QObject
 from qgis.core import QgsProject, QgsVectorLayer
 
-class NtrrpDataLayer(QObject):
+class NtrrpDataLayer:
 
-    # dataAdded = pyqtSignal(QObject)
     def __init__(self, shapefilePath):
         """Constructor."""
-        super(QObject, self).__init__()
         self.shapefilePath = shapefilePath
 
         # Layer name will be similar to: T1T3_darwin_T20210827_T20210817_seg_sa1_t300
@@ -22,31 +20,24 @@ class NtrrpDataLayer(QObject):
         self.subArea = segments[5][2:]
         self.threshold = segments[6][1:]
         self.layerName = f"Threshold {self.threshold}"
-        self.regionGroup = f"{self.region} Burnt Areas (Area {self.subArea})"
+        # self.regionGroup = f"{self.region} Burnt Areas (Area {self.subArea})"
         self.differenceGroup = f"{self.difference} Differences ({self.startDate.strftime('%b %d')}–{self.endDate.strftime('%b %d')})"
 
-    def getRegionGroup(self):
-        """Get or create the right layer group for an NTRRP data layer."""
-        groupLayer = QgsProject.instance().layerTreeRoot().findGroup(self.regionGroup)
-        if groupLayer == None:
-            QgsProject.instance().layerTreeRoot().insertGroup(0, self.regionGroup)
-            groupLayer = QgsProject.instance().layerTreeRoot().findGroup(self.regionGroup)
-        return groupLayer
-
-    def getDifferenceGroup(self):
+    def getSubGroupLayer(self, groupLayer):
         """Get or create the right dMIRBI difference layer group for an NTRRP data layer."""
-        regionGroupLayer = self.getRegionGroup()
 
-        groupLayer = regionGroupLayer.findGroup(self.differenceGroup)
-        if groupLayer == None:
-            regionGroupLayer.insertGroup(0, self.differenceGroup)
-            groupLayer = regionGroupLayer.findGroup(self.differenceGroup)
-        return groupLayer
+        subGroupLayer = groupLayer.findGroup(self.differenceGroup)
+        if subGroupLayer == None:
+            groupLayer.insertGroup(0, self.differenceGroup)
+            subGroupLayer = groupLayer.findGroup(self.differenceGroup)
+        return subGroupLayer
 
-    def addToMap(self):
+    def addMapLayer(self, groupLayer):
         """Add an NTRRP data layer to the map."""
         layer = QgsVectorLayer(self.shapefilePath.as_posix(), self.layerName, "ogr")
-        groupLayer = self.getDifferenceGroup()
 
         QgsProject.instance().addMapLayer(layer, False)
-        groupLayer.addLayer(layer)
+        subGroupLayer = self.getSubGroupLayer(groupLayer)
+
+        subGroupLayer.addLayer(layer)
+            

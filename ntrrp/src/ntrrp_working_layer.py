@@ -9,14 +9,12 @@ from .utils import ensureDirectory, getWorkingShapefilePath
 
 class NtrrpWorkingLayer(QObject):
 
-    def __init__(self, region, subArea):
+    def __init__(self):
         """Constructor."""
         super(QObject, self).__init__()
-        self.workingLayer = QgsVectorLayer("Polygon?crs=epsg:3577", "Burnt Areas - Approved", "memory")
+        self.layerName = "Burnt Areas - Approved" # TODO
+        self.workingLayer = QgsVectorLayer("Polygon?crs=epsg:3577", self.layerName, "memory")
         self.shapefilePath = getWorkingShapefilePath()
-        self.region = region
-        self.subArea = subArea
-        self.regionGroup = f"{self.region} Burnt Areas (Area {self.subArea})"
 
     def setSourceLayer(self, ntrrpDataLayer):
         """Set the source layer for this working layer."""
@@ -29,24 +27,22 @@ class NtrrpWorkingLayer(QObject):
 
     def addBurntAreas(self):
         """Add the currently selected burnt areas to this working layer."""
-        
 
         # Save after adding
         self.save()
 
-    def getRegionGroup(self):
-        """Get or create the right layer group for an NTRRP data layer."""
-        groupLayer = QgsProject.instance().layerTreeRoot().findGroup(self.regionGroup)
-        if groupLayer == None:
-            QgsProject.instance().layerTreeRoot().insertGroup(0, self.regionGroup)
-            groupLayer = QgsProject.instance().layerTreeRoot().findGroup(self.regionGroup)
-        return groupLayer
+    def getSubGroupLayer(self, groupLayer):
+        """Get or create the right dMIRBI difference layer group for an NTRRP data layer."""
+        subGroupLayerName = "Working layers"
+        subGroupLayer = groupLayer.findGroup(subGroupLayerName)
+        if subGroupLayer == None:
+            groupLayer.insertGroup(0, subGroupLayerName)
+            subGroupLayer = groupLayer.findGroup(subGroupLayerName)
+        return subGroupLayer
 
-    def addToMap(self):
-        """Add an NTRRP working layer to the map."""
-        # layer = QgsVectorLayer(self.shapefilePath.as_posix(), self.layerName, "ogr")
-        # groupLayer = self.getDifferenceGroup()
+    def addMapLayer(self, groupLayer):
+        """Add an NTRRP data layer to the map."""
 
         QgsProject.instance().addMapLayer(self.workingLayer, False)
-        self.getRegionGroup().addLayer(self.workingLayer)
-        # groupLayer.addLayer(layer)
+        subGroupLayer = self.getSubGroupLayer(groupLayer)
+        subGroupLayer.addLayer(self.workingLayer)

@@ -1,35 +1,31 @@
 # -*- coding: utf-8 -*-
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon, QStandardItem 
-from owslib.map.wms111 import ContentMetadata, WebMapService_1_1_1
 
 from qgis.core import QgsProject, QgsRasterLayer
 
-from .ntrrp_capabilities import NtrrpCapabilities
-from .utils import getNtrrpWmtsUrl, guiError, guiInformation, setDefaultProjectCrs
+from .ows_utils import parseNtrrpLayerDescription, parseNtrrpLayerRegion
+from .utils import getNtrrpWmtsUrl, guiError, setDefaultProjectCrs
 
 class NtrrpItem(QStandardItem):
     def __init__(self, wmsUrl, owsLayer):
         """Constructor."""
         super(QStandardItem, self).__init__()
 
-        assert isinstance(owsLayer, ContentMetadata)
-
         self.unsetLayer()
         
+        # assemble some properties
         self.wmsUrl = wmsUrl       
-        self.setFlags(Qt.ItemIsEnabled)
-
-        description = NtrrpCapabilities.parseNtrrpLayerDescription(owsLayer)
-        self.setText(description)
         self.owsLayer = owsLayer
+        self.region = parseNtrrpLayerRegion(owsLayer)
+        self.description = parseNtrrpLayerDescription(owsLayer)
+
+        self.setText(self.description)
+
+        self.setFlags(Qt.ItemIsEnabled)
         self.setCheckable(False)
 
-        if owsLayer.children: 
-            self.setIcon(QIcon(":/plugins/ntrrp/images/folder.png"))
-        else:
-            self.setIcon(QIcon(":/plugins/ntrrp/images/globe.png"))
-            self.restoreLayer()
+        self.restoreLayer()
 
     def unsetLayer(self):
         self.setIcon(QIcon(":/plugins/ntrrp/images/globe.png"))
@@ -48,7 +44,10 @@ class NtrrpItem(QStandardItem):
         self.mapLayerId = layer.id()
         layer.willBeDeleted.connect(self.unsetLayer)
 
-    def addWmtsLayer(self):
+    def getSubGroupLayer(self, groupLayer):
+        return groupLayer
+
+    def addMapLayer(self, groupLayer):
         """Create a QgsRasterLayer from WMTS given an OWS ContentMetadata object."""
         # only create a WMTS layer from a child
         # NtrrpItem keeps a reference to any active QgsMapLayer in order to avoid being added twice
@@ -68,8 +67,12 @@ class NtrrpItem(QStandardItem):
             wmtsLayer = QgsRasterLayer(wmtsParams, self.owsLayer.title, "wms")
 
             if wmtsLayer is not None and wmtsLayer.isValid():
-                wmtsLayer = project.addMapLayer(wmtsLayer)
-                self.linkLayer(wmtsLayer) 
+                wmtsLayer = project.addMapLayer(wmtsLayer, False)
+                self.linkLayer(wmtsLayer)
+
+                subGroupLayer = self.getSubGroupLayer(groupLayer)
+                subGroupLayer.addLayer(wmtsLayer)
+                
                 # don't show legend initially
                 displayLayer = project.layerTreeRoot().findLayer(wmtsLayer)
                 displayLayer.setExpanded(False)
@@ -78,8 +81,7 @@ class NtrrpItem(QStandardItem):
                          f"Check your QGIS WMS message log for details.")
                 guiError(error)
 
-
-    def addWmsLayer(self):
+    def addWmsMapLayer(self, groupLayer):
         """Create a QgsRasterLayer from WMS given an OWS ContentMetadata object."""
         # only create a WMS layer from a child
         # NtrrpItem keeps a reference to any active QgsMapLayer in order to avoid being added twice
@@ -100,8 +102,11 @@ class NtrrpItem(QStandardItem):
             wmsLayer = QgsRasterLayer(wmsParams, self.owsLayer.title, "wms")
 
             if wmsLayer is not None and wmsLayer.isValid():
-                wmsLayer = project.addMapLayer(wmsLayer)
-                self.linkLayer(wmsLayer) 
+                wmsLayer = project.addMapLayer(wmsLayer, False)
+                self.linkLayer(wmsLayer)
+
+                subGroupLayer = self.getSubGroupLayer(groupLayer)
+                subGroupLayer.addLayer(wmsLayer)
                 
                 # don't show legend initially
                 displayLayer = project.layerTreeRoot().findLayer(wmsLayer)
@@ -110,3 +115,4 @@ class NtrrpItem(QStandardItem):
                 error = (f"An error occurred adding the layer {self.owsLayer.title} to the map.\n"
                          f"Check your QGIS WMS message log for details.")
                 guiError(error)
+
