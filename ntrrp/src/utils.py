@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 import html
+import os
+import os.path as path
+import random
+import string
+from pathlib import Path
 
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsMessageLog, QgsProject, QgsSettings
@@ -34,6 +39,37 @@ def getNtrrpWmtsUrl():
 
 def getNtrrpDataUrl():
     return getSetting("NTRRP_DATA_URL", NTRRP_DATA_URL)
+
+def getDownloadDirectory():
+    """Get the directory location to store NAFI burnt areas data."""
+    return path.normpath(path.join(os.environ["TMP"], "ntrrp", "downloads"))
+
+def getWorkingDirectory():
+    """Get the directory location to output and save NAFI burnt areas working data."""
+    return path.normpath(path.join(os.environ["TMP"], "ntrrp", "working"))
+
+def ensureDirectory(dir):
+    """Ensure a particular directory exists."""
+    Path(dir).mkdir(parents=True, exist_ok=True)
+
+def ensureTempDirectories():
+    """Ensure the download and working directories exist."""
+    ensureDirectory(getDownloadDirectory())
+    ensureDirectory(getWorkingDirectory())
+
+def getRandomFilename():
+    """Get a random 8-character filename."""
+    return ''.join(random.choice(string.ascii_lowercase) for i in range(8))
+
+def getTempDownloadPath():
+    """Get a temporary download path."""
+    unzipLocation = path.normpath(path.join(getDownloadDirectory(), getRandomFilename()))
+    dataFile = f"{unzipLocation}.zip"
+    return dataFile
+
+def getWorkingShapefilePath():
+    outputDir = path.normpath(path.join(getWorkingDirectory(), getRandomFilename()))
+    return path.normpath(path.join(outputDir, "working.shp"))
 
 def qgsDebug(message, level=Qgis.Info):
     """Print a debug message."""

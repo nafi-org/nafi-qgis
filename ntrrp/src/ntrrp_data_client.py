@@ -1,20 +1,17 @@
 # -*- coding: utf-8 -*-
+import os
+import os.path as path
 from pathlib import Path
 from zipfile import ZipFile
-import os
-import random
-import string
 
-from qgis.PyQt.QtCore import pyqtSignal, QEventLoop, QObject, QUrl
-
+from qgis.PyQt.QtCore import QEventLoop, QObject, QUrl
 from qgis.core import QgsFileDownloader
 
 from .ntrrp_data_layer import NtrrpDataLayer
-from .utils import getNtrrpDataUrl, qgsDebug
+from .utils import ensureDirectory, getNtrrpDataUrl, getTempDownloadPath, qgsDebug
 
 class NtrrpDataClient(QObject):
 
-    # dataAdded = pyqtSignal(QObject)
     def __init__(self):
         """Constructor."""
         super(QObject, self).__init__()
@@ -28,20 +25,22 @@ class NtrrpDataClient(QObject):
         """Download, unzip and process remote data file."""
         loop = QEventLoop()
         dataUrl = self.getUrl(regionName)
-        randFilename = ''.join(random.choice(string.ascii_lowercase) for i in range(8))
-        unzipLocation = f"{os.environ['TMP']}\\ntrrp\\{randFilename}"
-        dataFile = f"{unzipLocation}.zip"
+        dataFile = getTempDownloadPath()
+        ensureDirectory(Path(dataFile).parent)
         qgsDebug(f"Data file: {dataFile}")
+        
         downloader = QgsFileDownloader(QUrl(dataUrl), dataFile, delayStart=True)
         downloader.downloadProgress.connect(NtrrpDataClient.downloadProgress)
         downloader.downloadError.connect(NtrrpDataClient.downloadError)
-        downloader.downloadCompleted.connect(lambda: self.loadData(dataFile, unzipLocation))
-
+        downloader.downloadCompleted.connect(lambda: self.loadData(dataFile))
         downloader.startDownload()
 
         loop.exec_()
 
-    def loadData(self, dataFile, unzipLocation):
+    def loadData(self, dataFile):
+        dataPath = Path(dataFile)
+        unzipLocation = path.normpath(path.join(dataPath.parent, os.pardir, dataPath.stem))
+        
         with ZipFile(dataFile, 'r') as zf:
             zf.extractall(unzipLocation)
 
