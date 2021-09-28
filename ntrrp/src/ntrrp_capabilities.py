@@ -8,8 +8,8 @@ from .utils import qgsDebug
 class NtrrpCapabilities:
     def __init__(self, wmsUrl, owsLayers):
         """Constructor."""
-        self.wmsUrl = wmsUrl
         self.owsLayers = owsLayers
+        self.wmsUrl = wmsUrl
         # get all the regions from all layers
         regions = [NtrrpCapabilities.parseNtrrpLayerRegion(l) for l in self.owsLayers]
         self.regions = list(set([r for r in regions if r is not None]))

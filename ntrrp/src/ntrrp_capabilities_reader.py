@@ -16,13 +16,16 @@ from .utils import capabilitiesError, connectionError, guiError, qgsDebug
 class NtrrpCapabilitiesReader(QObject):
 
     # emit this signal with the downloaded capabilities XML
+    capabilitiesDownloaded = pyqtSignal(str)
+
+    # emit this signal with the parsed capabilities object
     capabilitiesParsed = pyqtSignal(NtrrpCapabilities)
 
     def __init__(self):
         """Constructor."""
         super(QObject, self).__init__()
 
-    def parseCapabilities(self, wmsUrl):
+    def downloadCapabilities(self, wmsUrl):
         """Download and parse remote capabilities file."""
 
         # we get the WMS 1.1.1 XML because OWSLib actually works with it
@@ -43,12 +46,16 @@ class NtrrpCapabilitiesReader(QObject):
             reply = blockingRequest.reply()
             if reply.error() == QNetworkReply.NoError:
                 wmsXml = bytes(reply.content()).decode()
-                # self.capabilitiesDownloaded.emit(xml)
+                self.capabilitiesDownloaded.emit(wmsXml)
+                return wmsXml
             else:
                 connectionError(reply.errorString())
         else:
             connectionError(blockingRequest.errorMessage())
 
+        return None
+
+    def parseCapabilities(self, wmsUrl, wmsXml):
         """Parse the capabilities XML and return as a collection of OWSLib ContentMetadata items."""
 
         # etree.fromstring internally for some reason can't handle the XML declaration,
@@ -83,10 +90,18 @@ class NtrrpCapabilitiesReader(QObject):
             gatherLayers(capabilityElement, None)
         except (etree.ParserError, RuntimeError) as pe:
             capabilitiesError(str(pe), wmsXml)
-            return
+            return None
 
         # the OWSLib structure is not properly organised via its "children" properties, need to fix it up
         owsLayers = [contents[layerName] for layerName in list(contents)]
-        self.capabilitiesParsed.emit(NtrrpCapabilities(wmsUrl, owsLayers))
+        caps = NtrrpCapabilities(wmsUrl, owsLayers)
+        self.capabilitiesParsed.emit(caps)
+        return caps
+
+    def downloadAndParseCapabilities(self, wmsUrl):
+        """Download, then parse remote capabilities."""
+        wmsXml = self.downloadCapabilities(wmsUrl)
+
+        return (wmsXml and self.parseCapabilities(wmsUrl, wmsXml))
 
 

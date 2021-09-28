@@ -1,15 +1,10 @@
 # -*- coding: utf-8 -*-
 from urllib import parse
 
-from qgis.PyQt import QtGui, QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSignal, QRegExp, QSortFilterProxyModel, Qt, QModelIndex
-from qgis.PyQt.QtGui import QFont, QIcon, QPixmap, QStandardItem, QStandardItemModel 
-from qgis.PyQt.QtWidgets import QApplication
-
-from qgis.core import Qgis, QgsRasterLayer, QgsProject
+from qgis.PyQt import QtWidgets
+from qgis.PyQt.QtCore import pyqtSignal, QSortFilterProxyModel, Qt, QModelIndex
 
 from .ntrrp_about_dialog import NtrrpAboutDialog
-from .ntrrp_capabilities import NtrrpCapabilities
 from .ntrrp_capabilities_reader import NtrrpCapabilitiesReader
 from .ntrrp_data_client import NtrrpDataClient
 from .ntrrp_dockwidget_base import Ui_NtrrpDockWidgetBase
@@ -64,7 +59,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         """Load the NAFI WMS and additional layers."""
         qgsDebug("Calling parseCapabilities")
         self.wmsUrl = getNtrrpWmsUrl()
-        self.reader.parseCapabilities(self.wmsUrl)
+        self.reader.downloadAndParseCapabilities(self.wmsUrl)
 
     def initModel(self, ntrrpCapabilities):
         """Initialise a QStandardItemModel from the NAFI WMS."""
