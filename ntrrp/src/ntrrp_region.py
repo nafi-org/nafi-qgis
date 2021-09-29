@@ -28,6 +28,8 @@ class NtrrpRegion(QObject):
         self.sourceLayers = []
         self.workingLayers = []
         self.regionGroup = f"{self.name} Burnt Areas"
+        self.sourceLayersChanged.emit(self.sourceLayers)
+        self.workingLayersChanged.emit(self.workingLayers)
 
     # arrange data
     def getNtrrpItems(self):
@@ -57,7 +59,12 @@ class NtrrpRegion(QObject):
             root.insertGroup(0, self.regionGroup)
             groupLayer = root.findGroup(self.regionGroup)
         return groupLayer
-    
+
+    def getWorkingLayerByName(self, workingLayerName):
+        """Retrieve a current source layer by its display name."""
+        matches = [layer for layer in self.workingLayers if layer.getMapLayerName() == workingLayerName]
+        return next(iter(matches), None)
+
     def createWorkingLayer(self):
         """Create a new working layer for this region."""
         workingLayer = WorkingLayer()
@@ -70,6 +77,11 @@ class NtrrpRegion(QObject):
         """Remove a working layer and inform subscribers."""
         self.workingLayers.remove(layer)
         self.workingLayersChanged.emit(self.workingLayers)
+
+    def getSourceLayerByDisplayName(self, sourceLayerName):
+        """Retrieve a current source layer by its display name."""
+        matches = [layer for layer in self.sourceLayers if layer.getDisplayName() == sourceLayerName]
+        return next(iter(matches), None)
 
     def addSourceLayers(self, unzipLocation):
         """Add all shapefiles in a directory as data layers to the region group."""

@@ -16,7 +16,7 @@ class WorkingLayer(QObject, AbstractLayer):
         """Constructor."""
         super(QObject, self).__init__()
 
-        self.index = 1
+        self.index = 0
         self.impl = QgsVectorLayer("Polygon?crs=epsg:3577", self.getMapLayerName(), "memory")
         self.shapefilePath = getWorkingShapefilePath()
 

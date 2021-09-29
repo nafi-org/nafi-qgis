@@ -8,10 +8,11 @@ from .ntrrp_dockwidget_base import Ui_NtrrpDockWidgetBase
 from .ntrrp_item import NtrrpItem
 from .ntrrp_region import NtrrpRegion
 from .ntrrp_tree_view_model import NtrrpTreeViewModel
-from .utils import getNtrrpWmsUrl, guiInformation, qgsDebug
+from .utils import getNtrrpWmsUrl, guiInformation
 
 class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
     closingPlugin = pyqtSignal()
+    updateState = pyqtSignal()
 
     def __init__(self, parent=None):
         """Constructor."""
@@ -37,6 +38,12 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         # set up region combobox
         self.regionComboBox.currentIndexChanged.connect(self.regionComboBoxChanged)
 
+        # set up source layer combobox
+        self.sourceLayerComboBox.currentIndexChanged.connect(self.sourceLayerComboBoxChanged)
+
+        # set up working layer combobox
+        self.workingLayerComboBox.currentIndexChanged.connect(self.workingLayerComboBoxChanged)
+
         # set up About … dialog
         self.aboutButton.clicked.connect(self.showAboutDialog)
 
@@ -54,6 +61,12 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
 
         # set up upload button
         self.uploadButton.clicked.connect(lambda: guiInformation("Upload Burnt Areas feature still under construction!"))
+
+        self.activeSourceLayer = None
+        self.activeWorkingLayer = None
+
+        # set up state management
+        self.updateState.connect(lambda: self.enableDisable())
 
         self.reader = NtrrpCapabilitiesReader()
         self.reader.capabilitiesParsed.connect(lambda caps: self.initModel(caps))
@@ -85,6 +98,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
 
         if initRegion is not None:
             self.setRegion(initRegion)
+            self.enableDisable()
 
     def isCurrentRegion(self, region):
         """Check if a region is the current NTRRP region."""
@@ -103,7 +117,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         # …
 
         # set up signal handlers
-        region.sourceLayersChanged.connect(lambda dataLayers: self.updateSourceLayerComboBox(dataLayers))
+        region.sourceLayersChanged.connect(lambda sourceLayers: self.updateSourceLayerComboBox(sourceLayers))
         region.workingLayersChanged.connect(lambda workingLayers: self.updateWorkingLayerComboBox(workingLayers))
         region.ntrrpItemsChanged.connect(lambda: self.refreshCurrentRegion(region))
         self.region = region
@@ -133,15 +147,49 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         if region is not None:
             self.setRegion(region)
 
-    def updateSourceLayerComboBox(self, dataLayers):
+    def sourceLayerComboBoxChanged(self, sourceLayerIndex):
+        """Switch the active source layer."""
+        sourceLayerDisplayName = self.sourceLayerComboBox.itemText(sourceLayerIndex)
+        if len(sourceLayerDisplayName) > 0:
+            self.activeSourceLayer = self.region.getSourceLayerByDisplayName(sourceLayerDisplayName)
+        else:
+            self.activeSourceLayer = None
+        self.updateState.emit()
+    
+    def workingLayerComboBoxChanged(self, workingLayerIndex):
+        """Switch the active source layer."""
+        workingLayerDisplayName = self.workingLayerComboBox.itemText(workingLayerIndex)
+        if len(workingLayerDisplayName) > 0:
+            self.activeWorkingLayer = self.region.getWorkingLayerByName(workingLayerDisplayName)
+        else:
+            self.activeWorkingLayer = None
+        self.updateState.emit()
+
+    def updateSourceLayerComboBox(self, sourceLayers):
         """Update the source layers."""
+        current = self.sourceLayerComboBox.currentText()
         self.sourceLayerComboBox.clear()
-        self.sourceLayerComboBox.addItems([dataLayer.getDisplayName() for dataLayer in dataLayers])
+        items = [sourceLayer.getDisplayName() for sourceLayer in sourceLayers]
+        items.insert(0, "")
+        self.sourceLayerComboBox.addItems(items)
+
+        # restore source layer if present
+        index = self.sourceLayerComboBox.findText(current, Qt.MatchFixedString)
+        if index > 0:
+            self.sourceLayerComboBox.setCurrentIndex(index)
 
     def updateWorkingLayerComboBox(self, workingLayers):
         """Update the source layers."""
+        current = self.workingLayerComboBox.currentText()
         self.workingLayerComboBox.clear()
-        self.workingLayerComboBox.addItems([workingLayer.getMapLayerName() for workingLayer in workingLayers])
+        items = [workingLayer.getMapLayerName() for workingLayer in workingLayers]
+        items.insert(0, "")
+        self.workingLayerComboBox.addItems(items)
+
+        # restore working layer if present
+        index = self.workingLayerComboBox.findText(current, Qt.MatchFixedString)
+        if index > 0:
+            self.workingLayerComboBox.setCurrentIndex(index)
 
     def expandTopLevel(self):
         """Exppand top level items in the tree view."""
@@ -164,6 +212,27 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         if modelNode is not None:
             if isinstance(modelNode, NtrrpItem):
                 self.region.addWmtsLayer(modelNode)
+
+    def enableDisable(self):
+        "Enable or disable UI elements based on current state."
+        haveSourceLayers = bool(self.region.sourceLayers and len(self.region.sourceLayers) > 0)
+        haveWorkingLayers = bool(self.region.workingLayers and len(self.region.workingLayers) > 0)
+        
+        self.sourceLayerComboBox.setEnabled(haveSourceLayers)
+        if haveSourceLayers:
+            self.sourceLayerComboBox.setItemText(0, "Select …")
+        else:
+            self.sourceLayerComboBox.setItemText(0, "Download NAFI burnt areas first …")
+        
+        self.workingLayerComboBox.setEnabled(haveWorkingLayers)
+        if haveWorkingLayers:
+            self.workingLayerComboBox.setItemText(0, "Select …")
+        elif not haveWorkingLayers and haveSourceLayers:
+            self.workingLayerComboBox.setItemText(0, "Create a working layer first …")
+
+
+        self.approveButton.setEnabled(bool(self.activeSourceLayer and self.activeWorkingLayer))
+
 
     def closeEvent(self, event):
         """Handle plug-in close."""
