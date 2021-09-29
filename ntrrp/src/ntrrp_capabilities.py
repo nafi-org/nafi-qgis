@@ -8,7 +8,6 @@ class NtrrpCapabilities:
         self.owsLayers = owsLayers
         self.wmsUrl = wmsUrl
 
-        # sort "Darwin", "Katherine" for now
         layersByRegion = {}
 
         for layer in owsLayers:
@@ -20,6 +19,11 @@ class NtrrpCapabilities:
             else:
                 layersByRegion[region] = [layer]
 
-        self.regions = {region: NtrrpRegion(region, self.wmsUrl, layersByRegion[region]) for region in layersByRegion}
+        # sort "Darwin", "Katherine" for now
+        regions = list(layersByRegion.keys())
+        regions.sort()
+
+        # python3 dicts are sorted in insertion order
+        self.regions = {region: NtrrpRegion(region, self.wmsUrl, layersByRegion[region]) for region in regions}
 
 

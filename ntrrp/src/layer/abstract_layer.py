@@ -39,3 +39,4 @@ class AbstractLayer(ABC, metaclass=AbstractQObjectMeta):
             return None
         elif len(matches) >= 1:
             return matches[0]
+

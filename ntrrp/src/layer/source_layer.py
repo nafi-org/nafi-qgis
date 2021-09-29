@@ -5,6 +5,7 @@ from qgis.PyQt.QtCore import pyqtSignal, QObject
 from qgis.core import QgsProject, QgsVectorLayer
 
 from .abstract_layer import AbstractLayer
+from ..utils import resolveStylePath
 
 class SourceLayer(QObject, AbstractLayer):
 
@@ -40,9 +41,15 @@ class SourceLayer(QObject, AbstractLayer):
         self.impl = QgsVectorLayer(self.shapefilePath.as_posix(), self.getMapLayerName(), "ogr")
         self.impl.willBeDeleted.connect(lambda: self.layerRemoved.emit(self))
         QgsProject.instance().addMapLayer(self.impl, False)
+        
+        # load one of two styles based on the threshold used to segment these features
+        if int(self.threshold) < 200:
+            self.loadStyle("lower_threshold")
+        else:
+            self.loadStyle("higher_threshold")
+
         self.layerAdded.emit(self)
         subGroupLayer = self.getSubGroupLayer(groupLayer)
-
         subGroupLayer.addLayer(self.impl)
 
     def getMapLayerName(self):
@@ -62,4 +69,10 @@ class SourceLayer(QObject, AbstractLayer):
             groupLayer = QgsProject.instance().layerTreeRoot()
 
         return self.getSubGroupLayer(groupLayer).findLayer(self.impl)
+
+    def loadStyle(self, styleName):
+        """Apply a packaged style to this layer."""
+        stylePath = resolveStylePath(styleName)
+        if self.impl is not None:
+            self.impl.loadNamedStyle(stylePath)
             

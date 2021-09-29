@@ -93,6 +93,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         # get the region names for the combo
         self.regionComboBox.clear()
         regions = [region for region in self.ntrrpCapabilities.regions]
+        regions.sort()
 
         self.regionComboBox.addItems(regions)
 

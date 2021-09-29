@@ -68,8 +68,22 @@ def getTempDownloadPath():
     return dataFile
 
 def getWorkingShapefilePath():
+    """Get a path for a working layer shapefile."""
     outputDir = path.normpath(path.join(getWorkingDirectory(), getRandomFilename()))
     return path.normpath(path.join(outputDir, "working.shp"))
+
+def resolvePluginPath(relative, base = None):
+    """Resolve a relative path in the plug-in deployment directory."""
+    if not base:
+        base = path.dirname(os.path.realpath(__file__))
+        # note this function will break if this code in src/utils.py is moved to a different directory
+        base = path.normpath(path.join(base, os.pardir))    
+    return path.normpath(path.join(base, relative))
+
+def resolveStylePath(styleName):
+    """Load a style file packaged with the plug-in."""
+    relative = f"styles\\{styleName}.qml"
+    return resolvePluginPath(relative)
 
 def qgsDebug(message, level=Qgis.Info):
     """Print a debug message."""

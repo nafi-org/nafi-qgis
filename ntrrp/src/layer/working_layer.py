@@ -8,7 +8,7 @@ from qgis.utils import iface as QgsInterface
 
 from .abstract_layer import AbstractLayer
 from .source_layer import SourceLayer
-from ..utils import ensureDirectory, getWorkingShapefilePath, guiError
+from ..utils import ensureDirectory, getWorkingShapefilePath, guiError, resolveStylePath
 
 class WorkingLayer(QObject, AbstractLayer):
 
@@ -75,6 +75,7 @@ class WorkingLayer(QObject, AbstractLayer):
         """Add an NTRRP data layer to the map."""
         QgsProject.instance().addMapLayer(self.impl, False)
         self.impl.willBeDeleted.connect(lambda: self.layerRemoved.emit(self))
+        self.loadStyle("approved")
         self.layerAdded.emit(self)
         subGroupLayer = self.getSubGroupLayer(groupLayer)
         displayLayer = subGroupLayer.addLayer(self.impl)
@@ -112,3 +113,10 @@ class WorkingLayer(QObject, AbstractLayer):
             groupLayer = QgsProject.instance().layerTreeRoot()
 
         return self.getSubGroupLayer(groupLayer).findLayer(self.impl)
+
+    def loadStyle(self, styleName):
+        """Apply a packaged style to this layer."""
+        stylePath = resolveStylePath(styleName)
+        if self.impl is not None:
+            self.impl.loadNamedStyle(stylePath)
+
