@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-from pathlib import Path
 import dateutil
 
 from qgis.PyQt.QtCore import pyqtSignal, QObject
 from qgis.core import QgsProject, QgsVectorLayer
 
-class NtrrpDataLayer:
+from .abstract_layer import AbstractLayer
+
+class SourceLayer(AbstractLayer):
 
     def __init__(self, shapefilePath):
         """Constructor."""
@@ -19,7 +20,6 @@ class NtrrpDataLayer:
         self.startDate = dateutil.parser.parse(segments[3])
         self.subArea = segments[5][2:]
         self.threshold = segments[6][1:]
-        self.layerName = f"Threshold {self.threshold}"
         # self.regionGroup = f"{self.region} Burnt Areas (Area {self.subArea})"
         self.differenceGroup = f"{self.difference} Differences ({self.startDate.strftime('%b %d')}–{self.endDate.strftime('%b %d')})"
 
@@ -34,10 +34,25 @@ class NtrrpDataLayer:
 
     def addMapLayer(self, groupLayer):
         """Add an NTRRP data layer to the map."""
-        layer = QgsVectorLayer(self.shapefilePath.as_posix(), self.layerName, "ogr")
+        layer = QgsVectorLayer(self.shapefilePath.as_posix(), self.getMapLayerName(), "ogr")
 
         QgsProject.instance().addMapLayer(layer, False)
         subGroupLayer = self.getSubGroupLayer(groupLayer)
 
         subGroupLayer.addLayer(layer)
+
+    def getMapLayerName(self):
+        """Get an appropriate map layer name for this layer."""
+        return f"Threshold {self.threshold}"
+
+    def getDisplayName(self):
+        """Get an appropriate UX display name for non-hierarchical widgets like combos."""
+        return f"{self.difference} {self.getMapLayerName()}"
+
+    def getMapLayer(self, groupLayer = None):
+        """Get the QGIS map layer corresponding to this layer, if any."""
+        if groupLayer is None:
+            groupLayer = QgsProject.instance().layerTreeRoot()
+
+        return self.getSubGroupLayer(groupLayer).findLayer(self.getMapLayerName())
             

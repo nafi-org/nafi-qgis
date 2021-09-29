@@ -3,9 +3,9 @@ from qgis.PyQt.QtCore import QObject, pyqtSignal
 from qgis.core import QgsProject
 
 from .ntrrp_data_client import NtrrpDataClient
-from .ntrrp_data_layer import NtrrpDataLayer
+from .layer.source_layer import SourceLayer
+from .layer.working_layer import WorkingLayer
 from .ntrrp_item import NtrrpItem
-from .ntrrp_working_layer import NtrrpWorkingLayer
 from .utils import getNtrrpDataUrl, guiWarning
 
 class NtrrpRegion(QObject):
@@ -13,7 +13,7 @@ class NtrrpRegion(QObject):
     dataLayersChanged = pyqtSignal(list)
     
     # emit this signal with the created working layer
-    workingLayerCreated = pyqtSignal(NtrrpWorkingLayer)
+    workingLayerCreated = pyqtSignal(WorkingLayer)
 
     def __init__(self, region, wmsUrl, owsLayers):
         """Constructor."""
@@ -52,13 +52,13 @@ class NtrrpRegion(QObject):
     
     def createWorkingLayer(self):
         """Create a new working layer for this region."""
-        self.workingLayer = NtrrpWorkingLayer()
+        self.workingLayer = WorkingLayer()
         self.workingLayer.addMapLayer(self.getSubGroupLayer())
         self.workingLayerCreated.emit(self.workingLayer)
 
     def addDataLayers(self, unzipLocation):
         """Add all shapefiles in a directory as data layers to the region group."""
-        self.dataLayers = [NtrrpDataLayer(path) for path in unzipLocation.rglob("*.shp")]
+        self.dataLayers = [SourceLayer(path) for path in unzipLocation.rglob("*.shp")]
 
         for dataLayer in self.dataLayers:
             dataLayer.addMapLayer(self.getSubGroupLayer())
@@ -69,9 +69,9 @@ class NtrrpRegion(QObject):
         """Add an NTRRP remote layer for this region to the map."""
         assert(isinstance(item, NtrrpItem))
 
-        item.addMapLayer(self.getSubGroupLayer())
+        item.itemLayer.addMapLayer(self.getSubGroupLayer())
 
     # upload data
-    def uploadData(self):
+    def uploadBurntAreas(self):
         """Upload the curated working layer to NAFI."""
         guiWarning("Upload under construction!")

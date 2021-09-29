@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
-from urllib import parse
-
 from qgis.PyQt import QtWidgets
 from qgis.PyQt.QtCore import pyqtSignal, QSortFilterProxyModel, Qt, QModelIndex
 
 from .ntrrp_about_dialog import NtrrpAboutDialog
 from .ntrrp_capabilities_reader import NtrrpCapabilitiesReader
-from .ntrrp_data_client import NtrrpDataClient
 from .ntrrp_dockwidget_base import Ui_NtrrpDockWidgetBase
 from .ntrrp_item import NtrrpItem
 from .ntrrp_region import NtrrpRegion
@@ -75,6 +72,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
     def initModel(self, ntrrpCapabilities):
         """Initialise a QStandardItemModel from the NAFI WMS."""
         # stash the parsed capabilities and set up the region combobox
+        qgsDebug("Initialising view model …")
         self.ntrrpCapabilities = ntrrpCapabilities
 
         # get the region names for the combo
@@ -94,6 +92,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         if region is None:
             return
 
+        assert(isinstance(region, NtrrpRegion))
         # disconnect signal handlers?
         # if self.region is not None:
         #    try:
@@ -128,7 +127,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
     def updateSourceLayerComboBox(self, dataLayers):
         """Update the source layers."""
         self.sourceLayerComboBox.clear()
-        self.sourceLayerComboBox.addItems([dataLayer.layerName for dataLayer in dataLayers])
+        self.sourceLayerComboBox.addItems([dataLayer.getDisplayName() for dataLayer in dataLayers])
 
     def updateWorkingLayerComboBox(self, workingLayer):
         """Update the source layers."""

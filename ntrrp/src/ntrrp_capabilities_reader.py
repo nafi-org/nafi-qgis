@@ -11,7 +11,7 @@ from owslib.etree import etree
 from owslib.map.wms111 import ContentMetadata
 
 from .ntrrp_capabilities import NtrrpCapabilities
-from .utils import capabilitiesError, connectionError, guiError, qgsDebug
+from .utils import capabilitiesError, connectionError
 
 class NtrrpCapabilitiesReader(QObject):
 
