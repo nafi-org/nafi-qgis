@@ -2,7 +2,7 @@
 name=NT Risk Reduction Program
 qgisMinimumVersion=3.8.1
 description=Northern Territory Risk Reduction Program (NTRRP) QGIS tools
-version=0.5.0
+version=0.6.0
 author=Tom Lynch
 email=tom@trailmarker.io
 about=QGIS tools to support agency users re-providing digitised burnt area features to NAFI for public dissemination. These tools would not normally be of use to members of the public or non-specialist users.
@@ -16,7 +16,10 @@ experimental=False
 deprecated=False
 category=Web
 server=False
-changelog=0.5.0
+changelog=0.6.0
+          - wire working layer, source layer and other features
+          - major refactor
+          0.5.0
           - include Bushfires NT icon
           - correct access to NAFI WMTS layers from NTRRP workspace
           - add dMIRBI and RGB datestamps to plug-in layer list
