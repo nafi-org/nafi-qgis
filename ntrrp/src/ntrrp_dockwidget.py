@@ -28,9 +28,6 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         self.treeView.setFocusPolicy(Qt.NoFocus)
         self.treeView.pressed.connect(self.treeViewPressed)
 
-        # set up About … dialog
-        self.aboutButton.clicked.connect(self.showAboutDialog)
-
         # set up base model
         self.treeViewModel = NtrrpTreeViewModel(getNtrrpWmsUrl())
 
@@ -43,11 +40,23 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         # set up region combobox
         self.regionComboBox.currentIndexChanged.connect(self.regionComboBoxChanged)
 
+        # set up About … dialog
+        self.aboutButton.clicked.connect(self.showAboutDialog)
+
+        # set up refresh button
+        self.refreshButton.clicked.connect(self.loadNtrrpWms)
+
         # set up download button
         self.downloadButton.clicked.connect(lambda: self.region.downloadData())
 
         # set up create button
         self.createButton.clicked.connect(lambda: self.region.createWorkingLayer())
+
+        # set up approve button
+        self.approveButton.clicked.connect(lambda: guiInformation("Approve Selected Burnt Areas feature still under construction!"))
+
+        # set up upload button
+        self.uploadButton.clicked.connect(lambda: guiInformation("Upload Burnt Areas feature still under construction!"))
 
         self.reader = NtrrpCapabilitiesReader()
         self.reader.capabilitiesParsed.connect(lambda caps: self.initModel(caps))
