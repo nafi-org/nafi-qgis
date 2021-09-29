@@ -1,24 +1,32 @@
 # -*- coding: utf-8 -*-
 from pathlib import Path
 
-from qgis.PyQt.QtCore import pyqtSignal, QObject
+from qgis.PyQt.QtCore import QObject
+from qgis.PyQt.QtWidgets import QAction
 from qgis.core import QgsProject, QgsVectorFileWriter, QgsVectorLayer
 from qgis.utils import iface as QgsInterface
 
 from .abstract_layer import AbstractLayer
 from .source_layer import SourceLayer
-from ..utils import ensureDirectory, getWorkingShapefilePath, qgsDebug
+from ..utils import ensureDirectory, getWorkingShapefilePath, guiError
 
 class WorkingLayer(QObject, AbstractLayer):
 
 
-    def __init__(self):
+    def __init__(self, templateSourceLayer):
         """Constructor."""
         super(QObject, self).__init__()
 
         self.index = 0
         self.impl = QgsVectorLayer("Polygon?crs=epsg:3577", self.getMapLayerName(), "memory")
         self.shapefilePath = getWorkingShapefilePath()
+
+        # templateSourceLayer sets initial attributes
+        if templateSourceLayer is not None:
+            sourceImpl = templateSourceLayer.impl
+            fields = [sourceImpl.fields()[index] for index in sourceImpl.fields().allAttributesList()]
+            self.impl.dataProvider().addAttributes(fields)
+            self.impl.updateFields()
 
         # source layer is not initially set
         self.sourceLayer = None
@@ -33,15 +41,30 @@ class WorkingLayer(QObject, AbstractLayer):
         ensureDirectory(Path(self.shapefilePath).parent)
         QgsVectorFileWriter.writeAsVectorFormat(self.impl, self.shapefilePath, "utf-8", driverName="ESRI Shapefile")
 
-    def addBurntAreas(self):
-        """Add the currently selected burnt areas to this working layer."""
+    def copySelectedFeaturesFromSourceLayer(self):
+        """Add the currently selected features in the source layer to this working layer."""
+        if self.sourceLayer is None or self.sourceLayer.impl is None:
+            guiError("Error occurred: inconsistent state in source layer.")
+        elif self.impl is None:
+            guiError("Error occurred: inconsistent state in working layer.")
+        else:
+            QgsInterface.setActiveLayer(self.sourceLayer.impl)
+            QgsInterface.actionCopyFeatures().trigger()
+            QgsInterface.setActiveLayer(self.impl)
+            self.impl.startEditing()
+            QgsInterface.actionPasteFeatures().trigger()
+            self.impl.commitChanges()
+            QgsInterface.mainWindow().findChild(QAction, 'mActionDeselectAll').trigger()
+            QgsInterface.setActiveLayer(self.sourceLayer.impl)
+            # repopulate the clipboard with no features to avoid re-pasting
+            QgsInterface.actionCopyFeatures().trigger()
 
         # Save after adding
         self.save()
 
     def getSubGroupLayer(self, groupLayer):
         """Get or create the right dMIRBI difference layer group for an NTRRP data layer."""
-        subGroupLayerName = "Working layers"
+        subGroupLayerName = "New Burnt Areas"
         subGroupLayer = groupLayer.findGroup(subGroupLayerName)
         if subGroupLayer == None:
             groupLayer.insertGroup(0, subGroupLayerName)
@@ -78,7 +101,7 @@ class WorkingLayer(QObject, AbstractLayer):
 
     def getMapLayerName(self):
         """Get an appropriate map layer name for this layer."""
-        return f"Burnt Areas - Approved #{self.index}"
+        return f"Working Layer #{self.index}"
 
     def getMapLayer(self, groupLayer = None):
         """Get the QGIS map layer corresponding to this layer, if any."""

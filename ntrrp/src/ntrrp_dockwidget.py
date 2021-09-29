@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from qgis.PyQt import QtWidgets
 from qgis.PyQt.QtCore import pyqtSignal, QSortFilterProxyModel, Qt, QModelIndex
+from qgis.utils import iface as QgsInterface
 
 from .ntrrp_about_dialog import NtrrpAboutDialog
 from .ntrrp_capabilities_reader import NtrrpCapabilitiesReader
@@ -13,6 +14,8 @@ from .utils import getNtrrpWmsUrl, guiInformation
 class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
     closingPlugin = pyqtSignal()
     updateState = pyqtSignal()
+
+    NO_SELECTION_TEXT = "Select …"
 
     def __init__(self, parent=None):
         """Constructor."""
@@ -54,10 +57,10 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         self.downloadButton.clicked.connect(lambda: self.region.downloadData())
 
         # set up create button
-        self.createButton.clicked.connect(lambda: self.region.createWorkingLayer())
+        self.createButton.clicked.connect(lambda: self.region.createWorkingLayer(self.activeSourceLayer))
 
         # set up approve button
-        self.approveButton.clicked.connect(lambda: guiInformation("Approve Selected Burnt Areas feature still under construction!"))
+        self.approveButton.clicked.connect(lambda: self.activeWorkingLayer.copySelectedFeaturesFromSourceLayer())
 
         # set up upload button
         self.uploadButton.clicked.connect(lambda: guiInformation("Upload Burnt Areas feature still under construction!"))
@@ -116,11 +119,18 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         #        self.region.dataLayersChanged.disconnect()
         # …
 
+        # clear some stuff
+        self.activeSourceLayer = None
+        self.activeWorkingLayer = None
+
         # set up signal handlers
         region.sourceLayersChanged.connect(lambda sourceLayers: self.updateSourceLayerComboBox(sourceLayers))
         region.workingLayersChanged.connect(lambda workingLayers: self.updateWorkingLayerComboBox(workingLayers))
         region.ntrrpItemsChanged.connect(lambda: self.refreshCurrentRegion(region))
+
         self.region = region
+        self.updateSourceLayerComboBox(region.sourceLayers)
+        self.updateWorkingLayerComboBox(region.workingLayers)
         
         # populate tree view
         self.treeViewModel.setRegion(region)
@@ -150,8 +160,9 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
     def sourceLayerComboBoxChanged(self, sourceLayerIndex):
         """Switch the active source layer."""
         sourceLayerDisplayName = self.sourceLayerComboBox.itemText(sourceLayerIndex)
-        if len(sourceLayerDisplayName) > 0:
+        if len(sourceLayerDisplayName) > 0 and sourceLayerDisplayName != self.NO_SELECTION_TEXT:
             self.activeSourceLayer = self.region.getSourceLayerByDisplayName(sourceLayerDisplayName)
+            QgsInterface.setActiveLayer(self.activeSourceLayer.impl)
         else:
             self.activeSourceLayer = None
         self.updateState.emit()
@@ -159,8 +170,9 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
     def workingLayerComboBoxChanged(self, workingLayerIndex):
         """Switch the active source layer."""
         workingLayerDisplayName = self.workingLayerComboBox.itemText(workingLayerIndex)
-        if len(workingLayerDisplayName) > 0:
+        if len(workingLayerDisplayName) > 0 and workingLayerDisplayName != self.NO_SELECTION_TEXT:
             self.activeWorkingLayer = self.region.getWorkingLayerByName(workingLayerDisplayName)
+            QgsInterface.setActiveLayer(self.activeWorkingLayer.impl)
         else:
             self.activeWorkingLayer = None
         self.updateState.emit()
@@ -218,20 +230,31 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         haveSourceLayers = bool(self.region.sourceLayers and len(self.region.sourceLayers) > 0)
         haveWorkingLayers = bool(self.region.workingLayers and len(self.region.workingLayers) > 0)
         
+        # need a selection of source layers before we can start choosing
         self.sourceLayerComboBox.setEnabled(haveSourceLayers)
         if haveSourceLayers:
-            self.sourceLayerComboBox.setItemText(0, "Select …")
+            self.sourceLayerComboBox.setItemText(0, self.NO_SELECTION_TEXT)
         else:
             self.sourceLayerComboBox.setItemText(0, "Download NAFI burnt areas first …")
-        
+            self.sourceLayerComboBox.setCurrentIndex(0)
+
+        # need a selection
         self.workingLayerComboBox.setEnabled(haveWorkingLayers)
         if haveWorkingLayers:
-            self.workingLayerComboBox.setItemText(0, "Select …")
+            self.workingLayerComboBox.setItemText(0, self.NO_SELECTION_TEXT)
         elif not haveWorkingLayers and haveSourceLayers:
             self.workingLayerComboBox.setItemText(0, "Create a working layer first …")
+            self.workingLayerComboBox.setCurrentIndex(0)
 
+        # need to template working layers off source layers, so we can't enable create until there is one
+        haveSourceLayer = bool(self.activeSourceLayer)
+        self.createButton.setEnabled(haveSourceLayer)
 
-        self.approveButton.setEnabled(bool(self.activeSourceLayer and self.activeWorkingLayer))
+        # if we have both source and working, we can start approving
+        haveBoth = bool(self.activeSourceLayer and self.activeWorkingLayer)
+        if haveBoth:
+            self.activeWorkingLayer.setSourceLayer(self.activeSourceLayer)
+        self.approveButton.setEnabled(haveBoth)
 
 
     def closeEvent(self, event):

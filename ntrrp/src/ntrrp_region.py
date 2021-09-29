@@ -28,8 +28,6 @@ class NtrrpRegion(QObject):
         self.sourceLayers = []
         self.workingLayers = []
         self.regionGroup = f"{self.name} Burnt Areas"
-        self.sourceLayersChanged.emit(self.sourceLayers)
-        self.workingLayersChanged.emit(self.workingLayers)
 
     # arrange data
     def getNtrrpItems(self):
@@ -65,9 +63,9 @@ class NtrrpRegion(QObject):
         matches = [layer for layer in self.workingLayers if layer.getMapLayerName() == workingLayerName]
         return next(iter(matches), None)
 
-    def createWorkingLayer(self):
+    def createWorkingLayer(self, templateSourceLayer):
         """Create a new working layer for this region."""
-        workingLayer = WorkingLayer()
+        workingLayer = WorkingLayer(templateSourceLayer)
         workingLayer.layerRemoved.connect(lambda layer: self.removeWorkingLayer(layer))
         self.workingLayers.append(workingLayer)
         workingLayer.addMapLayer(self.getSubGroupLayer())
