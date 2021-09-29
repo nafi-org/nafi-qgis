@@ -6,11 +6,14 @@ from qgis.core import QgsProject, QgsVectorLayer
 
 from .abstract_layer import AbstractLayer
 
-class SourceLayer(AbstractLayer):
+class SourceLayer(QObject, AbstractLayer):
 
     def __init__(self, shapefilePath):
         """Constructor."""
+        super(QObject, self).__init__()
+
         self.shapefilePath = shapefilePath
+        self.impl = None
 
         # Layer name will be similar to: T1T3_darwin_T20210827_T20210817_seg_sa1_t300
         segments = shapefilePath.stem.split("_")
@@ -34,12 +37,13 @@ class SourceLayer(AbstractLayer):
 
     def addMapLayer(self, groupLayer):
         """Add an NTRRP data layer to the map."""
-        layer = QgsVectorLayer(self.shapefilePath.as_posix(), self.getMapLayerName(), "ogr")
-
-        QgsProject.instance().addMapLayer(layer, False)
+        self.impl = QgsVectorLayer(self.shapefilePath.as_posix(), self.getMapLayerName(), "ogr")
+        self.impl.willBeDeleted.connect(lambda: self.layerRemoved.emit(self))
+        QgsProject.instance().addMapLayer(self.impl, False)
+        self.layerAdded.emit(self)
         subGroupLayer = self.getSubGroupLayer(groupLayer)
 
-        subGroupLayer.addLayer(layer)
+        subGroupLayer.addLayer(self.impl)
 
     def getMapLayerName(self):
         """Get an appropriate map layer name for this layer."""
@@ -51,8 +55,11 @@ class SourceLayer(AbstractLayer):
 
     def getMapLayer(self, groupLayer = None):
         """Get the QGIS map layer corresponding to this layer, if any."""
+        if self.impl is None:
+            return None
+        
         if groupLayer is None:
             groupLayer = QgsProject.instance().layerTreeRoot()
 
-        return self.getSubGroupLayer(groupLayer).findLayer(self.getMapLayerName())
+        return self.getSubGroupLayer(groupLayer).findLayer(self.impl)
             

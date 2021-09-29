@@ -9,11 +9,14 @@ from .ntrrp_item import NtrrpItem
 from .utils import getNtrrpDataUrl, guiWarning
 
 class NtrrpRegion(QObject):
-     # emit this signal with the downloaded data layers
-    dataLayersChanged = pyqtSignal(list)
+    # emit this signal when the downloaded data layers are changed
+    sourceLayersChanged = pyqtSignal(list)
+
+    # emit this signal when the remote WMTS layers are changed
+    ntrrpItemsChanged = pyqtSignal()
     
-    # emit this signal with the created working layer
-    workingLayerCreated = pyqtSignal(WorkingLayer)
+    # emit this signal when working layers are changed
+    workingLayersChanged = pyqtSignal(list)
 
     def __init__(self, region, wmsUrl, owsLayers):
         """Constructor."""
@@ -22,22 +25,27 @@ class NtrrpRegion(QObject):
         self.name = region
         self.wmsUrl = wmsUrl
         self.owsLayers = owsLayers
-        self.dataLayers = []
-        self.workingLayer = None
+        self.sourceLayers = []
+        self.workingLayers = []
         self.regionGroup = f"{self.name} Burnt Areas"
 
     # arrange data
     def getNtrrpItems(self):
         """Return a set of NtrrpItem objects corresponding to this region's layers."""
-        return [NtrrpItem(self.wmsUrl, owsLayer) for owsLayer in self.owsLayers]
+        items = [NtrrpItem(self.wmsUrl, owsLayer) for owsLayer in self.owsLayers]
+        for item in items:
+            item.itemLayer.layerAdded.connect(lambda _: self.ntrrpItemsChanged.emit())
+            item.itemLayer.layerRemoved.connect(lambda _: self.ntrrpItemsChanged.emit())
+        return items
     
     def getDataUrl(self):
         """Get the distinctive URL used for the data layers for this region."""
         return getNtrrpDataUrl()
 
     def downloadData(self):
+        """Download burnt areas features from NAFI and call back to add them to the map."""
         client = NtrrpDataClient()
-        client.dataDownloaded.connect(lambda unzipLocation: self.addDataLayers(unzipLocation))
+        client.dataDownloaded.connect(lambda unzipLocation: self.addSourceLayers(unzipLocation))
         client.downloadData(self.getDataUrl())
 
     # add things to the map
@@ -52,20 +60,33 @@ class NtrrpRegion(QObject):
     
     def createWorkingLayer(self):
         """Create a new working layer for this region."""
-        self.workingLayer = WorkingLayer()
-        self.workingLayer.addMapLayer(self.getSubGroupLayer())
-        self.workingLayerCreated.emit(self.workingLayer)
+        workingLayer = WorkingLayer()
+        workingLayer.layerRemoved.connect(lambda layer: self.removeWorkingLayer(layer))
+        self.workingLayers.append(workingLayer)
+        workingLayer.addMapLayer(self.getSubGroupLayer())
+        self.workingLayersChanged.emit(self.workingLayers)
 
-    def addDataLayers(self, unzipLocation):
+    def removeWorkingLayer(self, layer):
+        """Remove a working layer and inform subscribers."""
+        self.workingLayers.remove(layer)
+        self.workingLayersChanged.emit(self.workingLayers)
+
+    def addSourceLayers(self, unzipLocation):
         """Add all shapefiles in a directory as data layers to the region group."""
-        self.dataLayers = [SourceLayer(path) for path in unzipLocation.rglob("*.shp")]
+        self.sourceLayers = [SourceLayer(path) for path in unzipLocation.rglob("*.shp")]
 
-        for dataLayer in self.dataLayers:
-            dataLayer.addMapLayer(self.getSubGroupLayer())
+        for sourceLayer in self.sourceLayers:
+            sourceLayer.layerRemoved.connect(lambda layer: self.removeSourceLayer(layer))
+            sourceLayer.addMapLayer(self.getSubGroupLayer())
 
-        self.dataLayersChanged.emit(self.dataLayers)
+        self.sourceLayersChanged.emit(self.sourceLayers)
 
-    def addNtrrpLayer(self, item):
+    def removeSourceLayer(self, layer):
+        """Remove a source layer and inform subscribers."""
+        self.sourceLayers.remove(layer)
+        self.sourceLayersChanged.emit(self.sourceLayers)
+
+    def addWmtsLayer(self, item):
         """Add an NTRRP remote layer for this region to the map."""
         assert(isinstance(item, NtrrpItem))
 

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from pathlib import Path
 
+from qgis.PyQt.QtCore import pyqtSignal, QObject
 from qgis.core import QgsProject, QgsVectorFileWriter, QgsVectorLayer
 from qgis.utils import iface as QgsInterface
 
@@ -8,13 +9,15 @@ from .abstract_layer import AbstractLayer
 from .source_layer import SourceLayer
 from ..utils import ensureDirectory, getWorkingShapefilePath, qgsDebug
 
-class WorkingLayer(AbstractLayer):
+class WorkingLayer(QObject, AbstractLayer):
+
 
     def __init__(self):
         """Constructor."""
+        super(QObject, self).__init__()
+
         self.index = 1
-        self.layerName = f"Burnt Areas - Approved #{self.index}" # TODO
-        self.workingLayer = QgsVectorLayer("Polygon?crs=epsg:3577", self.getMapLayerName(), "memory")
+        self.impl = QgsVectorLayer("Polygon?crs=epsg:3577", self.getMapLayerName(), "memory")
         self.shapefilePath = getWorkingShapefilePath()
 
         # source layer is not initially set
@@ -28,7 +31,7 @@ class WorkingLayer(AbstractLayer):
     def save(self):
         """Write the content of this layer to a shapefile."""
         ensureDirectory(Path(self.shapefilePath).parent)
-        QgsVectorFileWriter.writeAsVectorFormat(self.workingLayer, self.shapefilePath, "utf-8", driverName="ESRI Shapefile")
+        QgsVectorFileWriter.writeAsVectorFormat(self.impl, self.shapefilePath, "utf-8", driverName="ESRI Shapefile")
 
     def addBurntAreas(self):
         """Add the currently selected burnt areas to this working layer."""
@@ -47,9 +50,11 @@ class WorkingLayer(AbstractLayer):
 
     def addMapLayer(self, groupLayer):
         """Add an NTRRP data layer to the map."""
-        QgsProject.instance().addMapLayer(self.workingLayer, False)
+        QgsProject.instance().addMapLayer(self.impl, False)
+        self.impl.willBeDeleted.connect(lambda: self.layerRemoved.emit(self))
+        self.layerAdded.emit(self)
         subGroupLayer = self.getSubGroupLayer(groupLayer)
-        displayLayer = subGroupLayer.addLayer(self.workingLayer)
+        displayLayer = subGroupLayer.addLayer(self.impl)
         displayLayer.setName(self.getUniqueMapLayerName(groupLayer))
 
     # TODO does not currently work
@@ -61,10 +66,10 @@ class WorkingLayer(AbstractLayer):
         existingDisplayLayers = [groupLayer.findLayer(layer) for layer in existingMapLayers]
         existingDisplayLayers = [layer for layer in existingDisplayLayers if layer is not None]
 
-        while existingDisplayLayers:
+        while len(existingDisplayLayers) > 0:
             self.index += 1
-            qgsDebug(str(existingDisplayLayers))
-            qgsDebug(self.getMapLayerName())
+            # qgsDebug(str(existingDisplayLayers))
+            # qgsDebug(self.getMapLayerName())
             existingMapLayers = QgsProject.instance().mapLayersByName(self.getMapLayerName())
             existingDisplayLayers = [groupLayer.findLayer(layer) for layer in existingMapLayers]
         existingDisplayLayers = [layer for layer in existingDisplayLayers if layer is not None]
@@ -77,7 +82,10 @@ class WorkingLayer(AbstractLayer):
 
     def getMapLayer(self, groupLayer = None):
         """Get the QGIS map layer corresponding to this layer, if any."""
+        if self.impl is None:
+            return None
+        
         if groupLayer is None:
             groupLayer = QgsProject.instance().layerTreeRoot()
 
-        return self.getSubGroupLayer(groupLayer).findLayer(self.getMapLayerName())
+        return self.getSubGroupLayer(groupLayer).findLayer(self.impl)

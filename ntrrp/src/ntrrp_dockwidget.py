@@ -72,7 +72,6 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
     def initModel(self, ntrrpCapabilities):
         """Initialise a QStandardItemModel from the NAFI WMS."""
         # stash the parsed capabilities and set up the region combobox
-        qgsDebug("Initialising view model …")
         self.ntrrpCapabilities = ntrrpCapabilities
 
         # get the region names for the combo
@@ -87,6 +86,10 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         if initRegion is not None:
             self.setRegion(initRegion)
 
+    def isCurrentRegion(self, region):
+        """Check if a region is the current NTRRP region."""
+        return region and self.region and (region.name == self.region.name)
+
     def setRegion(self, region):
         """Set the current NTRRP region."""
         if region is None:
@@ -100,8 +103,9 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         # …
 
         # set up signal handlers
-        region.dataLayersChanged.connect(lambda dataLayers: self.updateSourceLayerComboBox(dataLayers))
-        region.workingLayerCreated.connect(lambda workingLayer: self.updateWorkingLayerComboBox(workingLayer))
+        region.sourceLayersChanged.connect(lambda dataLayers: self.updateSourceLayerComboBox(dataLayers))
+        region.workingLayersChanged.connect(lambda workingLayers: self.updateWorkingLayerComboBox(workingLayers))
+        region.ntrrpItemsChanged.connect(lambda: self.refreshCurrentRegion(region))
         self.region = region
         
         # populate tree view
@@ -110,6 +114,11 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         # set default sort and expansion
         self.proxyModel.sort(0, Qt.AscendingOrder)
         self.expandTopLevel()
+
+    def refreshCurrentRegion(self, region):
+        """If a region is the current region, refresh the tree view."""
+        if self.isCurrentRegion(region):
+            self.treeViewModel.setRegion(region)
 
     def sizeHint(self):
         return QtCore.QSize(150, 400)
@@ -129,10 +138,10 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         self.sourceLayerComboBox.clear()
         self.sourceLayerComboBox.addItems([dataLayer.getDisplayName() for dataLayer in dataLayers])
 
-    def updateWorkingLayerComboBox(self, workingLayer):
+    def updateWorkingLayerComboBox(self, workingLayers):
         """Update the source layers."""
         self.workingLayerComboBox.clear()
-        self.workingLayerComboBox.addItem(workingLayer.layerName)
+        self.workingLayerComboBox.addItems([workingLayer.getMapLayerName() for workingLayer in workingLayers])
 
     def expandTopLevel(self):
         """Exppand top level items in the tree view."""
@@ -154,7 +163,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         # if we've got a layer and not a layer group, add to map
         if modelNode is not None:
             if isinstance(modelNode, NtrrpItem):
-                self.region.addNtrrpLayer(modelNode)
+                self.region.addWmtsLayer(modelNode)
 
     def closeEvent(self, event):
         """Handle plug-in close."""

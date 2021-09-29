@@ -1,24 +1,26 @@
 # -*- coding: utf-8 -*-
-from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtCore import pyqtSignal, Qt
 from qgis.PyQt.QtGui import QIcon, QStandardItem 
 
-from qgis.core import QgsProject, QgsRasterLayer
+from qgis.core import QgsMapLayer
 
 from .layer.wmts_layer import WmtsLayer
 from .ows_utils import parseNtrrpLayerDescription, parseNtrrpLayerRegion
+from .utils import qgsDebug
 
 class NtrrpItem(QStandardItem):
+
     def __init__(self, wmsUrl, owsLayer):
         """Constructor."""
         super(QStandardItem, self).__init__()
 
-        self.unsetLayer()
+        self.toggleOff()
         
         # assemble some properties
         self.region = parseNtrrpLayerRegion(owsLayer)
         self.description = parseNtrrpLayerDescription(owsLayer)
-        self.itemLayer = WmtsLayer(wmsUrl, owsLayer, self)
 
+        self.itemLayer = WmtsLayer(wmsUrl, owsLayer)
         self.setText(self.description)
 
         self.setFlags(Qt.ItemIsEnabled)
@@ -26,20 +28,18 @@ class NtrrpItem(QStandardItem):
 
         self.restoreLayer()
 
-    def unsetLayer(self):
-        self.setIcon(QIcon(":/plugins/ntrrp/images/globe.png"))
-        self.mapLayerId = None
-
     def restoreLayer(self):
         """Check if a layer is in the map already and set its icon if it is."""
-        # Python idiom to get first or None
-        layer = next(iter(QgsProject.instance().mapLayersByName(self.itemLayer.owsLayer.title)), None)
-        if layer is not None and isinstance(layer, QgsRasterLayer):
-            self.linkLayer(layer)
+        layer = self.itemLayer.getMapLayer()
+        if layer is not None and isinstance(layer, QgsMapLayer):
+            self.toggleOn(layer)
 
-    def linkLayer(self, layer):
+    def toggleOn(self, layer):
         """Associate this WMS item with an active map layer."""
-        self.setIcon(QIcon(":/plugins/ntrrp/images/fire.png"))
-        self.mapLayerId = layer.id()
-        layer.willBeDeleted.connect(self.unsetLayer)
+        if layer is not None and isinstance(layer, QgsMapLayer):
+            self.setIcon(QIcon(":/plugins/ntrrp/images/fire.png"))
+            self.itemLayer.layerRemoved.connect(lambda _: self.toggleOff())
+
+    def toggleOff(self):
+        self.setIcon(QIcon(":/plugins/ntrrp/images/globe.png"))
 
