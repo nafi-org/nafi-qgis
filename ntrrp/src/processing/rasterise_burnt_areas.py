@@ -40,10 +40,10 @@ class RasteriseBurntAreas(QgsProcessingAlgorithm):
         return 'RasteriseBurntAreas'
 
     def displayName(self):
-        return 'RasteriseBurntAreas'
+        return 'Rasterise Burnt Areas'
 
     def group(self):
-        return 'NTRRP'
+        return ''
 
     def groupId(self):
         return ''

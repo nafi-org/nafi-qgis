@@ -9,7 +9,7 @@ import processing
 class BurntAreas(QgsProcessingAlgorithm):
 
     def initAlgorithm(self, config=None):
-        processing.ProcessingConfig.setSettingsValue('IGNORE_INVALID_FEATURES', 0)
+        processing.ProcessingConfig.setSettingValue('IGNORE_INVALID_FEATURES', 0)
         self.addParameter(QgsProcessingParameterVectorLayer('BurntAreas', 'Burnt Areas', types=[QgsProcessing.TypeVectorPolygon], defaultValue=None))
         self.addParameter(QgsProcessingParameterFeatureSink('DissolvedBurntAreas', 'Dissolved Burnt Areas', type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, defaultValue=None))
 
@@ -31,16 +31,16 @@ class BurntAreas(QgsProcessingAlgorithm):
         return results
 
     def name(self):
-        return 'Burnt Areas'
+        return 'FullBurntAreasProcess'
 
     def displayName(self):
-        return 'Burnt Areas'
+        return 'Full Burnt Areas Process'
 
     def group(self):
-        return 'NTRRP'
+        return ''
 
     def groupId(self):
-        return 'NTRRP'
+        return ''
 
     def createInstance(self):
         return BurntAreas()
