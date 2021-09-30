@@ -2,6 +2,7 @@
 
 from qgis.PyQt.QtGui import QIcon
 from qgis.core import QgsProcessingProvider
+
 from .processing.dissolve_burnt_areas import DissolveBurntAreas
 from .processing.attribute_burnt_areas import AttributeBurntAreas
 from .processing.rasterise_burnt_areas import RasteriseBurntAreas

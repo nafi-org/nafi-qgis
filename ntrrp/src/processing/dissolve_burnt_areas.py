@@ -28,8 +28,8 @@ class DissolveBurntAreas(QgsProcessingAlgorithm):
         # Dissolve
         alg_params = {
             'FIELD': [''],
-            'INPUT': 'BurntAreas',
-            'OUTPUT': 'DissolvedBurntAreas'
+            'INPUT': parameters['BurntAreas'],
+            'OUTPUT': parameters['DissolvedBurntAreas']
         }
         outputs['Dissolve'] = processing.run('native:dissolve', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
         results['DissolvedBurntAreas'] = outputs['Dissolve']['OUTPUT']
