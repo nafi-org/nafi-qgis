@@ -1,0 +1,6 @@
+{
+    "python.analysis.extraPaths": [
+        "C:/PROGRA~1/QGIS 3.18/apps/Python37/lib/site-packages",
+        "C:/PROGRA~1/QGIS 3.18/apps/qgis/python"
+    ]
+}

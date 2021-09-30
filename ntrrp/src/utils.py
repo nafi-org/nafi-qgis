@@ -13,6 +13,7 @@ from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsMessageLog, QgsProj
 NTRRP_WMS_URL = "https://test.firenorth.org.au/mapserver/ntrrp/gwc/service/wms"
 NTRRP_WMTS_URL = "https://test.firenorth.org.au/mapserver/ntrrp/gwc/service/wmts"
 NTRRP_DATA_URL = f"https://test.firenorth.org.au/ntrrp/downloads/drw/area1.zip"
+NTRRP_UPLOAD_URL = "https://test.firenorth.org.au/upload.php"
 # /wms?service=WMS&version=1.1.0&request=GetCapabilities&layers=ntrrp_test%3AT1T2_darwin_dMIRB
 # https://test.firenorth.org.au/mapserver/ntrrp/wms?service=WMS&version=1.1.0&request=GetMap&layers=ntrrp%3AFSHDRW_CURRENT&bbox=-222099.563500943%2C-1441352.91373074%2C-42069.56350094339%2C-1263222.91373074&width=768&height=759&srs=EPSG%3A3577&format=application/openlayers
 
@@ -40,6 +41,9 @@ def getNtrrpWmtsUrl():
 def getNtrrpDataUrl():
     return getSetting("NTRRP_DATA_URL", NTRRP_DATA_URL)
 
+def getNtrrpUploadUrl():
+    return getSetting("NTRRP_UPLOAD_URL", NTRRP_UPLOAD_URL)
+
 def getDownloadDirectory():
     """Get the directory location to store NAFI burnt areas data."""
     return path.normpath(path.join(os.environ["TMP"], "ntrrp", "downloads"))
@@ -47,6 +51,10 @@ def getDownloadDirectory():
 def getWorkingDirectory():
     """Get the directory location to output and save NAFI burnt areas working data."""
     return path.normpath(path.join(os.environ["TMP"], "ntrrp", "working"))
+
+def getUploadDirectory():
+    """Get a random upload directory."""
+    return path.normpath(path.join(os.environ["TMP"], "ntrrp", "uploads"))
 
 def ensureDirectory(dir):
     """Ensure a particular directory exists."""
@@ -56,6 +64,7 @@ def ensureTempDirectories():
     """Ensure the download and working directories exist."""
     ensureDirectory(getDownloadDirectory())
     ensureDirectory(getWorkingDirectory())
+    ensureDirectory(getUploadDirectory())
 
 def getRandomFilename():
     """Get a random 8-character filename."""
