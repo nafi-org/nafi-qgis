@@ -18,10 +18,10 @@ class TestWorkingLayer(unittest.TestCase):
 
     def test_create(self):
         workingLayer = WorkingLayer(self.getSourceLayer())
-        print(workingLayer.shapefilePath)
-        self.assertTrue(Path(getWorkingDirectory()) in Path(workingLayer.shapefilePath).parents, "Working layer shapefile is not in working directory!")
+        print(workingLayer.gpkgPath)
+        self.assertTrue(Path(getWorkingDirectory()) in Path(workingLayer.gpkgPath).parents, "Working layer shapefile is not in working directory!")
 
     def test_save(self):
         workingLayer = WorkingLayer(self.getSourceLayer())
         workingLayer.save()
-        self.assertTrue(Path(workingLayer.shapefilePath).exists(), f"Working layer with shapefile {workingLayer.shapefilePath} not created on filesystem!")
+        self.assertTrue(Path(workingLayer.gpkgPath).exists(), f"Working layer with shapefile {workingLayer.gpkgPath} not created on filesystem!")

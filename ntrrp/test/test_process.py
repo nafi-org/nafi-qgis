@@ -11,7 +11,7 @@ from src.processing.attribute_burnt_areas import AttributeBurntAreas
 from src.processing.rasterise_burnt_areas import RasteriseBurntAreas
 
 TEST_TIF = Path(path.normpath(path.join(path.dirname(__file__), os.pardir, os.pardir, "ntrrp_data", "test", "FSDRW_current_sr3577.tif")))
-TEST_APPROVED = Path(path.normpath(path.join(path.dirname(__file__), os.pardir, os.pardir, "ntrrp_data", "test", "test_working", "approved.shp")))
+TEST_APPROVED = Path(path.normpath(path.join(path.dirname(__file__), os.pardir, os.pardir, "ntrrp_data", "test", "test_working", "approved.gpkg")))
 NTRRP_DATA = path.normpath(path.join(path.dirname(__file__), os.pardir, os.pardir, "ntrrp_data"))
 
 class TestProcess(unittest.TestCase):

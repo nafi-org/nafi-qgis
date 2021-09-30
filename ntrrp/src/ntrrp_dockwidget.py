@@ -10,7 +10,7 @@ from .ntrrp_item import NtrrpItem
 from .ntrrp_region import NtrrpRegion
 from .ntrrp_tree_view_model import NtrrpTreeViewModel
 from .processing.upload import Upload
-from .utils import getNtrrpWmsUrl, getWorkingShapefilePath, guiInformation, qgsDebug
+from .utils import getNtrrpWmsUrl, getWorkingGeoPackagePath, guiInformation, qgsDebug
 
 
 class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
@@ -249,7 +249,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
     def runUpload(self):
         """Convert the currently active working layer to a raster, attribute it and upload to NAFI."""
 
-        results = Upload.run(self.activeWorkingLayer.shapefilePath, 128, self.region.name, getWorkingShapefilePath())
+        results = Upload.run(self.activeWorkingLayer.gpkgPath, 128, self.region.name, getWorkingGeoPackagePath())
         qgsDebug(str(results))
 
     def enableDisable(self):

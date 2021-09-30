@@ -8,7 +8,7 @@ from qgis.utils import iface as QgsInterface
 
 from .abstract_layer import AbstractLayer
 from .source_layer import SourceLayer
-from ..utils import ensureDirectory, getWorkingShapefilePath, guiError, resolveStylePath
+from ..utils import ensureDirectory, getWorkingGeoPackagePath, guiError, resolveStylePath
 
 class WorkingLayer(QObject, AbstractLayer):
 
@@ -19,7 +19,7 @@ class WorkingLayer(QObject, AbstractLayer):
 
         self.index = 0
         self.impl = QgsVectorLayer("Polygon?crs=epsg:3577", self.getMapLayerName(), "memory")
-        self.shapefilePath = getWorkingShapefilePath()
+        self.gpkgPath = getWorkingGeoPackagePath()
 
         # templateSourceLayer sets initial attributes
         if templateSourceLayer is not None:
@@ -38,8 +38,8 @@ class WorkingLayer(QObject, AbstractLayer):
 
     def save(self):
         """Write the content of this layer to a shapefile."""
-        ensureDirectory(Path(self.shapefilePath).parent)
-        QgsVectorFileWriter.writeAsVectorFormat(self.impl, self.shapefilePath, "utf-8", driverName="ESRI Shapefile")
+        ensureDirectory(Path(self.gpkgPath).parent)
+        QgsVectorFileWriter.writeAsVectorFormat(self.impl, self.gpkgPath, "utf-8", driverName="ogr")
 
     def copySelectedFeaturesFromSourceLayer(self):
         """Add the currently selected features in the source layer to this working layer."""

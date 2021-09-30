@@ -76,10 +76,10 @@ def getTempDownloadPath():
     dataFile = f"{unzipLocation}.zip"
     return dataFile
 
-def getWorkingShapefilePath():
+def getWorkingGeoPackagePath():
     """Get a path for a working layer shapefile."""
     outputDir = path.normpath(path.join(getWorkingDirectory(), getRandomFilename()))
-    return path.normpath(path.join(outputDir, "working.shp"))
+    return path.normpath(path.join(outputDir, "approved.gpkg"))
 
 def resolvePluginPath(relative, base = None):
     """Resolve a relative path in the plug-in deployment directory."""
