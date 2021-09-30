@@ -5,7 +5,8 @@ from qgis.core import QgsProcessingProvider
 from .processing.dissolve_burnt_areas import DissolveBurntAreas
 from .processing.attribute_burnt_areas import AttributeBurntAreas
 from .processing.rasterise_burnt_areas import RasteriseBurntAreas
-from .processing.burnt_areas import BurntAreas
+from .processing.upload_burnt_areas import UploadBurntAreas
+from .processing.full_burnt_areas_process import FullBurntAreasProcess
 
 class NtrrpProvider(QgsProcessingProvider):
 
@@ -21,7 +22,8 @@ class NtrrpProvider(QgsProcessingProvider):
         self.addAlgorithm(DissolveBurntAreas())
         self.addAlgorithm(AttributeBurntAreas())
         self.addAlgorithm(RasteriseBurntAreas())
-        self.addAlgorithm(BurntAreas())
+        self.addAlgorithm(UploadBurntAreas())
+        self.addAlgorithm(FullBurntAreasProcess())
 
     def id(self):
         """Return the unique provider ID."""

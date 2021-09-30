@@ -9,7 +9,7 @@ from .ntrrp_dockwidget_base import Ui_NtrrpDockWidgetBase
 from .ntrrp_item import NtrrpItem
 from .ntrrp_region import NtrrpRegion
 from .ntrrp_tree_view_model import NtrrpTreeViewModel
-from .utils import getNtrrpWmsUrl, guiInformation
+from .utils import getNtrrpWmsUrl, guiInformation, qgsDebug
 
 class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
     closingPlugin = pyqtSignal()
@@ -191,18 +191,36 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         if index > 0:
             self.sourceLayerComboBox.setCurrentIndex(index)
 
+    # TODO: factor this into a custom ComboBox widget
     def updateWorkingLayerComboBox(self, workingLayers):
         """Update the source layers."""
-        current = self.workingLayerComboBox.currentText()
-        self.workingLayerComboBox.clear()
+        currentActiveItem = self.workingLayerComboBox.currentText()
+        # qgsDebug(f"currentActiveItem: {currentActiveItem}")
         items = [workingLayer.getMapLayerName() for workingLayer in workingLayers]
         items.insert(0, "")
+        # qgsDebug(f"items: {items}")
+      
+        
+        oldItems = [self.workingLayerComboBox.itemText(i) for i in range(self.workingLayerComboBox.count())]
+        # qgsDebug(f"oldItems {oldItems}")
+
+        self.workingLayerComboBox.clear()
         self.workingLayerComboBox.addItems(items)
 
-        # restore working layer if present
-        index = self.workingLayerComboBox.findText(current, Qt.MatchFixedString)
-        if index > 0:
-            self.workingLayerComboBox.setCurrentIndex(index)
+        # new item?
+        if len(items) > len(oldItems):
+            newItems = list(set(items) - set(oldItems))
+            newItem = newItems[0]
+            qgsDebug(f"newItem: {newItem}")
+
+            index = self.workingLayerComboBox.findText(newItem, Qt.MatchFixedString)
+            if index > 0:
+                self.workingLayerComboBox.setCurrentIndex(index)
+        else: 
+            # restore working layer if present
+            index = self.workingLayerComboBox.findText(currentActiveItem, Qt.MatchFixedString)
+            if index > 0:
+                self.workingLayerComboBox.setCurrentIndex(index)
 
     def expandTopLevel(self):
         """Exppand top level items in the tree view."""

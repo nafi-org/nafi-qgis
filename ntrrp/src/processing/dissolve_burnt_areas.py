@@ -18,21 +18,6 @@ class DissolveBurntAreas(QgsProcessingAlgorithm):
         self.addParameter(QgsProcessingParameterVectorLayer('BurntAreas', 'Burnt Areas', types=[QgsProcessing.TypeVectorPolygon], defaultValue=None))
         self.addParameter(QgsProcessingParameterFeatureSink('DissolvedBurntAreas', 'Dissolved Burnt Areas', type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, defaultValue=None))
 
-    def getParameters(self, shapefilePath):
-        """Create processing algorithm parameters given the shapefile associated with a working layer."""
-        assert isinstance(shapefilePath, Path), "Input to DissolveBurntAreas should be a Path value"
-        assert shapefilePath.exists(), "Input to DissolveBurntAreas must exist on the filesystem"
-
-        params = {
-            'FIELD': [''],
-            'INPUT': str(shapefilePath),
-            'OUTPUT': path.normpath(path.join(str(shapefilePath.parent),"output.shp"))
-        }
-
-        qgsDebug(str(params))
-
-        return params
-
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
         # overall progress through the model
@@ -41,7 +26,11 @@ class DissolveBurntAreas(QgsProcessingAlgorithm):
         outputs = {}
 
         # Dissolve
-        alg_params = self.getParameters(parameters["BurntAreas"])
+        alg_params = {
+            'FIELD': [''],
+            'INPUT': 'BurntAreas',
+            'OUTPUT': 'DissolvedBurntAreas'
+        }
         outputs['Dissolve'] = processing.run('native:dissolve', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
         results['DissolvedBurntAreas'] = outputs['Dissolve']['OUTPUT']
         return results

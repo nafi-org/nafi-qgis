@@ -9,9 +9,8 @@ import processing
 class AttributeBurntAreas(QgsProcessingAlgorithm):
 
     def initAlgorithm(self, config=None):
-        processing.ProcessingConfig.setSettingValue('IGNORE_INVALID_FEATURES', 0)
         self.addParameter(QgsProcessingParameterVectorLayer('BurntAreas', 'Burnt Areas', types=[QgsProcessing.TypeVectorPolygon], defaultValue=None))
-        self.addParameter(QgsProcessingParameterFeatureSink('DissolvedBurntAreas', 'Dissolved Burnt Areas', type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, defaultValue=None))
+        self.addParameter(QgsProcessingParameterFeatureSink('AttributedBurntAreas', 'Attributed Burnt Areas', type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, defaultValue=None))
 
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
@@ -24,10 +23,10 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
         alg_params = {
             'FIELD': [''],
             'INPUT': parameters['BurntAreas'],
-            'OUTPUT': parameters['DissolvedBurntAreas']
+            'OUTPUT': parameters['AttributedBurntAreas']
         }
         outputs['Dissolve'] = processing.run('native:dissolve', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
-        results['DissolvedBurntAreas'] = outputs['Dissolve']['OUTPUT']
+        results['AttributedBurntAreas'] = outputs['Dissolve']['OUTPUT']
         return results
 
     def name(self):
@@ -43,4 +42,4 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
         return ''
 
     def createInstance(self):
-        return BurntAreas()
+        return AttributeBurntAreas()

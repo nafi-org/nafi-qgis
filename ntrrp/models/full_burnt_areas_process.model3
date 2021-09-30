@@ -1,0 +1,196 @@
+<!DOCTYPE model>
+<Option type="Map">
+  <Option type="Map" name="children">
+    <Option type="Map" name="BurntAreas:AttributeBurntAreas_1">
+      <Option type="bool" value="true" name="active"/>
+      <Option name="alg_config"/>
+      <Option type="QString" value="BurntAreas:AttributeBurntAreas" name="alg_id"/>
+      <Option type="QString" value="" name="color"/>
+      <Option type="Map" name="comment">
+        <Option type="QString" value="" name="color"/>
+        <Option type="QString" value="" name="component_description"/>
+        <Option type="double" value="60" name="component_height"/>
+        <Option type="double" value="663.2" name="component_pos_x"/>
+        <Option type="double" value="436.6" name="component_pos_y"/>
+        <Option type="double" value="100" name="component_width"/>
+        <Option type="bool" value="true" name="outputs_collapsed"/>
+        <Option type="bool" value="true" name="parameters_collapsed"/>
+      </Option>
+      <Option type="QString" value="Attribute Burnt Areas" name="component_description"/>
+      <Option type="double" value="30" name="component_height"/>
+      <Option type="double" value="585" name="component_pos_x"/>
+      <Option type="double" value="285" name="component_pos_y"/>
+      <Option type="double" value="210" name="component_width"/>
+      <Option name="dependencies"/>
+      <Option type="QString" value="BurntAreas:AttributeBurntAreas_1" name="id"/>
+      <Option name="outputs"/>
+      <Option type="bool" value="true" name="outputs_collapsed"/>
+      <Option type="bool" value="true" name="parameters_collapsed"/>
+      <Option type="Map" name="params">
+        <Option type="List" name="BurntAreas">
+          <Option type="Map">
+            <Option type="QString" value="BurntAreas:DissolveBurntAreas_1" name="child_id"/>
+            <Option type="QString" value="DissolvedBurntAreas" name="output_name"/>
+            <Option type="int" value="1" name="source"/>
+          </Option>
+        </Option>
+      </Option>
+    </Option>
+    <Option type="Map" name="BurntAreas:DissolveBurntAreas_1">
+      <Option type="bool" value="true" name="active"/>
+      <Option name="alg_config"/>
+      <Option type="QString" value="BurntAreas:DissolveBurntAreas" name="alg_id"/>
+      <Option type="QString" value="" name="color"/>
+      <Option type="Map" name="comment">
+        <Option type="QString" value="" name="color"/>
+        <Option type="QString" value="" name="component_description"/>
+        <Option type="double" value="60" name="component_height"/>
+        <Option type="double" value="347.20000000000005" name="component_pos_x"/>
+        <Option type="double" value="107.80000000000001" name="component_pos_y"/>
+        <Option type="double" value="100" name="component_width"/>
+        <Option type="bool" value="true" name="outputs_collapsed"/>
+        <Option type="bool" value="true" name="parameters_collapsed"/>
+      </Option>
+      <Option type="QString" value="Dissolve Burnt Areas" name="component_description"/>
+      <Option type="double" value="30" name="component_height"/>
+      <Option type="double" value="359.99999999999994" name="component_pos_x"/>
+      <Option type="double" value="165" name="component_pos_y"/>
+      <Option type="double" value="180" name="component_width"/>
+      <Option name="dependencies"/>
+      <Option type="QString" value="BurntAreas:DissolveBurntAreas_1" name="id"/>
+      <Option name="outputs"/>
+      <Option type="bool" value="true" name="outputs_collapsed"/>
+      <Option type="bool" value="false" name="parameters_collapsed"/>
+      <Option type="Map" name="params">
+        <Option type="List" name="BurntAreas">
+          <Option type="Map">
+            <Option type="QString" value="ApprovedBurntAreas" name="parameter_name"/>
+            <Option type="int" value="0" name="source"/>
+          </Option>
+        </Option>
+      </Option>
+    </Option>
+    <Option type="Map" name="BurntAreas:RasteriseBurntAreas_1">
+      <Option type="bool" value="true" name="active"/>
+      <Option name="alg_config"/>
+      <Option type="QString" value="BurntAreas:RasteriseBurntAreas" name="alg_id"/>
+      <Option type="QString" value="" name="color"/>
+      <Option type="Map" name="comment">
+        <Option type="QString" value="" name="color"/>
+        <Option type="QString" value="" name="component_description"/>
+        <Option type="double" value="60" name="component_height"/>
+        <Option type="double" value="719.2" name="component_pos_x"/>
+        <Option type="double" value="118.20000000000002" name="component_pos_y"/>
+        <Option type="double" value="100" name="component_width"/>
+        <Option type="bool" value="true" name="outputs_collapsed"/>
+        <Option type="bool" value="true" name="parameters_collapsed"/>
+      </Option>
+      <Option type="QString" value="Rasterise Burnt Areas" name="component_description"/>
+      <Option type="double" value="30" name="component_height"/>
+      <Option type="double" value="570" name="component_pos_x"/>
+      <Option type="double" value="45" name="component_pos_y"/>
+      <Option type="double" value="180" name="component_width"/>
+      <Option name="dependencies"/>
+      <Option type="QString" value="BurntAreas:RasteriseBurntAreas_1" name="id"/>
+      <Option name="outputs"/>
+      <Option type="bool" value="true" name="outputs_collapsed"/>
+      <Option type="bool" value="true" name="parameters_collapsed"/>
+      <Option type="Map" name="params">
+        <Option type="List" name="BurntAreas">
+          <Option type="Map">
+            <Option type="QString" value="BurntAreas:DissolveBurntAreas_1" name="child_id"/>
+            <Option type="QString" value="DissolvedBurntAreas" name="output_name"/>
+            <Option type="int" value="1" name="source"/>
+          </Option>
+        </Option>
+      </Option>
+    </Option>
+    <Option type="Map" name="BurntAreas:UploadBurntAreas_1">
+      <Option type="bool" value="true" name="active"/>
+      <Option name="alg_config"/>
+      <Option type="QString" value="BurntAreas:UploadBurntAreas" name="alg_id"/>
+      <Option type="QString" value="" name="color"/>
+      <Option type="Map" name="comment">
+        <Option type="QString" value="" name="color"/>
+        <Option type="QString" value="" name="component_description"/>
+        <Option type="double" value="60" name="component_height"/>
+        <Option type="double" value="1073.6" name="component_pos_x"/>
+        <Option type="double" value="328.6" name="component_pos_y"/>
+        <Option type="double" value="100" name="component_width"/>
+        <Option type="bool" value="true" name="outputs_collapsed"/>
+        <Option type="bool" value="true" name="parameters_collapsed"/>
+      </Option>
+      <Option type="QString" value="Upload Burnt Areas" name="component_description"/>
+      <Option type="double" value="30" name="component_height"/>
+      <Option type="double" value="840" name="component_pos_x"/>
+      <Option type="double" value="165" name="component_pos_y"/>
+      <Option type="double" value="180" name="component_width"/>
+      <Option name="dependencies"/>
+      <Option type="QString" value="BurntAreas:UploadBurntAreas_1" name="id"/>
+      <Option name="outputs"/>
+      <Option type="bool" value="true" name="outputs_collapsed"/>
+      <Option type="bool" value="true" name="parameters_collapsed"/>
+      <Option type="Map" name="params">
+        <Option type="List" name="AttributedBurntAreas">
+          <Option type="Map">
+            <Option type="QString" value="BurntAreas:AttributeBurntAreas_1" name="child_id"/>
+            <Option type="QString" value="AttributedBurntAreas" name="output_name"/>
+            <Option type="int" value="1" name="source"/>
+          </Option>
+        </Option>
+        <Option type="List" name="RasterisedBurntAreas">
+          <Option type="Map">
+            <Option type="QString" value="BurntAreas:RasteriseBurntAreas_1" name="child_id"/>
+            <Option type="QString" value="RasterisedBurntAreas" name="output_name"/>
+            <Option type="int" value="1" name="source"/>
+          </Option>
+        </Option>
+      </Option>
+    </Option>
+  </Option>
+  <Option name="designerParameterValues"/>
+  <Option name="groupBoxes"/>
+  <Option name="help"/>
+  <Option name="modelVariables"/>
+  <Option type="QString" value="NAFI Burnt Areas Tools" name="model_group"/>
+  <Option type="QString" value="Full Burnt Areas Process" name="model_name"/>
+  <Option type="Map" name="parameterDefinitions">
+    <Option type="Map" name="ApprovedBurntAreas">
+      <Option type="List" name="data_types">
+        <Option type="int" value="2"/>
+      </Option>
+      <Option type="invalid" name="default"/>
+      <Option type="invalid" name="defaultGui"/>
+      <Option type="QString" value="Approved Burnt Areas" name="description"/>
+      <Option type="int" value="0" name="flags"/>
+      <Option type="QString" value="" name="help"/>
+      <Option name="metadata"/>
+      <Option type="QString" value="ApprovedBurntAreas" name="name"/>
+      <Option type="QString" value="vector" name="parameter_type"/>
+    </Option>
+  </Option>
+  <Option name="parameterOrder"/>
+  <Option type="Map" name="parameters">
+    <Option type="Map" name="ApprovedBurntAreas">
+      <Option type="QString" value="" name="color"/>
+      <Option type="Map" name="comment">
+        <Option type="QString" value="" name="color"/>
+        <Option type="QString" value="" name="component_description"/>
+        <Option type="double" value="60" name="component_height"/>
+        <Option type="double" value="297.6" name="component_pos_x"/>
+        <Option type="double" value="241.40000000000003" name="component_pos_y"/>
+        <Option type="double" value="100" name="component_width"/>
+        <Option type="bool" value="true" name="outputs_collapsed"/>
+        <Option type="bool" value="true" name="parameters_collapsed"/>
+      </Option>
+      <Option type="QString" value="ApprovedBurntAreas" name="component_description"/>
+      <Option type="double" value="30" name="component_height"/>
+      <Option type="double" value="135" name="component_pos_x"/>
+      <Option type="double" value="45" name="component_pos_y"/>
+      <Option type="double" value="210" name="component_width"/>
+      <Option type="QString" value="ApprovedBurntAreas" name="name"/>
+      <Option type="bool" value="true" name="outputs_collapsed"/>
+      <Option type="bool" value="true" name="parameters_collapsed"/>
+    </Option>
+  </Option>
+</Option>
