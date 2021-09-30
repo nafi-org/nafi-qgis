@@ -5,7 +5,9 @@ from pathlib import Path
 from qgis.core import QgsProcessing
 from qgis.core import QgsProcessingAlgorithm
 from qgis.core import QgsProcessingMultiStepFeedback
-from qgis.core import QgsProcessingParameterVectorLayer, QgsProcessingParameterFile
+from qgis.core import QgsProcessingParameterVectorLayer 
+from qgis.core import QgsProcessingParameterFile
+from qgis.core import QgsProcessingParameterFileDestination
 import processing
 
 from ..upload.client import Client
@@ -52,14 +54,14 @@ class UploadBurntAreas(QgsProcessingAlgorithm):
         archive = path.join(uploadDir, f"{archiveName}.zip")
 
         # try to upload the lot!
-        try:
-            client = Client(getNtrrpUploadUrl(), 1024)
-            client.upload_file(archive)
+        # try:
+        #     client = Client(getNtrrpUploadUrl(), 1024)
+        #     client.upload_file(archive)
 
-        except ProcessingException as err:
-            raise RuntimeError('script terminated due to processing errors...')
+        # except ProcessingException as err:
+        #     raise RuntimeError('script terminated due to processing errors...')
 
-        return {}
+        # return {}
                                     
 
     def name(self):

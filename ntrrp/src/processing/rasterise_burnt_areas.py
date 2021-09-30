@@ -26,10 +26,10 @@ class RasteriseBurntAreas(QgsProcessingAlgorithm):
         # Rasterize (vector to raster)
         alg_params = {
             'BURN': None,
-            #'DATA_TYPE': 0,
-            'EXTENT': parameters['BurntAreas'],
+            'DATA_TYPE': 5,
+            'EXTENT': '-180010.000000000,-177230.000000000,-1350650.000000000,-1348610.000000000 [EPSG:3577]',
             'EXTRA': '',
-            'FIELD': '',
+            'FIELD': 'FSID',
             'HEIGHT': 10,
             'INIT': None,
             'INPUT': parameters['BurntAreas'],
@@ -40,7 +40,8 @@ class RasteriseBurntAreas(QgsProcessingAlgorithm):
             'WIDTH': 10,
             'OUTPUT': parameters['RasterisedBurntAreas']
         }
-        outputs['RasterizeVectorToRaster'] = processing.run('gdal:rasterize', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+
+        outputs['RasterizeVectorToRaster'] = processing.run("gdal:rasterize", alg_params, context=context, feedback=feedback, is_child_algorithm=True)
         results['RasterisedBurntAreas'] = outputs['RasterizeVectorToRaster']['OUTPUT']
 
         # add a color table using GDAL
