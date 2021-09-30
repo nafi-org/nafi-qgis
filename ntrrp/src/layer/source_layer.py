@@ -14,8 +14,7 @@ class SourceLayer(QObject, AbstractLayer):
         super(QObject, self).__init__()
 
         self.shapefilePath = shapefilePath
-        self.impl = None
-
+        
         # Layer name will be similar to: T1T3_darwin_T20210827_T20210817_seg_sa1_t300
         segments = shapefilePath.stem.split("_")
         self.difference = segments[0]
@@ -27,6 +26,8 @@ class SourceLayer(QObject, AbstractLayer):
         # self.regionGroup = f"{self.region} Burnt Areas (Area {self.subArea})"
         self.differenceGroup = f"{self.difference} Differences ({self.startDate.strftime('%b %d')}–{self.endDate.strftime('%b %d')})"
 
+        self.load()
+
     def getSubGroupLayer(self, groupLayer):
         """Get or create the right dMIRBI difference layer group for an NTRRP data layer."""
 
@@ -36,9 +37,12 @@ class SourceLayer(QObject, AbstractLayer):
             subGroupLayer = groupLayer.findGroup(self.differenceGroup)
         return subGroupLayer
 
+    def load(self):
+        """Load the source layer."""
+        self.impl = QgsVectorLayer(self.shapefilePath.as_posix(), self.getMapLayerName(), "ogr")
+
     def addMapLayer(self, groupLayer):
         """Add an NTRRP data layer to the map."""
-        self.impl = QgsVectorLayer(self.shapefilePath.as_posix(), self.getMapLayerName(), "ogr")
         self.impl.willBeDeleted.connect(lambda: self.layerRemoved.emit(self))
         QgsProject.instance().addMapLayer(self.impl, False)
         

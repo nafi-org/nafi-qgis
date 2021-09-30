@@ -1,5 +1,6 @@
 import unittest
 
+import os
 import os.path as path
 
 from src.ntrrp_capabilities_reader import NtrrpCapabilitiesReader
@@ -7,7 +8,7 @@ from src.ntrrp_capabilities import NtrrpCapabilities
 from src.ntrrp_region import NtrrpRegion
 from src.utils import getNtrrpWmsUrl
 
-TEST_CAPS = path.normpath(path.join(path.dirname(__file__), "data", "test_caps.xml"))
+TEST_CAPS = path.normpath(path.join(path.dirname(__file__), os.pardir, os.pardir, "ntrrp_data", "test", "test_caps.xml"))
 
 class TestCapabilities(unittest.TestCase):
 
