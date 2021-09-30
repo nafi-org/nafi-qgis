@@ -2,10 +2,9 @@ from qgis.core import QgsProcessing
 from qgis.core import QgsProcessingAlgorithm
 from qgis.core import QgsProcessingMultiStepFeedback
 from qgis.core import QgsProcessingParameterVectorLayer, QgsProcessingParameterFile
-from qgis.core import QgsProcessingParameterFeatureSink
 import processing
 
-
+from ..utils import qgsDebug
 class UploadBurntAreas(QgsProcessingAlgorithm):
 
     def initAlgorithm(self, config=None):
@@ -20,14 +19,9 @@ class UploadBurntAreas(QgsProcessingAlgorithm):
         results = {}
         outputs = {}
 
-        # # Dissolve
-        # alg_params = {
-        #     'FIELD': [''],
-        #     'INPUT': parameters['BurntAreas'],
-        #     'OUTPUT': parameters['DissolvedBurntAreas']
-        # }
-        # outputs['Dissolve'] = processing.run('native:dissolve', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
-        # results['DissolvedBurntAreas'] = outputs['Dissolve']['OUTPUT']
+        qgsDebug(f"AttributedBurntAreas: {parameters['AttributedBurntAreas']}")
+        qgsDebug(f"RasterisedBurntAreas: {parameters['RasterisedBurntAreas']}")
+
         return results
 
     def name(self):

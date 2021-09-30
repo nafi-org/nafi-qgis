@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from qgis.core import QgsProcessing
 from qgis.core import QgsProcessingAlgorithm
 from qgis.core import QgsProcessingMultiStepFeedback
@@ -5,6 +7,8 @@ from qgis.core import QgsProcessingParameterVectorLayer
 from qgis.core import QgsProcessingParameterRasterDestination
 import processing
 
+from .color_table import addColorTable
+from ..utils import qgsDebug
 
 class RasteriseBurntAreas(QgsProcessingAlgorithm):
 
@@ -22,7 +26,7 @@ class RasteriseBurntAreas(QgsProcessingAlgorithm):
         # Rasterize (vector to raster)
         alg_params = {
             'BURN': None,
-            'DATA_TYPE': 0,
+            #'DATA_TYPE': 0,
             'EXTENT': parameters['BurntAreas'],
             'EXTRA': '',
             'FIELD': '',
@@ -38,6 +42,12 @@ class RasteriseBurntAreas(QgsProcessingAlgorithm):
         }
         outputs['RasterizeVectorToRaster'] = processing.run('gdal:rasterize', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
         results['RasterisedBurntAreas'] = outputs['RasterizeVectorToRaster']['OUTPUT']
+
+        # add a color table using GDAL
+        addColorTable(Path(results['RasterisedBurntAreas']))
+
+        qgsDebug(f"RasterisedBurntAreas: {results['RasterisedBurntAreas']}")
+
         return results
 
     def name(self):

@@ -9,7 +9,9 @@ from .ntrrp_dockwidget_base import Ui_NtrrpDockWidgetBase
 from .ntrrp_item import NtrrpItem
 from .ntrrp_region import NtrrpRegion
 from .ntrrp_tree_view_model import NtrrpTreeViewModel
-from .utils import getNtrrpWmsUrl, guiInformation, qgsDebug
+from .processing.upload import Upload
+from .utils import getNtrrpWmsUrl, getWorkingShapefilePath, guiInformation, qgsDebug
+
 
 class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
     closingPlugin = pyqtSignal()
@@ -63,7 +65,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         self.approveButton.clicked.connect(lambda: self.activeWorkingLayer.copySelectedFeaturesFromSourceLayer())
 
         # set up upload button
-        self.uploadButton.clicked.connect(lambda: guiInformation("Upload Burnt Areas feature still under construction!"))
+        self.uploadButton.clicked.connect(lambda: self.runUpload())
 
         self.activeSourceLayer = None
         self.activeWorkingLayer = None
@@ -244,6 +246,12 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
             if isinstance(modelNode, NtrrpItem):
                 self.region.addWmtsLayer(modelNode)
 
+    def runUpload(self):
+        """Convert the currently active working layer to a raster, attribute it and upload to NAFI."""
+
+        results = Upload.run(self.activeWorkingLayer.shapefilePath, 128, self.region.name, getWorkingShapefilePath())
+        qgsDebug(str(results))
+
     def enableDisable(self):
         "Enable or disable UI elements based on current state."
         haveSourceLayers = bool(self.region.sourceLayers and len(self.region.sourceLayers) > 0)
@@ -274,6 +282,10 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         if haveBoth:
             self.activeWorkingLayer.setSourceLayer(self.activeSourceLayer)
         self.approveButton.setEnabled(haveBoth)
+
+        # we can upload when we've got an active working layer (might need to check for features later)
+        haveWorkingLayer = bool(self.activeWorkingLayer)
+        self.uploadButton.setEnabled(haveWorkingLayer)
 
 
     def closeEvent(self, event):
