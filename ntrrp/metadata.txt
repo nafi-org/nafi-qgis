@@ -1,8 +1,8 @@
 [general]
-name=NT Risk Reduction Program
+name=NAFI Burnt Areas Mapping
 qgisMinimumVersion=3.8.1
-description=Northern Territory Risk Reduction Program (NTRRP) QGIS tools
-version=0.7.1
+description=NAFI Burnt Areas Mapping Tools
+version=0.8.0
 author=Tom Lynch
 email=tom@trailmarker.io
 about=QGIS tools to support agency users re-providing digitised burnt area features to NAFI for public dissemination. These tools would not normally be of use to members of the public or non-specialist users.
@@ -16,7 +16,10 @@ experimental=False
 deprecated=False
 category=Web
 server=False
-changelog=0.7.1
+changelog=0.8.0
+          - update plugin name from NTRRP to NAFI Burnt Areas Mapping
+          - install NAFI Burnt Areas Tools as QGIS processing algorithms in the toolbox
+          0.7.1
           - pre-package three styles to be auto-applied to source and approved layers
           - fix default region sorting
           0.7.0

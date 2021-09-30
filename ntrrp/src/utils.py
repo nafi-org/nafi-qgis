@@ -87,19 +87,19 @@ def resolveStylePath(styleName):
 
 def qgsDebug(message, level=Qgis.Info):
     """Print a debug message."""
-    QgsMessageLog.logMessage(message, tag="NT Risk Reduction Program", level=level)
+    QgsMessageLog.logMessage(message, tag="NAFI Burnt Areas Mapping", level=level)
 
 def guiInformation(message):
     """Show an info message box."""
-    QMessageBox.information(None, "NT Risk Reduction Program", message)
+    QMessageBox.information(None, "NAFI Burnt Areas Mapping", message)
 
 def guiError(message):
     """Show an error message box."""
-    QMessageBox.critical(None, "NT Risk Reduction Program", message)
+    QMessageBox.critical(None, "NAFI Burnt Areas Mapping", message)
 
 def guiWarning(message):
     """Show a warning message box."""
-    QMessageBox.warning(None, "NT Risk Reduction Program", message)
+    QMessageBox.warning(None, "NAFI Burnt Areas Mapping", message)
 
 def setDefaultProjectCrs(project):
     """Set the Project CRS to the default value of GDA94 geographic."""
@@ -116,14 +116,14 @@ def setDefaultProjectCrs(project):
 def connectionError(logMessage):
     """Raise a connection error."""
     error = (f"Error connecting to NAFI services!\n"
-             f"Check the QGIS NT Risk Reduction Program message log for details.")
+             f"Check the QGIS NAFI Burnt Areas Mapping message log for details.")
     guiError(error)
     qgsDebug(logMessage, Qgis.Critical)
 
 def capabilitiesError(errorString, capsXml):
     """Raise an error parsing the WMS capabilities file."""
     error = (f"Error parsing the retrieved NAFI WMS capabilities!\n"
-             f"Check the QGIS NT Risk Reduction Program message log for details.")
+             f"Check the QGIS NAFI Burnt Areas Mapping message log for details.")
     guiError(error)
     logMessage = f"NAFI WMS capabilities XML parse failure: {errorString}"
     qgsDebug(logMessage, Qgis.Critical)

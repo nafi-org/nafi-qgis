@@ -3,7 +3,7 @@
 /***************************************************************************
  NTRRP
                                  A QGIS plugin
- Northern Territory Risk Reduction Program
+ NAFI Burnt Areas Mapping
                              -------------------
         begin                : 2021-05-27
         copyright            : (C) 2020 by Tom Lynch

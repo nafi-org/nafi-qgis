@@ -162,7 +162,7 @@ class Ui_NtrrpDockWidgetBase(object):
         NtrrpDockWidgetBase.setToolTip(_translate("NtrrpDockWidgetBase", "NAFI Burnt Areas Mapping"))
         NtrrpDockWidgetBase.setWindowTitle(_translate("NtrrpDockWidgetBase", "NAFI Burnt Areas Mapping"))
         self.regionLabel.setText(_translate("NtrrpDockWidgetBase", "<html><head/><body><p><span style=\" font-weight:600;\">Current region</span></p></body></html>"))
-        self.aboutButton.setToolTip(_translate("NtrrpDockWidgetBase", "About NTRRP …"))
+        self.aboutButton.setToolTip(_translate("NtrrpDockWidgetBase", "About NAFI Burnt Areas Mapping …"))
         self.refreshButton.setToolTip(_translate("NtrrpDockWidgetBase", "Refresh Region Layers"))
         self.downloadButton.setToolTip(_translate("NtrrpDockWidgetBase", "Download Burnt Areas"))
         self.createButton.setToolTip(_translate("NtrrpDockWidgetBase", "Create Working Burnt Areas Layer"))
