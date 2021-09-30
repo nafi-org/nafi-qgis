@@ -2,10 +2,11 @@
 name=NAFI Burnt Areas Mapping
 qgisMinimumVersion=3.8.1
 description=NAFI Burnt Areas Mapping Tools
-version=0.8.0
+version=0.9.1
 author=Tom Lynch
 email=tom@trailmarker.io
-about=QGIS tools to support agency users re-providing digitised burnt area features to NAFI for public dissemination. These tools would not normally be of use to members of the public or non-specialist users.
+about=This plugin is part of a project to provide high resolution burnt area mapping in northern Australia through the active fire season.
+Acknowledgment: The development of the plugin was supported by a Northern Territory Government grant (NTRRP) though the National Risk Reduction Framework initiative. It initially was produced in partnership with Bushfires NT, NT Police, Fire & Emergency Services and the Darwin Centre for Bushfire Research to support strategic fuel reduction activities and emergency response for the greater Darwin and Katherine areas.
 tracker=https://github.com/nafi-org/nafi-qgis/issues
 repository=https://github.com/nafi-org/nafi-qgis
 hasProcessingProvider=no
@@ -16,7 +17,11 @@ experimental=False
 deprecated=False
 category=Web
 server=False
-changelog=0.8.0
+changelog=0.9.1
+          - update about text
+          - integrate upload client
+          - end-to-end burnt areas process
+          0.8.0
           - update plugin name from NTRRP to NAFI Burnt Areas Mapping
           - install NAFI Burnt Areas Tools as QGIS processing algorithms in the toolbox
           0.7.1
