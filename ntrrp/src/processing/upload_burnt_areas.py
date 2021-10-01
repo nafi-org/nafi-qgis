@@ -50,7 +50,7 @@ class UploadBurntAreas(QgsProcessingAlgorithm):
         shutil.copyfile(rasterisedBurntAreasPath, path.join(archiveDir, "rasterised.tif"))
         
         # make_archive appends a .zip as well
-        shutil.make_archive(archiveDir, "zip", uploadDir)
+        shutil.make_archive(archiveDir, "zip", archiveDir)
         archive = path.join(uploadDir, f"{archiveName}.zip")
 
         # try to upload the lot!

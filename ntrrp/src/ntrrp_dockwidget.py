@@ -248,7 +248,8 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
 
         fsid = randint(100, 200)
         results = Upload.run(self.activeWorkingLayer.impl, fsid, self.region.name, getWorkingShapefilePath())
-        guiInformation(results)
+        # print the archive location to a message box while we wait on upload
+        guiInformation(results['ArchiveLocation'])
 
     def enableDisable(self):
         "Enable or disable UI elements based on current state."
