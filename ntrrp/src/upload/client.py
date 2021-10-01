@@ -55,5 +55,5 @@ class Client:
                 return False
 
         except IOError:
-            raise ProcessingException('Unable to open file \'%s\'' % file_name)
+            raise ProcessingException('Unable to open file \'%s\'' % file_path)
 

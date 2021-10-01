@@ -11,7 +11,7 @@ import processing
 class AttributeBurntAreas(QgsProcessingAlgorithm):
 
     def initAlgorithm(self, config=None):
-        processing.ProcessingConfig.setSettingValue('IGNORE_INVALID_FEATURES', 0)
+        processing.ProcessingConfig.setSettingValue('IGNORE_INVALID_FEATURES', 1)
         self.addParameter(QgsProcessingParameterVectorLayer('DissolvedBurntAreas', 'Dissolved Burnt Areas', types=[QgsProcessing.TypeVectorPolygon], defaultValue=None))
         self.addParameter(QgsProcessingParameterNumber('FSID', 'FSID', type=QgsProcessingParameterNumber.Integer, minValue=0, defaultValue=None))
         self.addParameter(QgsProcessingParameterString('Region', 'Region', multiLine=False, defaultValue=None))

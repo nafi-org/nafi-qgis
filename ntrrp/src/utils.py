@@ -6,6 +6,7 @@ import random
 import string
 from pathlib import Path
 
+from qgis.utils import iface as QgsInterface
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsMessageLog, QgsProject, QgsSettings
 
@@ -138,3 +139,4 @@ def capabilitiesError(errorString, capsXml):
     qgsDebug(logMessage, Qgis.Critical)
     logMessage = f"NAFI WMS capabilities XML: {html.escape(capsXml)}"
     qgsDebug(logMessage, Qgis.Critical)
+

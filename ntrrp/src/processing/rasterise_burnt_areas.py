@@ -5,6 +5,7 @@ from qgis.core import QgsProcessingAlgorithm
 from qgis.core import QgsProcessingMultiStepFeedback
 from qgis.core import QgsProcessingParameterVectorLayer
 from qgis.core import QgsProcessingParameterRasterDestination
+from qgis.core import QgsProcessingParameterExtent
 import processing
 
 from .color_table import addColorTable
@@ -15,6 +16,8 @@ class RasteriseBurntAreas(QgsProcessingAlgorithm):
     def initAlgorithm(self, config=None):
         self.addParameter(QgsProcessingParameterVectorLayer('BurntAreas', 'Burnt Areas', types=[QgsProcessing.TypeVectorPolygon], defaultValue=None))
         self.addParameter(QgsProcessingParameterRasterDestination('RasterisedBurntAreas', 'Rasterised Burnt Areas', createByDefault=True, defaultValue=None))
+        self.addParameter(QgsProcessingParameterExtent('Extent', 'Extent', defaultValue=None))
+
 
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
@@ -26,18 +29,18 @@ class RasteriseBurntAreas(QgsProcessingAlgorithm):
         # Rasterize (vector to raster)
         alg_params = {
             'BURN': None,
-            'DATA_TYPE': 5,
-            'EXTENT': '-180010.000000000,-177230.000000000,-1350650.000000000,-1348610.000000000 [EPSG:3577]',
+            'DATA_TYPE': 0,     # Byte
+            'EXTENT': parameters['Extent'],
             'EXTRA': '',
             'FIELD': 'FSID',
-            'HEIGHT': 10,
+            'HEIGHT': 10,       # metres
             'INIT': None,
             'INPUT': parameters['BurntAreas'],
             'INVERT': False,
-            'NODATA': 0,
+            'NODATA': 0,        # 0 background is also NODATA
             'OPTIONS': '',
-            'UNITS': 1,
-            'WIDTH': 10,
+            'UNITS': 1,         # Georeferenced units
+            'WIDTH': 10,        # metres
             'OUTPUT': parameters['RasterisedBurntAreas']
         }
 
@@ -46,8 +49,6 @@ class RasteriseBurntAreas(QgsProcessingAlgorithm):
 
         # add a color table using GDAL
         addColorTable(Path(results['RasterisedBurntAreas']))
-
-        qgsDebug(f"RasterisedBurntAreas: {results['RasterisedBurntAreas']}")
 
         return results
 

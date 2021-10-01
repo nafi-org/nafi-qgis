@@ -61,7 +61,9 @@ class UploadBurntAreas(QgsProcessingAlgorithm):
         # except ProcessingException as err:
         #     raise RuntimeError('script terminated due to processing errors...')
 
-        # return {}
+        return {
+            'ArchiveLocation': archive
+        }
                                     
 
     def name(self):

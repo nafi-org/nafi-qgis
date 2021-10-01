@@ -5,7 +5,11 @@ from qgis.core import QgsProcessingParameterFeatureSink
 from qgis.core import QgsProcessingParameterVectorLayer
 from qgis.core import QgsProcessingParameterNumber
 from qgis.core import QgsProcessingParameterString
+from qgis.core import QgsProcessingParameterExtent
+
+
 import processing
+from ..utils import qgsDebug
 
 class FullBurntAreasProcess(QgsProcessingAlgorithm):
 
@@ -14,6 +18,7 @@ class FullBurntAreasProcess(QgsProcessingAlgorithm):
         self.addParameter(QgsProcessingParameterNumber('FSID', 'FSID', type=QgsProcessingParameterNumber.Integer, minValue=0, defaultValue=None))
         self.addParameter(QgsProcessingParameterString('Region', 'Region', multiLine=False, defaultValue=''))
         self.addParameter(QgsProcessingParameterString('Comments', 'Comments', multiLine=True, defaultValue=''))
+        self.addParameter(QgsProcessingParameterExtent('Extent', 'Extent', defaultValue=None))
         self.addParameter(QgsProcessingParameterFeatureSink('AttributedBurntAreas', 'Attributed Burnt Areas', type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, defaultValue=None))
 
     def processAlgorithm(self, parameters, context, model_feedback):
@@ -34,17 +39,6 @@ class FullBurntAreasProcess(QgsProcessingAlgorithm):
         if feedback.isCanceled():
             return {}
 
-        # Rasterise Burnt Areas
-        alg_params = {
-            'BurntAreas': outputs['DissolveBurntAreas']['DissolvedBurntAreas'],
-            'RasterisedBurntAreas': QgsProcessing.TEMPORARY_OUTPUT
-        }
-        outputs['RasteriseBurntAreas'] = processing.run('BurntAreas:RasteriseBurntAreas', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
-
-        feedback.setCurrentStep(2)
-        if feedback.isCanceled():
-            return {}
-
         # Attribute Burnt Areas
         alg_params = {
             'Comments': parameters['Comments'],
@@ -56,6 +50,19 @@ class FullBurntAreasProcess(QgsProcessingAlgorithm):
         outputs['AttributeBurntAreas'] = processing.run('BurntAreas:AttributeBurntAreas', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
 
         feedback.setCurrentStep(3)
+        if feedback.isCanceled():
+            return {} 
+
+        # Rasterise Burnt Areas
+        alg_params = {
+            'Extent': parameters['Extent'],
+            'BurntAreas': outputs['AttributeBurntAreas']['AttributedBurntAreas'],
+            'RasterisedBurntAreas': QgsProcessing.TEMPORARY_OUTPUT
+        }
+
+        outputs['RasteriseBurntAreas'] = processing.run('BurntAreas:RasteriseBurntAreas', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+
+        feedback.setCurrentStep(2)
         if feedback.isCanceled():
             return {}
 

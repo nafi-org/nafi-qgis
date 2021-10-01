@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from random import randint
+
 from qgis.PyQt import QtWidgets
 from qgis.PyQt.QtCore import pyqtSignal, QSortFilterProxyModel, Qt, QModelIndex
 from qgis.utils import iface as QgsInterface
@@ -197,14 +199,10 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
     def updateWorkingLayerComboBox(self, workingLayers):
         """Update the source layers."""
         currentActiveItem = self.workingLayerComboBox.currentText()
-        # qgsDebug(f"currentActiveItem: {currentActiveItem}")
         items = [workingLayer.getMapLayerName() for workingLayer in workingLayers]
-        items.insert(0, "")
-        # qgsDebug(f"items: {items}")
-      
+        items.insert(0, "")      
         
         oldItems = [self.workingLayerComboBox.itemText(i) for i in range(self.workingLayerComboBox.count())]
-        # qgsDebug(f"oldItems {oldItems}")
 
         self.workingLayerComboBox.clear()
         self.workingLayerComboBox.addItems(items)
@@ -213,7 +211,6 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         if len(items) > len(oldItems):
             newItems = list(set(items) - set(oldItems))
             newItem = newItems[0]
-            qgsDebug(f"newItem: {newItem}")
 
             index = self.workingLayerComboBox.findText(newItem, Qt.MatchFixedString)
             if index > 0:
@@ -249,8 +246,9 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
     def runUpload(self):
         """Convert the currently active working layer to a raster, attribute it and upload to NAFI."""
 
-        results = Upload.run(self.activeWorkingLayer.shapefilePath, 128, self.region.name, getWorkingShapefilePath())
-        qgsDebug(str(results))
+        fsid = randint(100, 200)
+        results = Upload.run(self.activeWorkingLayer.impl, fsid, self.region.name, getWorkingShapefilePath())
+        guiInformation(results)
 
     def enableDisable(self):
         "Enable or disable UI elements based on current state."
