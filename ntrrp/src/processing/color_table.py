@@ -1,5 +1,5 @@
 from pathlib import Path
-import gdal
+from osgeo import gdal
 
 def getColorTable(gdalDatasetPath):
     """Get the colour table from an image supported by GDAL."""
