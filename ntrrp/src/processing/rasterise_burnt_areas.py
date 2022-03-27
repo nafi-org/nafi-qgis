@@ -44,8 +44,22 @@ class RasteriseBurntAreas(QgsProcessingAlgorithm):
             'OUTPUT': parameters['RasterisedBurntAreas']
         }
 
-        outputs['RasterizeVectorToRaster'] = processing.run("gdal:rasterize", alg_params, context=context, feedback=feedback, is_child_algorithm=True)
-        results['RasterisedBurntAreas'] = outputs['RasterizeVectorToRaster']['OUTPUT']
+        rasterised_output = processing.run("gdal:rasterize", alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+
+        # Merge with current mapping
+        merge_params = {
+            'DATA_TYPE': 0,
+            'EXTRA': '',
+            'INPUT': [rasterised_output['OUTPUT'],'C:/Users/tom.lynch/dev/gaia/nafi-qgis/ntrrp_data/bfnt_darwin_current_sr3577.tif'],
+            'NODATA_INPUT': 0,
+            'NODATA_OUTPUT': 0,
+            'OPTIONS': '',
+            'PCT': False,
+            'SEPARATE': False,
+            'OUTPUT': parameters['RasterisedBurntAreas']
+        }
+        outputs['Merge'] = processing.run('gdal:merge', merge_params, context=context, feedback=feedback, is_child_algorithm=True)
+        results['RasterisedBurntAreas'] = outputs['Merge']['OUTPUT']
 
         # add a color table using GDAL
         addColorTable(Path(results['RasterisedBurntAreas']))

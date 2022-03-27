@@ -16,7 +16,7 @@ from ..utils import ensureDirectory, getNtrrpUploadUrl, getRandomFilename, getUp
 class UploadBurntAreas(QgsProcessingAlgorithm):
 
     def initAlgorithm(self, config=None):
-        processing.ProcessingConfig.setSettingValue('IGNORE_INVALID_FEATURES', 0)
+        processing.ProcessingConfig.setSettingValue('IGNORE_INVALID_FEATURES', 1)
         self.addParameter(QgsProcessingParameterVectorLayer('AttributedBurntAreas', 'Burnt Areas', types=[QgsProcessing.TypeVectorPolygon], defaultValue=None))
         self.addParameter(QgsProcessingParameterFile('RasterisedBurntAreas', 'Rasterised Burnt Areas', extension="tif", defaultValue=None))
 
