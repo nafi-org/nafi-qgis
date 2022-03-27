@@ -7,13 +7,17 @@ from qgis.core import QgsProcessingParameterString
 from qgis.core import QgsProcessingParameterVectorLayer
 import processing
 
+from ..ntrrp_fsid_service import NtrrpFsidService
+from ..utils import getNtrrpApiUrl, qgsDebug
 
 class AttributeBurntAreas(QgsProcessingAlgorithm):
+
+    nextFsid = -1
 
     def initAlgorithm(self, config=None):
         processing.ProcessingConfig.setSettingValue('IGNORE_INVALID_FEATURES', 1)
         self.addParameter(QgsProcessingParameterVectorLayer('DissolvedBurntAreas', 'Dissolved Burnt Areas', types=[QgsProcessing.TypeVectorPolygon], defaultValue=None))
-        self.addParameter(QgsProcessingParameterNumber('FSID', 'FSID', type=QgsProcessingParameterNumber.Integer, minValue=0, defaultValue=None))
+        # self.addParameter(QgsProcessingParameterNumber('FSID', 'FSID', type=QgsProcessingParameterNumber.Integer, minValue=0, defaultValue=None))
         self.addParameter(QgsProcessingParameterString('Region', 'Region', multiLine=False, defaultValue=None))
         self.addParameter(QgsProcessingParameterString('Comments', 'Comments', multiLine=True, defaultValue=None))
         self.addParameter(QgsProcessingParameterFeatureSink('AttributedBurntAreas', 'Attributed Burnt Areas', type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, defaultValue=None))
@@ -31,13 +35,18 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
         # Curent – enter “yes” for the latest mapping for an area.
         # Comments – add any other additional information about a mapping period – ie note mapping problems due to cloud.
 
+        # Get the next available FSID
+        self.fsidService = NtrrpFsidService()
+        self.fsidService.fsidsParsed.connect(lambda fsids: self.calculateNextFsid(fsids))
+        self.fsidService.downloadAndParseFsids(getNtrrpApiUrl(), f'{parameters["Region"]}')
+
         # add FSID
         alg_params = {
             'FIELD_LENGTH': 10,
             'FIELD_NAME': 'FSID',
             'FIELD_PRECISION': 0,
             'FIELD_TYPE': 0,
-            'FORMULA': f'value = {parameters["FSID"]}', # hack to apply calculator from number input
+            'FORMULA': f'value = {self.nextFsid}', # hack to apply calculator from number input
             'GLOBAL': '',
             'INPUT': parameters['DissolvedBurntAreas'],
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
@@ -124,6 +133,16 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
     
         results['AttributedBurntAreas'] = outputs['AddComments']['OUTPUT']
         return results
+    
+    def calculateNextFsid(self, fsids):
+        qgsDebug("In calculateNextFsid")
+
+        fsids.sort(key=lambda x: int(x.fsid), reverse=True)
+        lastFsid = int(fsids[0].fsid)
+
+        self.nextFsid = lastFsid + 1
+        qgsDebug(f"nextFsid {self.nextFsid}")
+
 
     def name(self):
         return 'AttributeBurntAreas'

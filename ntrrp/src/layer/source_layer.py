@@ -22,7 +22,13 @@ class SourceLayer(QObject, AbstractLayer):
         self.endDate = dateutil.parser.parse(segments[2])
         self.startDate = dateutil.parser.parse(segments[3])
         self.subArea = segments[5][2:]
-        self.threshold = segments[6][1:]
+
+        # Patrice has started adding files with no threshold in the name
+        if len(segments) > 6:
+            self.threshold = segments[6][1:]
+        else:
+            self.threshold = 0
+
         # self.regionGroup = f"{self.region} Burnt Areas (Area {self.subArea})"
         self.differenceGroup = f"{self.difference} Differences ({self.startDate.strftime('%b %d')}–{self.endDate.strftime('%b %d')})"
 

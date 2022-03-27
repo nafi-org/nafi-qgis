@@ -15,7 +15,7 @@ class FullBurntAreasProcess(QgsProcessingAlgorithm):
 
     def initAlgorithm(self, config=None):
         self.addParameter(QgsProcessingParameterVectorLayer('ApprovedBurntAreas', 'Approved Burnt Areas', types=[QgsProcessing.TypeVectorPolygon], defaultValue=None))
-        self.addParameter(QgsProcessingParameterNumber('FSID', 'FSID', type=QgsProcessingParameterNumber.Integer, minValue=0, defaultValue=None))
+        # self.addParameter(QgsProcessingParameterNumber('FSID', 'FSID', type=QgsProcessingParameterNumber.Integer, minValue=0, defaultValue=None))
         self.addParameter(QgsProcessingParameterString('Region', 'Region', multiLine=False, defaultValue=''))
         self.addParameter(QgsProcessingParameterString('Comments', 'Comments', multiLine=True, defaultValue=''))
         self.addParameter(QgsProcessingParameterExtent('Extent', 'Extent', defaultValue=None))
@@ -43,7 +43,7 @@ class FullBurntAreasProcess(QgsProcessingAlgorithm):
         alg_params = {
             'Comments': parameters['Comments'],
             'DissolvedBurntAreas': outputs['DissolveBurntAreas']['DissolvedBurntAreas'],
-            'FSID': parameters['FSID'],
+            # 'FSID': parameters['FSID'],
             'Region': parameters['Region'],
             'AttributedBurntAreas': QgsProcessing.TEMPORARY_OUTPUT
         }

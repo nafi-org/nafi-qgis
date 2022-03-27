@@ -2,7 +2,7 @@
 from random import randint
 
 from qgis.PyQt import QtWidgets
-from qgis.PyQt.QtCore import pyqtSignal, QSortFilterProxyModel, Qt, QModelIndex
+from qgis.PyQt.QtCore import QModelIndex, QSortFilterProxyModel, Qt, pyqtSignal
 from qgis.utils import iface as QgsInterface
 
 from .ntrrp_about_dialog import NtrrpAboutDialog
@@ -12,7 +12,8 @@ from .ntrrp_item import NtrrpItem
 from .ntrrp_region import NtrrpRegion
 from .ntrrp_tree_view_model import NtrrpTreeViewModel
 from .processing.upload import Upload
-from .utils import getNtrrpWmsUrl, getWorkingShapefilePath, guiInformation, qgsDebug
+from .utils import (getNtrrpWmsUrl, getWorkingShapefilePath, guiInformation,
+                    qgsDebug)
 
 
 class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
@@ -83,7 +84,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
 
         # initialise proxied tree view model from WMS contents
         self.loadNtrrpWms()
-
+            
     def loadNtrrpWms(self):
         """Load the NAFI WMS and additional layers."""
         self.wmsUrl = getNtrrpWmsUrl()

@@ -14,7 +14,6 @@ from ..utils import qgsDebug
 class DissolveBurntAreas(QgsProcessingAlgorithm):
 
     def initAlgorithm(self, config=None):
-        processing.ProcessingConfig.setSettingValue('IGNORE_INVALID_FEATURES', 1)
         self.addParameter(QgsProcessingParameterVectorLayer('BurntAreas', 'Burnt Areas', types=[QgsProcessing.TypeVectorPolygon], defaultValue=None))
         self.addParameter(QgsProcessingParameterFeatureSink('DissolvedBurntAreas', 'Dissolved Burnt Areas', type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, defaultValue=None))
 
@@ -31,6 +30,8 @@ class DissolveBurntAreas(QgsProcessingAlgorithm):
             'INPUT': parameters['BurntAreas'],
             'OUTPUT': parameters['DissolvedBurntAreas']
         }
+        processing.ProcessingConfig.setSettingValue('IGNORE_INVALID_FEATURES', 1)
+
         outputs['Dissolve'] = processing.run('native:dissolve', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
         results['DissolvedBurntAreas'] = outputs['Dissolve']['OUTPUT']
         return results
