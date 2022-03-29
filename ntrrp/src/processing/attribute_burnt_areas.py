@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from qgis.core import QgsProcessing
 from qgis.core import QgsProcessingAlgorithm
 from qgis.core import QgsProcessingMultiStepFeedback
@@ -10,17 +11,23 @@ import processing
 from ..ntrrp_fsid_service import NtrrpFsidService
 from ..utils import getNtrrpApiUrl, qgsDebug
 
+
 class AttributeBurntAreas(QgsProcessingAlgorithm):
 
     nextFsid = -1
 
     def initAlgorithm(self, config=None):
-        processing.ProcessingConfig.setSettingValue('IGNORE_INVALID_FEATURES', 1)
-        self.addParameter(QgsProcessingParameterVectorLayer('DissolvedBurntAreas', 'Dissolved Burnt Areas', types=[QgsProcessing.TypeVectorPolygon], defaultValue=None))
+        processing.ProcessingConfig.setSettingValue(
+            'IGNORE_INVALID_FEATURES', 1)
+        self.addParameter(QgsProcessingParameterVectorLayer('DissolvedBurntAreas', 'Dissolved Burnt Areas', types=[
+                          QgsProcessing.TypeVectorPolygon], defaultValue=None))
         # self.addParameter(QgsProcessingParameterNumber('FSID', 'FSID', type=QgsProcessingParameterNumber.Integer, minValue=0, defaultValue=None))
-        self.addParameter(QgsProcessingParameterString('Region', 'Region', multiLine=False, defaultValue=None))
-        self.addParameter(QgsProcessingParameterString('Comments', 'Comments', multiLine=True, defaultValue=None))
-        self.addParameter(QgsProcessingParameterFeatureSink('AttributedBurntAreas', 'Attributed Burnt Areas', type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, defaultValue=None))
+        self.addParameter(QgsProcessingParameterString(
+            'Region', 'Region', multiLine=False, defaultValue=None))
+        self.addParameter(QgsProcessingParameterString(
+            'Comments', 'Comments', multiLine=True, defaultValue=None))
+        self.addParameter(QgsProcessingParameterFeatureSink('AttributedBurntAreas', 'Attributed Burnt Areas',
+                          type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, defaultValue=None))
 
     def processAlgorithm(self, parameters, context, model_feedback):
         feedback = QgsProcessingMultiStepFeedback(1, model_feedback)
@@ -37,8 +44,10 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
 
         # Get the next available FSID
         self.fsidService = NtrrpFsidService()
-        self.fsidService.fsidsParsed.connect(lambda fsids: self.calculateNextFsid(fsids))
-        self.fsidService.downloadAndParseFsids(getNtrrpApiUrl(), f'{parameters["Region"]}')
+        self.fsidService.fsidsParsed.connect(
+            lambda fsids: self.calculateNextFsid(fsids))
+        self.fsidService.downloadAndParseFsids(
+            getNtrrpApiUrl(), f'{parameters["Region"]}')
 
         # add FSID
         alg_params = {
@@ -46,13 +55,15 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
             'FIELD_NAME': 'FSID',
             'FIELD_PRECISION': 0,
             'FIELD_TYPE': 0,
-            'FORMULA': f'value = {self.nextFsid}', # hack to apply calculator from number input
+            # hack to apply calculator from number input
+            'FORMULA': f'value = {self.nextFsid}',
             'GLOBAL': '',
             'INPUT': parameters['DissolvedBurntAreas'],
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
         }
-        outputs['AddFSID'] = processing.run('qgis:advancedpythonfieldcalculator', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
-        
+        outputs['AddFSID'] = processing.run(
+            'qgis:advancedpythonfieldcalculator', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+
         # add Mapping Period
         alg_params = {
             'FIELD_LENGTH': 100,
@@ -64,7 +75,8 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
             'INPUT': outputs['AddFSID']['OUTPUT'],
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
         }
-        outputs['AddMappingPeriod'] = processing.run('qgis:advancedpythonfieldcalculator', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+        outputs['AddMappingPeriod'] = processing.run(
+            'qgis:advancedpythonfieldcalculator', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
 
         # add Month
         alg_params = {
@@ -77,8 +89,9 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
             'INPUT': outputs['AddMappingPeriod']['OUTPUT'],
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
         }
-        outputs['AddMonth'] = processing.run('qgis:advancedpythonfieldcalculator', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
-    
+        outputs['AddMonth'] = processing.run(
+            'qgis:advancedpythonfieldcalculator', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+
         # add Region
         alg_params = {
             'FIELD_LENGTH': 100,
@@ -90,8 +103,9 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
             'INPUT': outputs['AddMonth']['OUTPUT'],
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
         }
-        outputs['AddRegion'] = processing.run('qgis:advancedpythonfieldcalculator', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
-    
+        outputs['AddRegion'] = processing.run(
+            'qgis:advancedpythonfieldcalculator', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+
         # add Upload Date
         alg_params = {
             'FIELD_LENGTH': 100,
@@ -103,8 +117,9 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
             'INPUT': outputs['AddRegion']['OUTPUT'],
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
         }
-        outputs['AddUploadDate'] = processing.run('qgis:advancedpythonfieldcalculator', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
-    
+        outputs['AddUploadDate'] = processing.run(
+            'qgis:advancedpythonfieldcalculator', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+
         # add Current
         alg_params = {
             'FIELD_LENGTH': 10,
@@ -116,8 +131,9 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
             'INPUT': outputs['AddUploadDate']['OUTPUT'],
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
         }
-        outputs['AddCurrent'] = processing.run('qgis:advancedpythonfieldcalculator', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
-    
+        outputs['AddCurrent'] = processing.run(
+            'qgis:advancedpythonfieldcalculator', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+
         # add Comments
         alg_params = {
             'FIELD_LENGTH': 10,
@@ -129,11 +145,12 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
             'INPUT': outputs['AddCurrent']['OUTPUT'],
             'OUTPUT': parameters['AttributedBurntAreas'],
         }
-        outputs['AddComments'] = processing.run('qgis:advancedpythonfieldcalculator', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
-    
+        outputs['AddComments'] = processing.run(
+            'qgis:advancedpythonfieldcalculator', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+
         results['AttributedBurntAreas'] = outputs['AddComments']['OUTPUT']
         return results
-    
+
     def calculateNextFsid(self, fsids):
         qgsDebug("In calculateNextFsid")
 
@@ -142,7 +159,6 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
 
         self.nextFsid = lastFsid + 1
         qgsDebug(f"nextFsid {self.nextFsid}")
-
 
     def name(self):
         return 'AttributeBurntAreas'

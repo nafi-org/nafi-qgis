@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import unittest
 
 import gdal
@@ -10,9 +11,13 @@ from src.processing.dissolve_burnt_areas import DissolveBurntAreas
 from src.processing.attribute_burnt_areas import AttributeBurntAreas
 from src.processing.rasterise_burnt_areas import RasteriseBurntAreas
 
-TEST_TIF = Path(path.normpath(path.join(path.dirname(__file__), os.pardir, os.pardir, "ntrrp_data", "test", "FSDRW_current_sr3577.tif")))
-TEST_APPROVED = Path(path.normpath(path.join(path.dirname(__file__), os.pardir, os.pardir, "ntrrp_data", "test", "test_working", "approved.shp")))
-NTRRP_DATA = path.normpath(path.join(path.dirname(__file__), os.pardir, os.pardir, "ntrrp_data"))
+TEST_TIF = Path(path.normpath(path.join(path.dirname(__file__), os.pardir,
+                os.pardir, "ntrrp_data", "test", "FSDRW_current_sr3577.tif")))
+TEST_APPROVED = Path(path.normpath(path.join(path.dirname(
+    __file__), os.pardir, os.pardir, "ntrrp_data", "test", "test_working", "approved.shp")))
+NTRRP_DATA = path.normpath(path.join(path.dirname(
+    __file__), os.pardir, os.pardir, "ntrrp_data"))
+
 
 class TestProcess(unittest.TestCase):
 
@@ -23,7 +28,8 @@ class TestProcess(unittest.TestCase):
         self.assertEqual(table, FIRESCAR_COLOR_TABLE)
 
     def test_approvedExists(self):
-        self.assertTrue(TEST_APPROVED.exists(), "Sample approved features path is incorrect!")
+        self.assertTrue(TEST_APPROVED.exists(),
+                        "Sample approved features path is incorrect!")
 
     # def test_dissolveBurntAreas(self):
     #     # evaluate

@@ -1,4 +1,4 @@
-
+# -*- coding: utf-8 -*-
 from qgis.PyQt.QtCore import QObject, pyqtSignal
 from qgis.core import QgsProject
 
@@ -9,15 +9,13 @@ from .layer.working_layer import WorkingLayer
 from .ntrrp_item import NtrrpItem
 from .utils import getNtrrpDataUrl, guiWarning, qgsDebug
 
-from pathlib import Path
-
 class NtrrpRegion(QObject):
     # emit this signal when the downloaded data layers are changed
     sourceLayersChanged = pyqtSignal(list)
 
     # emit this signal when the remote WMTS layers are changed
     ntrrpItemsChanged = pyqtSignal()
-    
+
     # emit this signal when working layers are changed
     workingLayersChanged = pyqtSignal(list)
 
@@ -36,16 +34,18 @@ class NtrrpRegion(QObject):
     # arrange data
     def getNtrrpItems(self):
         """Return a set of NtrrpItem objects corresponding to this region's layers."""
-        items = [NtrrpItem(self.wmsUrl, owsLayer) for owsLayer in self.owsLayers]
+        items = [NtrrpItem(self.wmsUrl, owsLayer)
+                 for owsLayer in self.owsLayers]
         for item in items:
-            item.itemLayer.layerAdded.connect(lambda _: self.ntrrpItemsChanged.emit())
-            item.itemLayer.layerRemoved.connect(lambda _: self.ntrrpItemsChanged.emit())
+            item.itemLayer.layerAdded.connect(
+                lambda _: self.ntrrpItemsChanged.emit())
+            item.itemLayer.layerRemoved.connect(
+                lambda _: self.ntrrpItemsChanged.emit())
         return items
-    
+
     def getDataUrl(self):
         """Get the distinctive URL used for the data layers for this region."""
-        # return f"{getNtrrpDataUrl()}/{self.name.lower()}/{self.name.lower()}.zip"
-        return f"{getNtrrpDataUrl()}/{self.name.lower()}/area1.zip"
+        return f"{getNtrrpDataUrl()}/{self.name.lower()}/{self.name.lower()}.zip"
 
     def getCurrentMappingDataUrl(self):
         """Get the current mapping data URL for the given region."""
@@ -55,14 +55,16 @@ class NtrrpRegion(QObject):
         """Download current mapping for the region."""
         qgsDebug("Downloading current mapping …")
         currentMappingClient = NtrrpDataClient()
-        currentMappingClient.dataDownloaded.connect(lambda unzipLocation: self.addCurrentMappingLayer(unzipLocation))
+        currentMappingClient.dataDownloaded.connect(
+            lambda unzipLocation: self.addCurrentMappingLayer(unzipLocation))
         currentMappingClient.downloadData(self.getCurrentMappingDataUrl())
 
     def downloadData(self):
         """Download burnt areas features from NAFI and call back to add them to the map."""
         qgsDebug("Downloading data …")
         client = NtrrpDataClient()
-        client.dataDownloaded.connect(lambda unzipLocation: self.addSourceLayers(unzipLocation))
+        client.dataDownloaded.connect(
+            lambda unzipLocation: self.addSourceLayers(unzipLocation))
         client.downloadData(self.getDataUrl())
 
     # add things to the map
@@ -77,13 +79,15 @@ class NtrrpRegion(QObject):
 
     def getWorkingLayerByName(self, workingLayerName):
         """Retrieve a current source layer by its display name."""
-        matches = [layer for layer in self.workingLayers if layer.getMapLayerName() == workingLayerName]
+        matches = [layer for layer in self.workingLayers if layer.getMapLayerName(
+        ) == workingLayerName]
         return next(iter(matches), None)
 
     def createWorkingLayer(self, templateSourceLayer):
         """Create a new working layer for this region."""
         workingLayer = WorkingLayer(templateSourceLayer)
-        workingLayer.layerRemoved.connect(lambda layer: self.removeWorkingLayer(layer))
+        workingLayer.layerRemoved.connect(
+            lambda layer: self.removeWorkingLayer(layer))
         self.workingLayers.append(workingLayer)
         workingLayer.addMapLayer(self.getSubGroupLayer())
         self.workingLayersChanged.emit(self.workingLayers)
@@ -95,7 +99,8 @@ class NtrrpRegion(QObject):
 
     def getSourceLayerByDisplayName(self, sourceLayerName):
         """Retrieve a current source layer by its display name."""
-        matches = [layer for layer in self.sourceLayers if layer.getDisplayName() == sourceLayerName]
+        matches = [
+            layer for layer in self.sourceLayers if layer.getDisplayName() == sourceLayerName]
         return next(iter(matches), None)
 
     def addCurrentMappingLayer(self, unzipLocation):
@@ -105,10 +110,12 @@ class NtrrpRegion(QObject):
 
     def addSourceLayers(self, unzipLocation):
         """Add all shapefiles in a directory as data layers to the region group."""
-        self.sourceLayers = [SourceLayer(path) for path in unzipLocation.rglob("*.shp")]
+        self.sourceLayers = [SourceLayer(path)
+                             for path in unzipLocation.rglob("*.shp")]
 
         for sourceLayer in self.sourceLayers:
-            sourceLayer.layerRemoved.connect(lambda layer: self.removeSourceLayer(layer))
+            sourceLayer.layerRemoved.connect(
+                lambda layer: self.removeSourceLayer(layer))
             sourceLayer.addMapLayer(self.getSubGroupLayer())
 
         self.sourceLayersChanged.emit(self.sourceLayers)

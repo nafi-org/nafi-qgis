@@ -1,17 +1,12 @@
 # -*- coding: utf-8 -*-
 import json
-import re
-from collections import OrderedDict
 
-from owslib.etree import etree
-from owslib.map.wms111 import ContentMetadata
 from qgis.core import QgsBlockingNetworkRequest
 from qgis.PyQt.QtCore import QObject, QUrl, pyqtSignal
 from qgis.PyQt.QtNetwork import QNetworkReply, QNetworkRequest, QSslSocket
 
-from .ntrrp_capabilities import NtrrpCapabilities
 from .ntrrp_fsid_record import NtrrpFsidRecord
-from .utils import capabilitiesError, connectionError, fsidsError, qgsDebug
+from .utils import connectionError, fsidsError, qgsDebug
 
 
 class NtrrpFsidService(QObject):
@@ -77,14 +72,10 @@ class NtrrpFsidService(QObject):
     def downloadAndParseFsids(self, apiBaseUrl, regionName):
         """Download, then parse FSID data."""
 
-        qgsDebug("Downloading FSIDs")
+        qgsDebug("Accessing FSID service …")
 
         fsidsJson = self.downloadFsids(apiBaseUrl, regionName)
 
-        qgsDebug(f"Got FSIDs {fsidsJson}")
-
-        qgsDebug("Parsing FSIDs")
+        qgsDebug("Parsing FSIDs …")
 
         return (fsidsJson and self.parseFsids(fsidsJson))
-
-

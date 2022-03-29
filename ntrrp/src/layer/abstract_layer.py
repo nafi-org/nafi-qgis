@@ -4,9 +4,11 @@ from abc import ABC, ABCMeta, abstractmethod
 from qgis.PyQt.QtCore import pyqtSignal, QObject
 from qgis.core import QgsMapLayer, QgsProject
 
+
 class AbstractQObjectMeta(ABCMeta, type(QObject)):
     """Metaclass to manage the requirement that things with signals be QObjects."""
     pass
+
 
 class AbstractLayer(ABC, metaclass=AbstractQObjectMeta):
     """Abstract base class for burnt areas layers."""
@@ -30,7 +32,7 @@ class AbstractLayer(ABC, metaclass=AbstractQObjectMeta):
         """Get an appropriate map layer name for this layer."""
         pass
 
-    def getMapLayer(self, groupLayer = None):
+    def getMapLayer(self, groupLayer=None):
         """Get the QGIS map layer corresponding to this layer, if any."""
         # TODO might be aliased
         matches = QgsProject.instance().mapLayersByName(self.getMapLayerName())
@@ -39,4 +41,3 @@ class AbstractLayer(ABC, metaclass=AbstractQObjectMeta):
             return None
         elif len(matches) >= 1:
             return matches[0]
-

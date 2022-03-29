@@ -1,5 +1,4 @@
-import json
-
+# -*- coding: utf-8 -*-
 class NtrrpFsidRecord:
     def __init__(self, fsidJson):
         """Constructor."""
@@ -95,5 +94,3 @@ class NtrrpFsidRecord:
 #     "comment": ""
 #   }
 # ]
-
-

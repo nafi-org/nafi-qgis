@@ -35,6 +35,7 @@ from .resources_rc import *
 from .src.ntrrp_dockwidget import NtrrpDockWidget
 from .src.ntrrp_provider import NtrrpProvider
 
+
 class Ntrrp:
     """QGIS Plugin Implementation."""
 
@@ -83,8 +84,8 @@ class Ntrrp:
         self.pluginIsActive = False
         self.dockwidget = None
 
-
     # noinspection PyMethodMayBeStatic
+
     def tr(self, message):
         """Get the translation for a string using Qt translation API."""
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
@@ -96,16 +97,16 @@ class Ntrrp:
         QgsApplication.processingRegistry().addProvider(self.provider)
 
     def addAction(
-        self,
-        icon_path,
-        text,
-        callback,
-        enabled_flag=True,
-        add_to_menu=True,
-        add_to_toolbar=True,
-        status_tip=None,
-        whats_this=None,
-        parent=None):
+            self,
+            icon_path,
+            text,
+            callback,
+            enabled_flag=True,
+            add_to_menu=True,
+            add_to_toolbar=True,
+            status_tip=None,
+            whats_this=None,
+            parent=None):
         """Add a toolbar icon to the toolbar.
 
         :param icon_path: Path to the icon for this action. Can be a resource
@@ -168,7 +169,6 @@ class Ntrrp:
 
         return action
 
-
     def initGui(self):
         """Create the the objects inside the QGIS GUI."""
         self.initProcessing()
@@ -193,7 +193,6 @@ class Ntrrp:
 
         self.pluginIsActive = False
 
-
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
 
@@ -205,11 +204,11 @@ class Ntrrp:
                 self.tr(u'&NAFI Burnt Areas Mapping'),
                 action)
             self.iface.removeToolBarIcon(action)
-        
+
         # remove the toolbar
         del self.toolbar
 
-    #--------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
 
     def run(self):
         """Run method that loads and starts the plugin"""

@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 from qgis.PyQt.QtCore import pyqtSignal, Qt
-from qgis.PyQt.QtGui import QIcon, QStandardItem 
+from qgis.PyQt.QtGui import QIcon, QStandardItem
 
 from qgis.core import QgsMapLayer
 
 from .layer.wmts_layer import WmtsLayer
 from .ows_utils import parseNtrrpLayerDescription, parseNtrrpLayerRegion
-from .utils import qgsDebug
 
 class NtrrpItem(QStandardItem):
 
@@ -15,7 +14,7 @@ class NtrrpItem(QStandardItem):
         super(QStandardItem, self).__init__()
 
         self.toggleOff()
-        
+
         # assemble some properties
         self.region = parseNtrrpLayerRegion(owsLayer)
         self.description = parseNtrrpLayerDescription(owsLayer)
@@ -42,4 +41,3 @@ class NtrrpItem(QStandardItem):
 
     def toggleOff(self):
         self.setIcon(QIcon(":/plugins/ntrrp/images/globe.png"))
-

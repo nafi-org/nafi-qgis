@@ -10,21 +10,23 @@ from .abstract_layer import AbstractLayer
 from .source_layer import SourceLayer
 from ..utils import ensureDirectory, getWorkingShapefilePath, guiError, resolveStylePath
 
-class WorkingLayer(QObject, AbstractLayer):
 
+class WorkingLayer(QObject, AbstractLayer):
 
     def __init__(self, templateSourceLayer):
         """Constructor."""
         super(QObject, self).__init__()
 
         self.index = 0
-        self.impl = QgsVectorLayer("Polygon?crs=epsg:3577", self.getMapLayerName(), "memory")
+        self.impl = QgsVectorLayer(
+            "Polygon?crs=epsg:3577", self.getMapLayerName(), "memory")
         self.shapefilePath = getWorkingShapefilePath()
 
         # templateSourceLayer sets initial attributes
         if templateSourceLayer is not None:
             sourceImpl = templateSourceLayer.impl
-            fields = [sourceImpl.fields()[index] for index in sourceImpl.fields().allAttributesList()]
+            fields = [sourceImpl.fields()[index]
+                      for index in sourceImpl.fields().allAttributesList()]
             self.impl.dataProvider().addAttributes(fields)
             self.impl.updateFields()
 
@@ -39,7 +41,8 @@ class WorkingLayer(QObject, AbstractLayer):
     def save(self):
         """Write the content of this layer to a shapefile."""
         ensureDirectory(Path(self.shapefilePath).parent)
-        QgsVectorFileWriter.writeAsVectorFormat(self.impl, self.shapefilePath, "utf-8", driverName="ESRI Shapefile")
+        QgsVectorFileWriter.writeAsVectorFormat(
+            self.impl, self.shapefilePath, "utf-8", driverName="ESRI Shapefile")
 
     def copySelectedFeaturesFromSourceLayer(self):
         """Add the currently selected features in the source layer to this working layer."""
@@ -85,18 +88,22 @@ class WorkingLayer(QObject, AbstractLayer):
     def getUniqueMapLayerName(self, groupLayer):
         if groupLayer is None:
             groupLayer = QgsProject.instance().layerTreeRoot()
-        
+
         existingMapLayers = QgsProject.instance().mapLayersByName(self.getMapLayerName())
-        existingDisplayLayers = [groupLayer.findLayer(layer) for layer in existingMapLayers]
-        existingDisplayLayers = [layer for layer in existingDisplayLayers if layer is not None]
+        existingDisplayLayers = [groupLayer.findLayer(
+            layer) for layer in existingMapLayers]
+        existingDisplayLayers = [
+            layer for layer in existingDisplayLayers if layer is not None]
 
         while len(existingDisplayLayers) > 0:
             self.index += 1
             # qgsDebug(str(existingDisplayLayers))
             # qgsDebug(self.getMapLayerName())
             existingMapLayers = QgsProject.instance().mapLayersByName(self.getMapLayerName())
-            existingDisplayLayers = [groupLayer.findLayer(layer) for layer in existingMapLayers]
-        existingDisplayLayers = [layer for layer in existingDisplayLayers if layer is not None]
+            existingDisplayLayers = [groupLayer.findLayer(
+                layer) for layer in existingMapLayers]
+        existingDisplayLayers = [
+            layer for layer in existingDisplayLayers if layer is not None]
 
         return self.getMapLayerName()
 
@@ -104,11 +111,11 @@ class WorkingLayer(QObject, AbstractLayer):
         """Get an appropriate map layer name for this layer."""
         return f"Working Layer #{self.index}"
 
-    def getMapLayer(self, groupLayer = None):
+    def getMapLayer(self, groupLayer=None):
         """Get the QGIS map layer corresponding to this layer, if any."""
         if self.impl is None:
             return None
-        
+
         if groupLayer is None:
             groupLayer = QgsProject.instance().layerTreeRoot()
 
@@ -119,4 +126,3 @@ class WorkingLayer(QObject, AbstractLayer):
         stylePath = resolveStylePath(styleName)
         if self.impl is not None:
             self.impl.loadNamedStyle(stylePath)
-

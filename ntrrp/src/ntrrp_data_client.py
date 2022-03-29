@@ -9,6 +9,7 @@ from qgis.core import QgsFileDownloader
 
 from .utils import ensureDirectory, getNtrrpDataUrl, getTempDownloadPath, qgsDebug
 
+
 class NtrrpDataClient(QObject):
     # emit this signal with the downloaded data
     dataDownloaded = pyqtSignal(Path)
@@ -24,8 +25,9 @@ class NtrrpDataClient(QObject):
         dataFile = getTempDownloadPath()
         ensureDirectory(Path(dataFile).parent)
         qgsDebug(f"Data file: {dataFile}")
-        
-        downloader = QgsFileDownloader(QUrl(dataUrl), dataFile, delayStart=True)
+
+        downloader = QgsFileDownloader(
+            QUrl(dataUrl), dataFile, delayStart=True)
         downloader.downloadProgress.connect(NtrrpDataClient.downloadProgress)
         downloader.downloadError.connect(NtrrpDataClient.downloadError)
         downloader.downloadCompleted.connect(lambda: self.unzipData(dataFile))
@@ -37,8 +39,9 @@ class NtrrpDataClient(QObject):
         """Unzip the downloaded data and signal the process is complete."""
         qgsDebug(f"Unzipping data file: {dataFile}")
         dataPath = Path(dataFile)
-        unzipLocation = path.normpath(path.join(dataPath.parent, os.pardir, dataPath.stem))
-        
+        unzipLocation = path.normpath(
+            path.join(dataPath.parent, os.pardir, dataPath.stem))
+
         with ZipFile(dataFile, 'r') as zf:
             zf.extractall(unzipLocation)
 

@@ -13,6 +13,7 @@ from owslib.map.wms111 import ContentMetadata
 from .ntrrp_capabilities import NtrrpCapabilities
 from .utils import capabilitiesError, connectionError
 
+
 class NtrrpCapabilitiesReader(QObject):
 
     # emit this signal with the downloaded capabilities XML
@@ -64,13 +65,15 @@ class NtrrpCapabilitiesReader(QObject):
         contents = OrderedDict()
 
         try:
-            parser = etree.XMLParser(dtd_validation=False, load_dtd=False, no_network=True, recover=True, resolve_entities=False)
+            parser = etree.XMLParser(dtd_validation=False, load_dtd=False,
+                                     no_network=True, recover=True, resolve_entities=False)
             capabilities = etree.fromstring(wmsXml, parser)
 
             capabilityElement = capabilities.find("Capability")
 
             if capabilityElement is None:
-                raise RuntimeError("Missing 'Capability' Element in parsed XML capabilities")
+                raise RuntimeError(
+                    "Missing 'Capability' Element in parsed XML capabilities")
 
             # recursively gather content metadata for all layer elements, this is stolen
             # from OWSLib because it won't let us configure the parser the way we need to
@@ -80,8 +83,8 @@ class NtrrpCapabilitiesReader(QObject):
                 layers = []
                 for index, elem in enumerate(parentElement.findall('Layer')):
                     cm = ContentMetadata(elem, parent=parentMetadata,
-                                            index=index + 1,
-                                            parse_remote_metadata=False)
+                                         index=index + 1,
+                                         parse_remote_metadata=False)
                     if cm.id:
                         layers.append(cm)
                         contents[cm.id] = cm
@@ -103,5 +106,3 @@ class NtrrpCapabilitiesReader(QObject):
         wmsXml = self.downloadCapabilities(wmsUrl)
 
         return (wmsXml and self.parseCapabilities(wmsUrl, wmsXml))
-
-

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from pathlib import Path
 
 from qgis.core import QgsProcessing
@@ -14,17 +15,22 @@ from .color_table import addColorTable
 from ..ntrrp_data_client import NtrrpDataClient
 from ..utils import getNtrrpDataUrl, qgsDebug
 
+
 class RasteriseBurntAreas(QgsProcessingAlgorithm):
 
     currentMappingTif = None
 
     def initAlgorithm(self, config=None):
-        self.addParameter(QgsProcessingParameterVectorLayer('BurntAreas', 'Burnt Areas', types=[QgsProcessing.TypeVectorPolygon], defaultValue=None))
-        self.addParameter(QgsProcessingParameterRasterDestination('RasterisedBurntAreas', 'Rasterised Burnt Areas', createByDefault=True, defaultValue=None))
-        self.addParameter(QgsProcessingParameterRasterLayer('CurrentMapping', 'Current Mapping', defaultValue=None))
-        self.addParameter(QgsProcessingParameterString('Region', 'Region', defaultValue='Darwin'))
-        self.addParameter(QgsProcessingParameterExtent('Extent', 'Extent', defaultValue=None))
-
+        self.addParameter(QgsProcessingParameterVectorLayer('BurntAreas', 'Burnt Areas', types=[
+                          QgsProcessing.TypeVectorPolygon], defaultValue=None))
+        self.addParameter(QgsProcessingParameterRasterDestination(
+            'RasterisedBurntAreas', 'Rasterised Burnt Areas', createByDefault=True, defaultValue=None))
+        self.addParameter(QgsProcessingParameterRasterLayer(
+            'CurrentMapping', 'Current Mapping', defaultValue=None))
+        self.addParameter(QgsProcessingParameterString(
+            'Region', 'Region', defaultValue='Darwin'))
+        self.addParameter(QgsProcessingParameterExtent(
+            'Extent', 'Extent', defaultValue=None))
 
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
@@ -52,8 +58,10 @@ class RasteriseBurntAreas(QgsProcessingAlgorithm):
             'WIDTH': 10,        # metres
             'OUTPUT': parameters['RasterisedBurntAreas']
         }
-        processing.ProcessingConfig.setSettingValue('IGNORE_INVALID_FEATURES', 1)
-        rasteriseOutput = processing.run("gdal:rasterize", algParams, context=context, feedback=feedback, is_child_algorithm=True)
+        processing.ProcessingConfig.setSettingValue(
+            'IGNORE_INVALID_FEATURES', 1)
+        rasteriseOutput = processing.run(
+            "gdal:rasterize", algParams, context=context, feedback=feedback, is_child_algorithm=True)
 
         rasterisedBurntAreasTif = rasteriseOutput['OUTPUT']
 
@@ -69,7 +77,8 @@ class RasteriseBurntAreas(QgsProcessingAlgorithm):
             'SEPARATE': False,
             'OUTPUT': parameters['RasterisedBurntAreas']
         }
-        outputs['RasterisedBurntAreas'] = processing.run('gdal:merge', mergeAlgParams, context=context, feedback=feedback, is_child_algorithm=True)
+        outputs['RasterisedBurntAreas'] = processing.run(
+            'gdal:merge', mergeAlgParams, context=context, feedback=feedback, is_child_algorithm=True)
         results['RasterisedBurntAreas'] = outputs['RasterisedBurntAreas']['OUTPUT']
 
         # add a color table using GDAL
@@ -92,7 +101,8 @@ class RasteriseBurntAreas(QgsProcessingAlgorithm):
         """Download the current mapping for the given region."""
         qgsDebug("Downloading current mapping")
         client = NtrrpDataClient()
-        client.dataDownloaded.connect(lambda unzipLocation: self.setUnzipLocation(unzipLocation))
+        client.dataDownloaded.connect(
+            lambda unzipLocation: self.setUnzipLocation(unzipLocation))
         dataUrl = self.getCurrentMappingDataUrl(region)
         client.downloadData(dataUrl)
 

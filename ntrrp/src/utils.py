@@ -6,19 +6,14 @@ import random
 import string
 from pathlib import Path
 
-from qgis.utils import iface as QgsInterface
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsMessageLog, QgsProject, QgsSettings
 
-# NTRRP_URL = "https://test.firenorth.org.au/mapserver/ntrrp/wms"
 NTRRP_WMS_URL = "https://test.firenorth.org.au/mapserver/bfnt/gwc/service/wms"
 NTRRP_WMTS_URL = "https://test.firenorth.org.au/mapserver/bfnt/gwc/service/wmts"
 NTRRP_DATA_URL = f"https://test.firenorth.org.au/bfnt/downloads"
 NTRRP_UPLOAD_URL = "https://test.firenorth.org.au/bfnt/upload.php"
 NTRRP_API_URL = "https://test.firenorth.org.au/bfnt/api"
-# /wms?service=WMS&version=1.1.0&request=GetCapabilities&layers=ntrrp_test%3AT1T2_darwin_dMIRB
-# https://test.firenorth.org.au/mapserver/ntrrp/wms?service=WMS&version=1.1.0&request=GetMap&layers=ntrrp%3AFSHDRW_CURRENT&bbox=-222099.563500943%2C-1441352.91373074%2C-42069.56350094339%2C-1263222.91373074&width=768&height=759&srs=EPSG%3A3577&format=application/openlayers
-
 
 def getSetting(setting, default=None):
     """Retrieve an NTRRP setting."""

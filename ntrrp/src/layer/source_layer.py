@@ -7,6 +7,7 @@ from qgis.core import QgsProject, QgsVectorLayer
 from .abstract_layer import AbstractLayer
 from ..utils import resolveStylePath
 
+
 class SourceLayer(QObject, AbstractLayer):
 
     def __init__(self, shapefilePath):
@@ -14,7 +15,7 @@ class SourceLayer(QObject, AbstractLayer):
         super(QObject, self).__init__()
 
         self.shapefilePath = shapefilePath
-        
+
         # Layer name will be similar to: T1T3_darwin_T20210827_T20210817_seg_sa1_t300
         segments = shapefilePath.stem.split("_")
         self.difference = segments[0]
@@ -45,13 +46,14 @@ class SourceLayer(QObject, AbstractLayer):
 
     def load(self):
         """Load the source layer."""
-        self.impl = QgsVectorLayer(self.shapefilePath.as_posix(), self.getMapLayerName(), "ogr")
+        self.impl = QgsVectorLayer(
+            self.shapefilePath.as_posix(), self.getMapLayerName(), "ogr")
 
     def addMapLayer(self, groupLayer):
         """Add an NTRRP data layer to the map."""
         self.impl.willBeDeleted.connect(lambda: self.layerRemoved.emit(self))
         QgsProject.instance().addMapLayer(self.impl, False)
-        
+
         # load one of two styles based on the threshold used to segment these features
         if int(self.threshold) < 200:
             self.loadStyle("lower_threshold")
@@ -70,11 +72,11 @@ class SourceLayer(QObject, AbstractLayer):
         """Get an appropriate UX display name for non-hierarchical widgets like combos."""
         return f"{self.difference} {self.getMapLayerName()}"
 
-    def getMapLayer(self, groupLayer = None):
+    def getMapLayer(self, groupLayer=None):
         """Get the QGIS map layer corresponding to this layer, if any."""
         if self.impl is None:
             return None
-        
+
         if groupLayer is None:
             groupLayer = QgsProject.instance().layerTreeRoot()
 
@@ -85,4 +87,3 @@ class SourceLayer(QObject, AbstractLayer):
         stylePath = resolveStylePath(styleName)
         if self.impl is not None:
             self.impl.loadNamedStyle(stylePath)
-            

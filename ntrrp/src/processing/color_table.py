@@ -1,14 +1,15 @@
+# -*- coding: utf-8 -*-
 from pathlib import Path
 from osgeo import gdal
 
 def getColorTable(gdalDatasetPath):
     """Get the colour table from an image supported by GDAL."""
     assert isinstance(gdalDatasetPath, Path)
-    
+
     dataset = gdal.Open(gdalDatasetPath.as_posix(), 1)
-    
+
     assert dataset.RasterCount == 1, "Input raster for colour table must have 1 component"
-    
+
     band = dataset.GetRasterBand(1)
     table = band.GetColorTable()
     result = table and [table.GetColorEntry(index) for index in range(256)]
@@ -17,10 +18,11 @@ def getColorTable(gdalDatasetPath):
     del band, dataset
     return result
 
+
 def addColorTable(gdalDatasetPath):
     """Add the colour table to an image supported by GDAL."""
     assert isinstance(gdalDatasetPath, Path)
-    
+
     dataset = gdal.Open(gdalDatasetPath.as_posix(), 1)
 
     assert dataset.RasterCount == 1, "Input raster for colour table must have 1 component"
@@ -33,7 +35,7 @@ def addColorTable(gdalDatasetPath):
     # load entries from default
     for index in range(256):
         colors.SetColorEntry(index, FIRESCAR_COLOR_TABLE[index])
-        
+
     # set color table and color interpretation
     band.SetRasterColorTable(colors)
     band.SetRasterColorInterpretation(gdal.GCI_PaletteIndex)

@@ -6,11 +6,12 @@ from .abstract_layer import AbstractLayer
 from ..ows_utils import parseNtrrpLayerDescription
 from ..utils import getNtrrpWmtsUrl, guiError, setDefaultProjectCrs
 
+
 class WmtsLayer(QObject, AbstractLayer):
     def __init__(self, wmsUrl, owsLayer):
         """Constructor."""
         super(QObject, self).__init__()
-        self.wmsUrl = wmsUrl       
+        self.wmsUrl = wmsUrl
         self.owsLayer = owsLayer
         self.mapLayerId = None
         self.impl = None
@@ -25,7 +26,7 @@ class WmtsLayer(QObject, AbstractLayer):
         if not self.owsLayer.children and self.mapLayerId is None:
             project = QgsProject.instance()
             # weirdly true that URL-encoding of the layer ID does not work correctly
-            encodedLayer = self.owsLayer.id.replace(" ","%20")
+            encodedLayer = self.owsLayer.id.replace(" ", "%20")
 
             # set the project CRS to Australian Albers (EPSG 3577) whenever an NTRRP WMTS layer is added
             srsId = project.crs().postgisSrid()
@@ -35,17 +36,19 @@ class WmtsLayer(QObject, AbstractLayer):
             wmtsUrl = getNtrrpWmtsUrl()
             wmtsParams = f"crs=EPSG:3577&format=image/png&layers={encodedLayer}&url={wmtsUrl}&styles&tileMatrixSet=EPSG:3577"
 
-            self.impl = QgsRasterLayer(wmtsParams, self.getMapLayerName(), "wms")
+            self.impl = QgsRasterLayer(
+                wmtsParams, self.getMapLayerName(), "wms")
 
             if self.impl is not None and self.impl.isValid():
                 self.impl = project.addMapLayer(self.impl, False)
-                self.impl.willBeDeleted.connect(lambda: self.layerRemoved.emit(self))
+                self.impl.willBeDeleted.connect(
+                    lambda: self.layerRemoved.emit(self))
                 self.layerAdded.emit(self)
                 self.mapLayerId = self.impl.id()
 
                 subGroupLayer = self.getSubGroupLayer(groupLayer)
                 subGroupLayer.addLayer(self.impl)
-                
+
                 # don't show legend initially
                 displayLayer = project.layerTreeRoot().findLayer(self.impl)
                 displayLayer.setExpanded(False)
@@ -60,7 +63,7 @@ class WmtsLayer(QObject, AbstractLayer):
     #     # NtrrpItem keeps a reference to any active QgsMapLayer in order to avoid being added twice
     #     if not self.owsLayer.children and self.mapLayerId is None:
     #         project = QgsProject.instance()
-            
+
     #         # weirdly true that URL-encoding of the layer ID does not work correctly
     #         encodedLayer = self.owsLayer.id.replace(" ","%20")
 
@@ -82,7 +85,7 @@ class WmtsLayer(QObject, AbstractLayer):
 
     #             subGroupLayer = self.getSubGroupLayer(groupLayer)
     #             subGroupLayer.addLayer(wmsLayer)
-                
+
     #             # don't show legend initially
     #             displayLayer = subGroupLayer.findLayer(wmsLayer)
     #             displayLayer.setExpanded(False)
@@ -95,12 +98,8 @@ class WmtsLayer(QObject, AbstractLayer):
         """Get an appropriate map layer name for this layer."""
         return parseNtrrpLayerDescription(self.owsLayer)
 
-    def getMapLayer(self, groupLayer = None):
+    def getMapLayer(self, groupLayer=None):
         """Get the QGIS map layer corresponding to this layer, if any."""
 
         matches = QgsProject.instance().mapLayersByName(self.getMapLayerName())
         return matches and matches[0]
-
-    
-
-

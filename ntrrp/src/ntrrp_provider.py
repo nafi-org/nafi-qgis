@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 from qgis.PyQt.QtGui import QIcon
 from qgis.core import QgsProcessingProvider
 
@@ -8,7 +7,6 @@ from .processing.attribute_burnt_areas import AttributeBurntAreas
 from .processing.rasterise_burnt_areas import RasteriseBurntAreas
 from .processing.upload_burnt_areas import UploadBurntAreas
 from .processing.full_burnt_areas_process import FullBurntAreasProcess
-
 class NtrrpProvider(QgsProcessingProvider):
 
     def __init__(self):

@@ -23,6 +23,8 @@
 """
 
 # noinspection PyPep8Naming
+
+
 def classFactory(iface):  # pylint: disable=invalid-name
     """Load Ntrrp class from file Ntrrp.
 

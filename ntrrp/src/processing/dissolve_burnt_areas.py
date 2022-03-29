@@ -1,6 +1,4 @@
-import os.path as path
-from pathlib import Path
-
+# -*- coding: utf-8 -*-
 from qgis.core import QgsProcessing
 from qgis.core import QgsProcessingAlgorithm
 from qgis.core import QgsProcessingMultiStepFeedback
@@ -9,13 +7,13 @@ from qgis.core import QgsProcessingParameterFeatureSink
 
 import processing
 
-from ..utils import qgsDebug
-
 class DissolveBurntAreas(QgsProcessingAlgorithm):
 
     def initAlgorithm(self, config=None):
-        self.addParameter(QgsProcessingParameterVectorLayer('BurntAreas', 'Burnt Areas', types=[QgsProcessing.TypeVectorPolygon], defaultValue=None))
-        self.addParameter(QgsProcessingParameterFeatureSink('DissolvedBurntAreas', 'Dissolved Burnt Areas', type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, defaultValue=None))
+        self.addParameter(QgsProcessingParameterVectorLayer('BurntAreas', 'Burnt Areas', types=[
+                          QgsProcessing.TypeVectorPolygon], defaultValue=None))
+        self.addParameter(QgsProcessingParameterFeatureSink('DissolvedBurntAreas', 'Dissolved Burnt Areas',
+                          type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, defaultValue=None))
 
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
@@ -31,8 +29,10 @@ class DissolveBurntAreas(QgsProcessingAlgorithm):
             'OUTPUT': parameters['DissolvedBurntAreas']
         }
 
-        processing.ProcessingConfig.setSettingValue('IGNORE_INVALID_FEATURES', 1)
-        outputs['Dissolve'] = processing.run('native:dissolve', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+        processing.ProcessingConfig.setSettingValue(
+            'IGNORE_INVALID_FEATURES', 1)
+        outputs['Dissolve'] = processing.run(
+            'native:dissolve', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
         results['DissolvedBurntAreas'] = outputs['Dissolve']['OUTPUT']
         return results
 
