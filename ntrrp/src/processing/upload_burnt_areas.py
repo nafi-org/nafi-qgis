@@ -19,10 +19,10 @@ class UploadBurntAreas(QgsProcessingAlgorithm):
     def initAlgorithm(self, config=None):
         processing.ProcessingConfig.setSettingValue(
             'IGNORE_INVALID_FEATURES', 1)
-        self.addParameter(QgsProcessingParameterVectorLayer('AttributedBurntAreas', 'Your approved burnt areas', types=[
+        self.addParameter(QgsProcessingParameterVectorLayer('AttributedBurntAreas', 'Your approved and attributed burnt areas', types=[
                           QgsProcessing.TypeVectorPolygon], defaultValue=None))
         self.addParameter(QgsProcessingParameterRasterLayer(
-            'RasterisedBurntAreas', 'Your rasterised burnt areas merged with the current mapping', defaultValue=None))
+            'RasterisedBurntAreas', 'Rasterised and merged burnt area map', defaultValue=None))
 
     def processAlgorithm(self, parameters, context, model_feedback):
         # use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the

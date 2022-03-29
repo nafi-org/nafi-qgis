@@ -16,13 +16,11 @@ class FullBurntAreasProcess(QgsProcessingAlgorithm):
         self.addParameter(QgsProcessingParameterVectorLayer('ApprovedBurntAreas', 'Your approved burnt areas', types=[
                           QgsProcessing.TypeVectorPolygon], defaultValue=None))
         self.addParameter(QgsProcessingParameterRasterLayer(
-            'CurrentMapping', 'Current Mapping', defaultValue=None))
+            'CurrentMapping', 'Current rasterised mapping for your region', defaultValue=None))
         self.addParameter(QgsProcessingParameterString(
             'Region', 'Region mapped (Darwin or Katherine)', multiLine=False, defaultValue=''))
         self.addParameter(QgsProcessingParameterString(
             'Comments', 'Your comments on this mapping', multiLine=True, defaultValue=''))
-        self.addParameter(QgsProcessingParameterExtent(
-            'Extent', 'Extent', defaultValue=None))
         self.addParameter(QgsProcessingParameterFeatureSink('AttributedBurntAreas', 'Attributed Burnt Areas',
                           type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, defaultValue=None))
 
@@ -49,7 +47,6 @@ class FullBurntAreasProcess(QgsProcessingAlgorithm):
         alg_params = {
             'Comments': parameters['Comments'],
             'DissolvedBurntAreas': outputs['DissolveBurntAreas']['DissolvedBurntAreas'],
-            # 'FSID': parameters['FSID'],
             'Region': parameters['Region'],
             'AttributedBurntAreas': QgsProcessing.TEMPORARY_OUTPUT
         }
@@ -62,7 +59,6 @@ class FullBurntAreasProcess(QgsProcessingAlgorithm):
 
         # Rasterise Burnt Areas
         alg_params = {
-            'Extent': parameters['Extent'],
             'BurntAreas': outputs['AttributeBurntAreas']['AttributedBurntAreas'],
             'CurrentMapping': parameters['CurrentMapping'],
             'RasterisedBurntAreas': QgsProcessing.TEMPORARY_OUTPUT

@@ -17,14 +17,14 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
     def initAlgorithm(self, config=None):
         processing.ProcessingConfig.setSettingValue(
             'IGNORE_INVALID_FEATURES', 1)
-        self.addParameter(QgsProcessingParameterVectorLayer('DissolvedBurntAreas', 'Dissolved Burnt Areas', types=[
+        self.addParameter(QgsProcessingParameterVectorLayer('DissolvedBurntAreas', 'Your burnt areas (should already be dissolved)', types=[
                           QgsProcessing.TypeVectorPolygon], defaultValue=None))
         # self.addParameter(QgsProcessingParameterNumber('FSID', 'FSID', type=QgsProcessingParameterNumber.Integer, minValue=0, defaultValue=None))
         self.addParameter(QgsProcessingParameterString(
             'Region', 'Region', multiLine=False, defaultValue=None))
         self.addParameter(QgsProcessingParameterString(
             'Comments', 'Comments', multiLine=True, defaultValue=None))
-        self.addParameter(QgsProcessingParameterFeatureSink('AttributedBurntAreas', 'Attributed Burnt Areas',
+        self.addParameter(QgsProcessingParameterFeatureSink('AttributedBurntAreas', 'Burnt areas attributed with FSID and other NAFI attributes',
                           type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, defaultValue=None))
 
     def processAlgorithm(self, parameters, context, model_feedback):
@@ -32,7 +32,6 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
         results = {}
         outputs = {}
 
-        # FSID – do not change
         # Mapping Period – Enter the dates of the current image and T1 or T2 image date.
         # Month – do not change
         # Region – the areas mapped (ie a1, a2, a3, a4, Kat)
@@ -162,7 +161,7 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
         return 'AttributeBurntAreas'
 
     def displayName(self):
-        return 'Attribute Burnt Areas'
+        return 'Attribute Burnt Areas (add FSID)'
 
     def group(self):
         return ''

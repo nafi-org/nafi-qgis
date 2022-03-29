@@ -10,9 +10,9 @@ import processing
 class DissolveBurntAreas(QgsProcessingAlgorithm):
 
     def initAlgorithm(self, config=None):
-        self.addParameter(QgsProcessingParameterVectorLayer('BurntAreas', 'Burnt Areas', types=[
+        self.addParameter(QgsProcessingParameterVectorLayer('BurntAreas', 'Your burnt areas', types=[
                           QgsProcessing.TypeVectorPolygon], defaultValue=None))
-        self.addParameter(QgsProcessingParameterFeatureSink('DissolvedBurntAreas', 'Dissolved Burnt Areas',
+        self.addParameter(QgsProcessingParameterFeatureSink('DissolvedBurntAreas', 'Dissolved burnt areas',
                           type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, defaultValue=None))
 
     def processAlgorithm(self, parameters, context, model_feedback):

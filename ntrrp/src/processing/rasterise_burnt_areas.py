@@ -21,16 +21,12 @@ class RasteriseBurntAreas(QgsProcessingAlgorithm):
     currentMappingTif = None
 
     def initAlgorithm(self, config=None):
-        self.addParameter(QgsProcessingParameterVectorLayer('BurntAreas', 'Burnt Areas', types=[
+        self.addParameter(QgsProcessingParameterVectorLayer('BurntAreas', 'Your burnt areas (should be attributed with an FSID)', types=[
                           QgsProcessing.TypeVectorPolygon], defaultValue=None))
         self.addParameter(QgsProcessingParameterRasterDestination(
-            'RasterisedBurntAreas', 'Rasterised Burnt Areas', createByDefault=True, defaultValue=None))
+            'RasterisedBurntAreas', 'Rasterised and merged burnt area map', createByDefault=True, defaultValue=None))
         self.addParameter(QgsProcessingParameterRasterLayer(
-            'CurrentMapping', 'Current Mapping', defaultValue=None))
-        self.addParameter(QgsProcessingParameterString(
-            'Region', 'Region', defaultValue='Darwin'))
-        self.addParameter(QgsProcessingParameterExtent(
-            'Extent', 'Extent', defaultValue=None))
+            'CurrentMapping', 'Current rasterised mapping for your region', defaultValue=None))
 
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
@@ -39,11 +35,13 @@ class RasteriseBurntAreas(QgsProcessingAlgorithm):
         results = {}
         outputs = {}
 
+        burntAreasExtent = self.parameterAsExtent(parameters, 'BurntAreas', context)
+
         # Rasterize (vector to raster)
         algParams = {
             'BURN': None,
             'DATA_TYPE': 0,     # Byte
-            'EXTENT': parameters['Extent'],
+            'EXTENT': burntAreasExtent,
             'EXTRA': '',
             'FIELD': 'FSID',
             'HEIGHT': 10,       # metres
@@ -83,27 +81,7 @@ class RasteriseBurntAreas(QgsProcessingAlgorithm):
         addColorTable(Path(results['RasterisedBurntAreas']))
 
         return results
-
-    def getCurrentMappingDataUrl(self, region):
-        """Get the current mapping data URL for the given region."""
-        return f"{getNtrrpDataUrl()}/bfnt_{region.lower()}_current_sr3577_tif.zip"
-
-    def setUnzipLocation(self, unzipLocation):
-        """Set the unzip location for the current mapping."""
-        qgsDebug(f"Received unzip location: {unzipLocation}")
-        downloadedTifLocation = next(unzipLocation.rglob("*.tif"))
-        qgsDebug(f"Setting TIF location to: {downloadedTifLocation}")
-        self.currentMappingTif = downloadedTifLocation
-
-    def downloadCurrentMapping(self, region):
-        """Download the current mapping for the given region."""
-        qgsDebug("Downloading current mapping")
-        client = NtrrpDataClient()
-        client.dataDownloaded.connect(
-            lambda unzipLocation: self.setUnzipLocation(unzipLocation))
-        dataUrl = self.getCurrentMappingDataUrl(region)
-        client.downloadData(dataUrl)
-
+   
     def name(self):
         return 'RasteriseBurntAreas'
 
