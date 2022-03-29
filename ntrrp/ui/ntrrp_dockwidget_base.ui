@@ -129,6 +129,26 @@
           </widget>
         </item>
         <item row="2" column="5">
+          <widget class="QPushButton" name="currentMappingButton">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="toolTip">
+              <string>Download Current Mapping</string>
+            </property>
+            <property name="text">
+              <string/>
+            </property>
+            <property name="icon">
+              <iconset>
+                <normaloff>:/plugins/ntrrp/images/mapdownload.png</normaloff>:/plugins/ntrrp/images/mapdownload.png</iconset>
+            </property>
+          </widget>
+        </item>
+        <item row="2" column="6">
           <widget class="QPushButton" name="createButton">
             <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -148,7 +168,7 @@
             </property>
           </widget>
         </item>
-        <item row="2" column="6">
+        <item row="2" column="7">
           <widget class="QPushButton" name="approveButton">
             <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -168,7 +188,7 @@
             </property>
           </widget>
         </item>
-        <item row="2" column="7">
+        <item row="2" column="8">
           <widget class="QPushButton" name="uploadButton">
             <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">

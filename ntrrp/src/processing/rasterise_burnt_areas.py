@@ -3,19 +3,26 @@ from pathlib import Path
 from qgis.core import QgsProcessing
 from qgis.core import QgsProcessingAlgorithm
 from qgis.core import QgsProcessingMultiStepFeedback
-from qgis.core import QgsProcessingParameterVectorLayer
-from qgis.core import QgsProcessingParameterRasterDestination
 from qgis.core import QgsProcessingParameterExtent
+from qgis.core import QgsProcessingParameterRasterDestination
+from qgis.core import QgsProcessingParameterRasterLayer
+from qgis.core import QgsProcessingParameterString
+from qgis.core import QgsProcessingParameterVectorLayer
 import processing
 
 from .color_table import addColorTable
-from ..utils import qgsDebug
+from ..ntrrp_data_client import NtrrpDataClient
+from ..utils import getNtrrpDataUrl, qgsDebug
 
 class RasteriseBurntAreas(QgsProcessingAlgorithm):
+
+    currentMappingTif = None
 
     def initAlgorithm(self, config=None):
         self.addParameter(QgsProcessingParameterVectorLayer('BurntAreas', 'Burnt Areas', types=[QgsProcessing.TypeVectorPolygon], defaultValue=None))
         self.addParameter(QgsProcessingParameterRasterDestination('RasterisedBurntAreas', 'Rasterised Burnt Areas', createByDefault=True, defaultValue=None))
+        self.addParameter(QgsProcessingParameterRasterLayer('CurrentMapping', 'Current Mapping', defaultValue=None))
+        self.addParameter(QgsProcessingParameterString('Region', 'Region', defaultValue='Darwin'))
         self.addParameter(QgsProcessingParameterExtent('Extent', 'Extent', defaultValue=None))
 
 
@@ -26,8 +33,10 @@ class RasteriseBurntAreas(QgsProcessingAlgorithm):
         results = {}
         outputs = {}
 
+        # qgsDebug(f"BurntAreas: {parameters['BurntAreas']}")
+
         # Rasterize (vector to raster)
-        alg_params = {
+        algParams = {
             'BURN': None,
             'DATA_TYPE': 0,     # Byte
             'EXTENT': parameters['Extent'],
@@ -43,14 +52,16 @@ class RasteriseBurntAreas(QgsProcessingAlgorithm):
             'WIDTH': 10,        # metres
             'OUTPUT': parameters['RasterisedBurntAreas']
         }
+        processing.ProcessingConfig.setSettingValue('IGNORE_INVALID_FEATURES', 1)
+        rasteriseOutput = processing.run("gdal:rasterize", algParams, context=context, feedback=feedback, is_child_algorithm=True)
 
-        rasterised_output = processing.run("gdal:rasterize", alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+        rasterisedBurntAreasTif = rasteriseOutput['OUTPUT']
 
         # Merge with current mapping
-        merge_params = {
+        mergeAlgParams = {
             'DATA_TYPE': 0,
             'EXTRA': '',
-            'INPUT': [rasterised_output['OUTPUT'],'C:/Users/tom.lynch/dev/gaia/nafi-qgis/ntrrp_data/bfnt_darwin_current_sr3577.tif'],
+            'INPUT': [rasterisedBurntAreasTif, parameters['CurrentMapping']],
             'NODATA_INPUT': 0,
             'NODATA_OUTPUT': 0,
             'OPTIONS': '',
@@ -58,13 +69,32 @@ class RasteriseBurntAreas(QgsProcessingAlgorithm):
             'SEPARATE': False,
             'OUTPUT': parameters['RasterisedBurntAreas']
         }
-        outputs['Merge'] = processing.run('gdal:merge', merge_params, context=context, feedback=feedback, is_child_algorithm=True)
-        results['RasterisedBurntAreas'] = outputs['Merge']['OUTPUT']
+        outputs['RasterisedBurntAreas'] = processing.run('gdal:merge', mergeAlgParams, context=context, feedback=feedback, is_child_algorithm=True)
+        results['RasterisedBurntAreas'] = outputs['RasterisedBurntAreas']['OUTPUT']
 
         # add a color table using GDAL
         addColorTable(Path(results['RasterisedBurntAreas']))
 
         return results
+
+    def getCurrentMappingDataUrl(self, region):
+        """Get the current mapping data URL for the given region."""
+        return f"{getNtrrpDataUrl()}/bfnt_{region.lower()}_current_sr3577_tif.zip"
+
+    def setUnzipLocation(self, unzipLocation):
+        """Set the unzip location for the current mapping."""
+        qgsDebug(f"Received unzip location: {unzipLocation}")
+        downloadedTifLocation = next(unzipLocation.rglob("*.tif"))
+        qgsDebug(f"Setting TIF location to: {downloadedTifLocation}")
+        self.currentMappingTif = downloadedTifLocation
+
+    def downloadCurrentMapping(self, region):
+        """Download the current mapping for the given region."""
+        qgsDebug("Downloading current mapping")
+        client = NtrrpDataClient()
+        client.dataDownloaded.connect(lambda unzipLocation: self.setUnzipLocation(unzipLocation))
+        dataUrl = self.getCurrentMappingDataUrl(region)
+        client.downloadData(dataUrl)
 
     def name(self):
         return 'RasteriseBurntAreas'

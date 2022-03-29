@@ -7,12 +7,12 @@ git archive HEAD | tar -x -C deployment
 cd deployment
 
 # remove bare image files—these are encoded in resources_rc anyway
-cp ntrrp/images/icon.png nafi/icon.png
+cp ntrrp/images/icon.png ntrrp/icon.png
 rm -rf ntrrp/images
 
 # zip up the NAFI plug-in directory only into a datestamped archive
-zip -FSr "../ntrrp-$(date +'%Y%m%d').zip" ntrrp
-cd ..
-rm -rf deployment
+# zip -FSr "../ntrrp-$(date +'%Y%m%d').zip" ntrrp
+# cd ..
+# rm -rf deployment
 
 

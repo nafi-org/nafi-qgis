@@ -13,13 +13,14 @@ from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsMessageLog, QgsProj
 # NTRRP_URL = "https://test.firenorth.org.au/mapserver/ntrrp/wms"
 NTRRP_WMS_URL = "https://test.firenorth.org.au/mapserver/bfnt/gwc/service/wms"
 NTRRP_WMTS_URL = "https://test.firenorth.org.au/mapserver/bfnt/gwc/service/wmts"
-NTRRP_DATA_URL = f"https://test.firenorth.org.au/bfnt/downloads/darwin/area1.zip"
-NTRRP_UPLOAD_URL = "https://test.firenorth.org.au/upload.php"
+NTRRP_DATA_URL = f"https://test.firenorth.org.au/bfnt/downloads"
+NTRRP_UPLOAD_URL = "https://test.firenorth.org.au/bfnt/upload.php"
 NTRRP_API_URL = "https://test.firenorth.org.au/bfnt/api"
 # /wms?service=WMS&version=1.1.0&request=GetCapabilities&layers=ntrrp_test%3AT1T2_darwin_dMIRB
 # https://test.firenorth.org.au/mapserver/ntrrp/wms?service=WMS&version=1.1.0&request=GetMap&layers=ntrrp%3AFSHDRW_CURRENT&bbox=-222099.563500943%2C-1441352.91373074%2C-42069.56350094339%2C-1263222.91373074&width=768&height=759&srs=EPSG%3A3577&format=application/openlayers
 
-def getSetting(setting, default = None):
+
+def getSetting(setting, default=None):
     """Retrieve an NTRRP setting."""
     settings = QgsSettings()
     current = settings.value(f"NTRRP/{setting}", default)
@@ -28,42 +29,53 @@ def getSetting(setting, default = None):
         settings.setValue(f"NTRRP/{setting}", current)
     return current
 
+
 def restoreDefaults():
     settings = QgsSettings()
     settings.setValue(f"NTRRP/NTRRP_WMS_URL", NTRRP_WMS_URL)
     settings.setValue(f"NTRRP/NTRRP_WMTS_URL", NTRRP_WMTS_URL)
     settings.setValue(f"NTRRP/NTRRP_DATA_URL", NTRRP_DATA_URL)
 
+
 def getNtrrpWmsUrl():
     return getSetting("NTRRP_WMS_URL", NTRRP_WMS_URL)
+
 
 def getNtrrpWmtsUrl():
     return getSetting("NTRRP_WMTS_URL", NTRRP_WMTS_URL)
 
+
 def getNtrrpDataUrl():
     return getSetting("NTRRP_DATA_URL", NTRRP_DATA_URL)
+
 
 def getNtrrpUploadUrl():
     return getSetting("NTRRP_UPLOAD_URL", NTRRP_UPLOAD_URL)
 
+
 def getNtrrpApiUrl():
     return getSetting("NTRRP_API_URL", NTRRP_API_URL)
+
 
 def getDownloadDirectory():
     """Get the directory location to store NAFI burnt areas data."""
     return path.normpath(path.join(os.environ["TMP"], "ntrrp", "downloads"))
 
+
 def getWorkingDirectory():
     """Get the directory location to output and save NAFI burnt areas working data."""
     return path.normpath(path.join(os.environ["TMP"], "ntrrp", "working"))
+
 
 def getUploadDirectory():
     """Get a random upload directory."""
     return path.normpath(path.join(os.environ["TMP"], "ntrrp", "uploads"))
 
+
 def ensureDirectory(dir):
     """Ensure a particular directory exists."""
     Path(dir).mkdir(parents=True, exist_ok=True)
+
 
 def ensureTempDirectories():
     """Ensure the download and working directories exist."""
@@ -71,49 +83,62 @@ def ensureTempDirectories():
     ensureDirectory(getWorkingDirectory())
     ensureDirectory(getUploadDirectory())
 
+
 def getRandomFilename():
     """Get a random 8-character filename."""
     return ''.join(random.choice(string.ascii_lowercase) for i in range(8))
 
+
 def getTempDownloadPath():
     """Get a temporary download path."""
-    unzipLocation = path.normpath(path.join(getDownloadDirectory(), getRandomFilename()))
+    unzipLocation = path.normpath(
+        path.join(getDownloadDirectory(), getRandomFilename()))
     dataFile = f"{unzipLocation}.zip"
     return dataFile
 
+
 def getWorkingShapefilePath():
     """Get a path for a working layer shapefile."""
-    outputDir = path.normpath(path.join(getWorkingDirectory(), getRandomFilename()))
+    outputDir = path.normpath(
+        path.join(getWorkingDirectory(), getRandomFilename()))
     return path.normpath(path.join(outputDir, "working.shp"))
 
-def resolvePluginPath(relative, base = None):
+
+def resolvePluginPath(relative, base=None):
     """Resolve a relative path in the plug-in deployment directory."""
     if not base:
         base = path.dirname(os.path.realpath(__file__))
         # note this function will break if this code in src/utils.py is moved to a different directory
-        base = path.normpath(path.join(base, os.pardir))    
+        base = path.normpath(path.join(base, os.pardir))
     return path.normpath(path.join(base, relative))
+
 
 def resolveStylePath(styleName):
     """Load a style file packaged with the plug-in."""
     relative = f"styles\\{styleName}.qml"
     return resolvePluginPath(relative)
 
+
 def qgsDebug(message, level=Qgis.Info):
     """Print a debug message."""
-    QgsMessageLog.logMessage(message, tag="NAFI Burnt Areas Mapping", level=level)
+    QgsMessageLog.logMessage(
+        message, tag="NAFI Burnt Areas Mapping", level=level)
+
 
 def guiInformation(message):
     """Show an info message box."""
     QMessageBox.information(None, "NAFI Burnt Areas Mapping", message)
 
+
 def guiError(message):
     """Show an error message box."""
     QMessageBox.critical(None, "NAFI Burnt Areas Mapping", message)
 
+
 def guiWarning(message):
     """Show a warning message box."""
     QMessageBox.warning(None, "NAFI Burnt Areas Mapping", message)
+
 
 def setDefaultProjectCrs(project):
     """Set the Project CRS to the default value of GDA94 geographic."""
@@ -127,12 +152,14 @@ def setDefaultProjectCrs(project):
     guiWarning(warning)
     project.setCrs(ausAlbers)
 
+
 def connectionError(logMessage):
     """Raise a connection error."""
     error = (f"Error connecting to NAFI services!\n"
              f"Check the QGIS NAFI Burnt Areas Mapping message log for details.")
     guiError(error)
     qgsDebug(logMessage, Qgis.Critical)
+
 
 def capabilitiesError(errorString, capsXml):
     """Raise an error parsing the WMS capabilities file."""
@@ -143,6 +170,7 @@ def capabilitiesError(errorString, capsXml):
     qgsDebug(logMessage, Qgis.Critical)
     logMessage = f"NAFI WMS capabilities XML: {html.escape(capsXml)}"
     qgsDebug(logMessage, Qgis.Critical)
+
 
 def fsidsError(fsidData):
     """Raise an error retrieving FSID data."""

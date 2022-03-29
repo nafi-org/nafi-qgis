@@ -35,6 +35,7 @@ class NtrrpDataClient(QObject):
 
     def unzipData(self, dataFile):
         """Unzip the downloaded data and signal the process is complete."""
+        qgsDebug(f"Unzipping data file: {dataFile}")
         dataPath = Path(dataFile)
         unzipLocation = path.normpath(path.join(dataPath.parent, os.pardir, dataPath.stem))
         

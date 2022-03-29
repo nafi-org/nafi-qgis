@@ -61,6 +61,9 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         # set up download button
         self.downloadButton.clicked.connect(lambda: self.region.downloadData())
 
+        # set up download current mapping button
+        self.currentMappingButton.clicked.connect(lambda: self.region.downloadCurrentMapping())
+
         # set up create button
         self.createButton.clicked.connect(lambda: self.region.createWorkingLayer(self.activeSourceLayer))
 

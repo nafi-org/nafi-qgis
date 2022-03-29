@@ -30,8 +30,8 @@ class DissolveBurntAreas(QgsProcessingAlgorithm):
             'INPUT': parameters['BurntAreas'],
             'OUTPUT': parameters['DissolvedBurntAreas']
         }
-        processing.ProcessingConfig.setSettingValue('IGNORE_INVALID_FEATURES', 1)
 
+        processing.ProcessingConfig.setSettingValue('IGNORE_INVALID_FEATURES', 1)
         outputs['Dissolve'] = processing.run('native:dissolve', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
         results['DissolvedBurntAreas'] = outputs['Dissolve']['OUTPUT']
         return results
