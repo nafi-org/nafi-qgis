@@ -3,14 +3,12 @@ from qgis.core import QgsProcessing
 from qgis.core import QgsProcessingAlgorithm
 from qgis.core import QgsProcessingMultiStepFeedback
 from qgis.core import QgsProcessingParameterFeatureSink
-from qgis.core import QgsProcessingParameterNumber
 from qgis.core import QgsProcessingParameterString
 from qgis.core import QgsProcessingParameterVectorLayer
 import processing
 
 from ..ntrrp_fsid_service import NtrrpFsidService
-from ..utils import getNtrrpApiUrl, qgsDebug
-
+from ..utils import getNtrrpApiUrl
 
 class AttributeBurntAreas(QgsProcessingAlgorithm):
 
@@ -43,12 +41,16 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
         # Comments – add any other additional information about a mapping period – ie note mapping problems due to cloud.
 
         # Get the next available FSID
+        feedback.pushInfo("Retrieving next available FSID from NAFI endpoint …")
         self.fsidService = NtrrpFsidService()
         self.fsidService.fsidsParsed.connect(
             lambda fsids: self.calculateNextFsid(fsids))
         self.fsidService.downloadAndParseFsids(
             getNtrrpApiUrl(), f'{parameters["Region"]}')
 
+        feedback.pushInfo(f"Next FSID: {self.nextFsid}")
+
+        feedback.pushInfo("Adding FSID, Mapping Period, Month, Region, Upload Date, Curent, and Comments attributes to your burnt areas …")
         # add FSID
         alg_params = {
             'FIELD_LENGTH': 10,
@@ -152,13 +154,9 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
         return results
 
     def calculateNextFsid(self, fsids):
-        qgsDebug("In calculateNextFsid")
-
         fsids.sort(key=lambda x: int(x.fsid), reverse=True)
         lastFsid = int(fsids[0].fsid)
-
         self.nextFsid = lastFsid + 1
-        qgsDebug(f"nextFsid {self.nextFsid}")
 
     def name(self):
         return 'AttributeBurntAreas'

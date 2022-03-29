@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from random import randint
-
 from qgis.PyQt import QtWidgets
 from qgis.PyQt.QtCore import QModelIndex, QSortFilterProxyModel, Qt, pyqtSignal
 from qgis.utils import iface as QgsInterface
@@ -11,9 +9,7 @@ from .ntrrp_dockwidget_base import Ui_NtrrpDockWidgetBase
 from .ntrrp_item import NtrrpItem
 from .ntrrp_region import NtrrpRegion
 from .ntrrp_tree_view_model import NtrrpTreeViewModel
-from .utils import (getNtrrpWmsUrl, getWorkingShapefilePath, guiInformation,
-                    qgsDebug)
-
+from .utils import getNtrrpWmsUrl
 
 class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
     closingPlugin = pyqtSignal()

@@ -7,7 +7,7 @@ from zipfile import ZipFile
 from qgis.PyQt.QtCore import QEventLoop, QObject, QUrl, pyqtSignal
 from qgis.core import QgsFileDownloader
 
-from .utils import ensureDirectory, getNtrrpDataUrl, getTempDownloadPath, qgsDebug
+from .utils import ensureDirectory, getTempDownloadPath, qgsDebug
 
 
 class NtrrpDataClient(QObject):

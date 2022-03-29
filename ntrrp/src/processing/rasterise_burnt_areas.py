@@ -39,8 +39,6 @@ class RasteriseBurntAreas(QgsProcessingAlgorithm):
         results = {}
         outputs = {}
 
-        # qgsDebug(f"BurntAreas: {parameters['BurntAreas']}")
-
         # Rasterize (vector to raster)
         algParams = {
             'BURN': None,

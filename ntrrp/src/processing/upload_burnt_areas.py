@@ -28,7 +28,8 @@ class UploadBurntAreas(QgsProcessingAlgorithm):
         # use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
         # overall progress through the model
         feedback = QgsProcessingMultiStepFeedback(1, model_feedback)
-        results = {}
+
+        feedback.pushInfo(f"Rasterised Burnt Areas: {type(parameters['RasterisedBurntAreas'])} {str(parameters['RasterisedBurntAreas'])}")
 
         # set up a temp filesystem
         uploadDir = getUploadDirectory()
@@ -93,7 +94,7 @@ class UploadBurntAreas(QgsProcessingAlgorithm):
                             "-u", getNtrrpUploadUrl(),
                             "-f", archive,
                             "-cs", "409600",
-                            "-v"])
+                            "-v"], shell=True)
 
         except Exception as err:
             raise RuntimeError(r"""Exception occurred spawning external NAFI upload script … 

@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-from qgis.PyQt import QtGui, QtWidgets, uic
-from qgis.PyQt.QtWidgets import QLayout
+from qgis.PyQt import QtWidgets
 
 from .ntrrp_about_dialog_base import Ui_NtrrpAboutDialogBase
-
 
 class NtrrpAboutDialog(QtWidgets.QDialog, Ui_NtrrpAboutDialogBase):
 

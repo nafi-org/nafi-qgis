@@ -2,11 +2,11 @@
 from qgis.core import QgsProcessing
 from qgis.core import QgsProcessingAlgorithm
 from qgis.core import QgsProcessingMultiStepFeedback
-from qgis.core import QgsProcessingParameterFeatureSink
-from qgis.core import QgsProcessingParameterVectorLayer
-from qgis.core import QgsProcessingParameterNumber
-from qgis.core import QgsProcessingParameterString
 from qgis.core import QgsProcessingParameterExtent
+from qgis.core import QgsProcessingParameterFeatureSink
+from qgis.core import QgsProcessingParameterRasterLayer
+from qgis.core import QgsProcessingParameterVectorLayer
+from qgis.core import QgsProcessingParameterString
 
 import processing
 
@@ -15,6 +15,8 @@ class FullBurntAreasProcess(QgsProcessingAlgorithm):
     def initAlgorithm(self, config=None):
         self.addParameter(QgsProcessingParameterVectorLayer('ApprovedBurntAreas', 'Your approved burnt areas', types=[
                           QgsProcessing.TypeVectorPolygon], defaultValue=None))
+        self.addParameter(QgsProcessingParameterRasterLayer(
+            'CurrentMapping', 'Current Mapping', defaultValue=None))
         self.addParameter(QgsProcessingParameterString(
             'Region', 'Region mapped (Darwin or Katherine)', multiLine=False, defaultValue=''))
         self.addParameter(QgsProcessingParameterString(
@@ -62,6 +64,7 @@ class FullBurntAreasProcess(QgsProcessingAlgorithm):
         alg_params = {
             'Extent': parameters['Extent'],
             'BurntAreas': outputs['AttributeBurntAreas']['AttributedBurntAreas'],
+            'CurrentMapping': parameters['CurrentMapping'],
             'RasterisedBurntAreas': QgsProcessing.TEMPORARY_OUTPUT
         }
 

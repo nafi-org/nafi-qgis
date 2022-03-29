@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from qgis.PyQt.QtGui import QStandardItem, QStandardItemModel
-from owslib.map.wms111 import ContentMetadata
+from qgis.PyQt.QtGui import QStandardItemModel
 
 from .ntrrp_region import NtrrpRegion
 
