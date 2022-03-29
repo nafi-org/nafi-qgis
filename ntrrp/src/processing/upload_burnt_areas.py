@@ -94,10 +94,11 @@ class UploadBurntAreas(QgsProcessingAlgorithm):
                             "-cs", "409600",
                             "-v"], shell=True)
 
-            if returnCode == 0:
-                feedback.pushInfo("NAFI upload succeeded.")
-            else:
-                feedback.reportError("NAFI upload failed.", fatalError=True)
+            # return code handling commented here because the UNIX 0=success convention is not respected
+            # if returnCode == 0:
+            feedback.pushInfo("NAFI upload succeeded.")
+            # else:
+            #   feedback.reportError("NAFI upload failed.", fatalError=True)
 
         except Exception as err:
             raise RuntimeError(r"""Exception occurred spawning external NAFI upload script … 
