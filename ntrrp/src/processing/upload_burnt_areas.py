@@ -53,11 +53,8 @@ class UploadBurntAreas(QgsProcessingAlgorithm):
         processing.run('native:savefeatures', alg_params,
                        context=context, feedback=feedback, is_child_algorithm=True)
 
-        # derive Rasterised Burnt Areas output file from the specified rasterised burnt areas layer
-        project = QgsProject.instance()
-        rasterisedBurntAreasLayer = project.mapLayer(
-            parameters["RasterisedBurntAreas"])
-        rasterisedBurntAreasPath = rasterisedBurntAreasLayer.dataProvider().dataSourceUri()
+        # make this work whether the input is a layer ID or a filename
+        rasterisedBurntAreasPath = self.deriveRasterisedBurntAreasPath(parameters['RasterisedBurntAreas'])
 
         feedback.pushInfo(
             f"Rasterised burnt areas path: {rasterisedBurntAreasPath}")
@@ -65,6 +62,7 @@ class UploadBurntAreas(QgsProcessingAlgorithm):
         feedback.pushInfo(
             f"Copying rasterised burnt areas to {rasterisedTifLocation} …")
 
+        # copy the rasterised burnt areas output to the upload location ready for archiving
         shutil.copyfile(rasterisedBurntAreasPath, rasterisedTifLocation)
 
         # make_archive appends a .zip as well
@@ -73,13 +71,13 @@ class UploadBurntAreas(QgsProcessingAlgorithm):
 
         shutil.make_archive(archiveDir, "zip", archiveDir)
 
-        feedback.pushInfo(f"Attempting upload …")
+        feedback.pushInfo(f"Starting NAFI upload …")
 
         # try to upload the lot!
         try:
             patriceScript = resolvePluginPath("src/upload/upload.py")
 
-            feedback.pushInfo(f"Patrice's script: {patriceScript}")
+            feedback.pushInfo(f"Using upload script at: {patriceScript}")
 
             args = ["python", patriceScript,
                     "-u", getNtrrpUploadUrl(),
@@ -90,11 +88,16 @@ class UploadBurntAreas(QgsProcessingAlgorithm):
             feedback.pushInfo(f"Arguments: {str(args)}")
 
             # mojo from Patrice
-            subprocess.run(["python", patriceScript,
+            returnCode = subprocess.run(["python", patriceScript,
                             "-u", getNtrrpUploadUrl(),
                             "-f", archive,
                             "-cs", "409600",
                             "-v"], shell=True)
+
+            if returnCode == 0:
+                feedback.pushInfo("NAFI upload succeeded.")
+            else:
+                feedback.reportError("NAFI upload failed.", fatalError=True)
 
         except Exception as err:
             raise RuntimeError(r"""Exception occurred spawning external NAFI upload script … 
@@ -105,6 +108,15 @@ class UploadBurntAreas(QgsProcessingAlgorithm):
         return {
             'ArchiveLocation': archive
         }
+
+    def deriveRasterisedBurntAreasPath(self, rasterisedBurntAreasParam):
+        # derive Rasterised Burnt Areas output file from the specified rasterised burnt areas layer
+        project = QgsProject.instance()
+        rasterisedBurntAreasLayer = project.mapLayer(rasterisedBurntAreasParam)
+        if rasterisedBurntAreasLayer is not None:
+            return rasterisedBurntAreasLayer.dataProvider().dataSourceUri()
+        else:
+            return rasterisedBurntAreasParam
 
     def name(self):
         return 'UploadBurntAreas'

@@ -87,10 +87,10 @@ class FullBurntAreasProcess(QgsProcessingAlgorithm):
         return results
 
     def name(self):
-        return 'Full Burnt Areas Process'
+        return 'FullBurntAreasProcess'
 
     def displayName(self):
-        return 'Full Burnt Areas Process'
+        return 'Process and Upload Burnt Areas to NAFI'
 
     def group(self):
         return ''
