@@ -264,12 +264,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
 
     def runUpload(self):
         """Convert the currently active working layer to a raster, attribute it and upload to NAFI."""
-        pass
-        # fsid = randint(100, 200)
-        # results = Upload.run(self.activeWorkingLayer.impl,
-        #                      fsid, self.region.name, getWorkingShapefilePath())
-        # # print the archive location to a message box while we wait on upload
-        # guiInformation(results['ArchiveLocation'])
+        self.region.processAndUploadBurntAreas()
 
     def enableDisable(self):
         "Enable or disable UI elements based on current state."
@@ -308,7 +303,8 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
 
         # we can upload when we've got an active working layer (might need to check for features later)
         haveWorkingLayer = bool(self.activeWorkingLayer)
-        self.uploadButton.setEnabled(haveWorkingLayer)
+        # self.uploadButton.setEnabled(haveWorkingLayer)
+        self.uploadButton.setEnabled(True)
 
     def closeEvent(self, event):
         """Handle plug-in close."""

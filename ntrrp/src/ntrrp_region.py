@@ -2,6 +2,8 @@
 from qgis.PyQt.QtCore import QObject, pyqtSignal
 from qgis.core import QgsProject
 
+import processing
+
 from .ntrrp_data_client import NtrrpDataClient
 from .layer.current_mapping_layer import CurrentMappingLayer
 from .layer.source_layer import SourceLayer
@@ -132,6 +134,16 @@ class NtrrpRegion(QObject):
         item.itemLayer.addMapLayer(self.getSubGroupLayer())
 
     # upload data
-    def uploadBurntAreas(self):
+    def processAndUploadBurntAreas(self):
         """Upload the curated working layer to NAFI."""
-        guiWarning("Upload under construction!")
+        initial_params={
+            'Region': self.name
+        }
+
+        # default current mapping layer if present
+        if self.currentMappingLayer is not None:
+            initial_params['CurrentMapping'] = self.currentMappingLayer.impl.id()
+
+        processing.execAlgorithmDialog('BurntAreas:FullBurntAreasProcess', initial_params)
+
+        
