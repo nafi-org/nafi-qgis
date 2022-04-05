@@ -2,7 +2,7 @@
 name=NAFI Burnt Areas Mapping
 qgisMinimumVersion=3.8.1
 description=NAFI Burnt Areas Mapping Tools
-version=0.10.2
+version=0.10.3
 author=Tom Lynch
 email=tom@trailmarker.io
 about=This plugin is part of a project to provide high resolution burnt area mapping in northern Australia through the active fire season.
@@ -17,7 +17,14 @@ experimental=False
 deprecated=False
 category=Web
 server=False
-changelog=0.10.2
+changelog=0.10.3
+          - downloading of segmentation data and current mapping now done via DownloadFile
+          - subarea support implemented
+          - removed NtrrpDataClient
+          - source layer combo box removed in favour of setting source layer via the Layers Panel
+          - cleanup
+          - tools with a 'Region' parameter now take a ['Darwin', 'Katherine'] enumeration
+          0.10.2
           - upload button working with at least some sensible defaults
           0.10.1
           - updates to processing to auto-calculate extent params
