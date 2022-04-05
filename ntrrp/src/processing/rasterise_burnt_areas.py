@@ -4,16 +4,12 @@ from pathlib import Path
 from qgis.core import QgsProcessing
 from qgis.core import QgsProcessingAlgorithm
 from qgis.core import QgsProcessingMultiStepFeedback
-from qgis.core import QgsProcessingParameterExtent
 from qgis.core import QgsProcessingParameterRasterDestination
 from qgis.core import QgsProcessingParameterRasterLayer
-from qgis.core import QgsProcessingParameterString
 from qgis.core import QgsProcessingParameterVectorLayer
 import processing
 
 from .color_table import addColorTable
-from ..ntrrp_data_client import NtrrpDataClient
-from ..utils import getNtrrpDataUrl, qgsDebug
 
 
 class RasteriseBurntAreas(QgsProcessingAlgorithm):
@@ -35,7 +31,8 @@ class RasteriseBurntAreas(QgsProcessingAlgorithm):
         results = {}
         outputs = {}
 
-        burntAreasExtent = self.parameterAsExtent(parameters, 'BurntAreas', context)
+        burntAreasExtent = self.parameterAsExtent(
+            parameters, 'BurntAreas', context)
 
         # Rasterize (vector to raster)
         algParams = {
@@ -81,7 +78,7 @@ class RasteriseBurntAreas(QgsProcessingAlgorithm):
         addColorTable(Path(results['RasterisedBurntAreas']))
 
         return results
-   
+
     def name(self):
         return 'RasteriseBurntAreas'
 

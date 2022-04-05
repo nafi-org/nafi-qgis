@@ -2,6 +2,7 @@
 from .ntrrp_region import NtrrpRegion
 from .ows_utils import parseNtrrpLayerRegion
 
+
 class NtrrpCapabilities:
     def __init__(self, wmsUrl, owsLayers):
         """Constructor."""

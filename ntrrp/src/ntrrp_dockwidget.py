@@ -11,6 +11,7 @@ from .ntrrp_region import NtrrpRegion
 from .ntrrp_tree_view_model import NtrrpTreeViewModel
 from .utils import getNtrrpWmsUrl, guiInformation, qgsDebug
 
+
 class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
     closingPlugin = pyqtSignal()
     updateState = pyqtSignal()
@@ -174,7 +175,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         # self.downloadButton.setEnabled(False)
         # self.region.dataDownloadFinished.connect(lambda: self.downloadButton.setEnabled(True))
         self.region.downloadData()
-    
+
     def downloadCurrentMapping(self):
         """Download the current mapping data."""
         # self.currentMappingButton.setEnabled(False)
@@ -186,14 +187,14 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         """Update the active source layer based on clicks in the Layers Panel."""
         activeLayer = QgsInterface.activeLayer()
         if activeLayer is not None:
-            matchingSourceLayer = self.region.getSourceLayerByMapLayer(activeLayer)        
+            matchingSourceLayer = self.region.getSourceLayerByMapLayer(
+                activeLayer)
             if matchingSourceLayer is not None:
-                qgsDebug(f"Changing active source layer to {matchingSourceLayer.getDisplayName()}")
+                # qgsDebug(f"Changing active source layer to {matchingSourceLayer.getDisplayName()}")
                 self.activeSourceLayer = matchingSourceLayer
                 self.updateSourceLayerLabel(self.activeSourceLayer)
                 self.updateState.emit()
-                # self.updateSourceLayerComboBox(self.activeSourceLayer)        
-
+                # self.updateSourceLayerComboBox(self.activeSourceLayer)
 
     def regionComboBoxChanged(self, regionIndex):
         """Switch the active region."""
@@ -202,7 +203,6 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
 
         if region is not None:
             self.setRegion(region)
-
 
     def workingLayerComboBoxChanged(self, workingLayerIndex):
         """Switch the active source layer."""
@@ -284,7 +284,8 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
             self.region.workingLayers and len(self.region.workingLayers) > 0)
 
         if not haveSourceLayers:
-            self.activeSourceLayerLabel.setText("Download NAFI burnt areas first …")
+            self.activeSourceLayerLabel.setText(
+                "Download NAFI burnt areas first …")
 
         # need a selection
         self.workingLayerComboBox.setEnabled(haveWorkingLayers)

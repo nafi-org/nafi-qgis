@@ -7,6 +7,7 @@ from qgis.core import QgsMapLayer
 from .layer.wmts_layer import WmtsLayer
 from .ows_utils import parseNtrrpLayerDescription, parseNtrrpLayerRegion
 
+
 class NtrrpItem(QStandardItem):
 
     def __init__(self, wmsUrl, owsLayer):

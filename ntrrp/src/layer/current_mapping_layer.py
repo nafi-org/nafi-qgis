@@ -4,7 +4,7 @@ from pathlib import Path
 from qgis.core import QgsProject, QgsRasterLayer
 from qgis.PyQt.QtCore import QObject
 
-from ..utils import guiError, qgsDebug
+from ..utils import guiError
 from .abstract_layer import AbstractLayer
 
 
@@ -44,4 +44,3 @@ class CurrentMappingLayer(QObject, AbstractLayer):
     def getMapLayerName(self):
         """Get an appropriate map layer name for this layer."""
         return f"{self.region} Current Mapping"
-

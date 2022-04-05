@@ -10,6 +10,7 @@ import processing
 from ..ntrrp_fsid_service import NtrrpFsidService
 from ..utils import getNtrrpApiUrl
 
+
 class AttributeBurntAreas(QgsProcessingAlgorithm):
 
     nextFsid = -1
@@ -40,7 +41,8 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
         # Comments – add any other additional information about a mapping period – ie note mapping problems due to cloud.
 
         # Get the next available FSID
-        feedback.pushInfo("Retrieving next available FSID from NAFI endpoint …")
+        feedback.pushInfo(
+            "Retrieving next available FSID from NAFI endpoint …")
         self.fsidService = NtrrpFsidService()
         self.fsidService.fsidsParsed.connect(
             lambda fsids: self.calculateNextFsid(fsids))
@@ -49,7 +51,8 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
 
         feedback.pushInfo(f"Next FSID: {self.nextFsid}")
 
-        feedback.pushInfo("Adding FSID, Mapping Period, Month, Region, Upload Date, Curent, and Comments attributes to your burnt areas …")
+        feedback.pushInfo(
+            "Adding FSID, Mapping Period, Month, Region, Upload Date, Curent, and Comments attributes to your burnt areas …")
         # add FSID
         alg_params = {
             'FIELD_LENGTH': 10,

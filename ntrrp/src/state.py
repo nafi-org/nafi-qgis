@@ -6,6 +6,7 @@ from qgis.core import QgsProject
 
 from .utils import guiError, getSetting, setSetting
 
+
 class NtrrpState(object):
 
     # Fully qualified Windows path of the current working folder (which should be the QGS project file area)
@@ -33,8 +34,8 @@ class NtrrpState(object):
 
     def saveState(self):
         """Save the current state to QGIS settings."""
-        setSetting("NTRRP_STATE", json.dumps(self, default=lambda o: o.__dict__, 
-            sort_keys=True, indent=4))      
+        setSetting("NTRRP_STATE", json.dumps(self, default=lambda o: o.__dict__,
+                                             sort_keys=True, indent=4))
 
     def loadState(self):
         """Load the current state from QGIS settings."""
@@ -44,6 +45,6 @@ class NtrrpState(object):
         # self.workingLayerName = state["workingLayerName"]
         # self.sourceLayerName = state["sourceLayerName"]
         # self.region = state["region"]
-     
+
 
 State = NtrrpState()

@@ -5,6 +5,7 @@ from .ntrrp_region import NtrrpRegion
 
 UNWANTED_LAYERS = ["NODATA_RASTER"]
 
+
 class NtrrpTreeViewModel(QStandardItemModel):
 
     def __init__(self, unwantedLayers=UNWANTED_LAYERS):

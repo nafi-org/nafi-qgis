@@ -2,13 +2,16 @@
 from qgis.core import QgsProcessing
 from qgis.core import QgsProcessingAlgorithm
 from qgis.core import QgsProcessingMultiStepFeedback
-from qgis.core import QgsProcessingParameterExtent
+from qgis.core import QgsProcessingParameterEnum
 from qgis.core import QgsProcessingParameterFeatureSink
 from qgis.core import QgsProcessingParameterRasterLayer
 from qgis.core import QgsProcessingParameterVectorLayer
 from qgis.core import QgsProcessingParameterString
 
 import processing
+
+from ..utils import NTRRP_REGIONS
+
 
 class FullBurntAreasProcess(QgsProcessingAlgorithm):
 
@@ -17,8 +20,9 @@ class FullBurntAreasProcess(QgsProcessingAlgorithm):
                           QgsProcessing.TypeVectorPolygon], defaultValue=None))
         self.addParameter(QgsProcessingParameterRasterLayer(
             'CurrentMapping', 'Current rasterised mapping for your region', defaultValue=None))
-        self.addParameter(QgsProcessingParameterString(
-            'Region', 'Region mapped (Darwin or Katherine)', multiLine=False, defaultValue=''))
+        self.addParameter(QgsProcessingParameterEnum('Region', 'Region', options=NTRRP_REGIONS,
+                          allowMultiple=False, usesStaticStrings=False, defaultValue=0))
+
         self.addParameter(QgsProcessingParameterString(
             'Comments', 'Your comments on this mapping', multiLine=True, defaultValue=''))
         self.addParameter(QgsProcessingParameterFeatureSink('AttributedBurntAreas', 'Attributed Burnt Areas',
@@ -86,7 +90,7 @@ class FullBurntAreasProcess(QgsProcessingAlgorithm):
         return 'FullBurntAreasProcess'
 
     def displayName(self):
-        return 'Process and Upload Burnt Areas to NAFI'
+        return 'Process and Upload Burnt Areas'
 
     def group(self):
         return ''

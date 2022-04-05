@@ -7,6 +7,7 @@ from qgis.core import QgsProcessingParameterFeatureSink
 
 import processing
 
+
 class DissolveBurntAreas(QgsProcessingAlgorithm):
 
     def initAlgorithm(self, config=None):

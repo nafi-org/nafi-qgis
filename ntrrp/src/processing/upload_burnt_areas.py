@@ -12,7 +12,8 @@ from qgis.core import QgsProject
 
 import processing
 
-from ..utils import ensureDirectory, getNtrrpUploadUrl, getRandomFilename, getUploadDirectory, resolvePluginPath, qgsDebug
+from ..utils import ensureDirectory, getNtrrpUploadUrl, getRandomFilename, getUploadDirectory, resolvePluginPath
+
 
 class UploadBurntAreas(QgsProcessingAlgorithm):
 
@@ -29,7 +30,8 @@ class UploadBurntAreas(QgsProcessingAlgorithm):
         # overall progress through the model
         feedback = QgsProcessingMultiStepFeedback(1, model_feedback)
 
-        feedback.pushInfo(f"Rasterised Burnt Areas: {type(parameters['RasterisedBurntAreas'])} {str(parameters['RasterisedBurntAreas'])}")
+        feedback.pushInfo(
+            f"Rasterised Burnt Areas: {type(parameters['RasterisedBurntAreas'])} {str(parameters['RasterisedBurntAreas'])}")
 
         # set up a temp filesystem
         uploadDir = getUploadDirectory()
@@ -54,7 +56,8 @@ class UploadBurntAreas(QgsProcessingAlgorithm):
                        context=context, feedback=feedback, is_child_algorithm=True)
 
         # make this work whether the input is a layer ID or a filename
-        rasterisedBurntAreasPath = self.deriveRasterisedBurntAreasPath(parameters['RasterisedBurntAreas'])
+        rasterisedBurntAreasPath = self.deriveRasterisedBurntAreasPath(
+            parameters['RasterisedBurntAreas'])
 
         feedback.pushInfo(
             f"Rasterised burnt areas path: {rasterisedBurntAreasPath}")
@@ -89,10 +92,10 @@ class UploadBurntAreas(QgsProcessingAlgorithm):
 
             # mojo from Patrice
             returnCode = subprocess.run(["python", patriceScript,
-                            "-u", getNtrrpUploadUrl(),
-                            "-f", archive,
-                            "-cs", "409600",
-                            "-v"], shell=True)
+                                         "-u", getNtrrpUploadUrl(),
+                                         "-f", archive,
+                                         "-cs", "409600",
+                                         "-v"], shell=True)
 
             # return code handling commented here because the UNIX 0=success convention is not respected
             # if returnCode == 0:
@@ -104,7 +107,7 @@ class UploadBurntAreas(QgsProcessingAlgorithm):
             raise RuntimeError(r"""Exception occurred spawning external NAFI upload script … 
                                    check you can run scripts of the form 
                                    'python.exe upload.py -u https://test.firenorth.org.au/bfnt -f examples\bfnt_darwin_current_sr3577_tif.zip -cs 409600 -v'""")
-        
+
         # we need to return something to processing engine or it records a failure
         return {
             'ArchiveLocation': archive

@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
 from abc import ABC, ABCMeta, abstractmethod
-from tokenize import group
 
 from qgis.PyQt.QtCore import pyqtSignal, QObject
-from qgis.core import QgsMapLayer, QgsProject
-
-from ..utils import qgsDebug
+from qgis.core import QgsProject
 
 
 class AbstractQObjectMeta(ABCMeta, type(QObject)):
@@ -53,7 +50,8 @@ class AbstractLayer(ABC, metaclass=AbstractQObjectMeta):
             return None
         elif len(matches) >= 1:
             subGroupLayer = self.getSubGroupLayer()
-            matches = [layer for layer in matches if subGroupLayer.findLayer(layer) is not None]
+            matches = [layer for layer in matches if subGroupLayer.findLayer(
+                layer) is not None]
             if len(matches) >= 1:
                 return matches[0]
             else:
@@ -63,9 +61,8 @@ class AbstractLayer(ABC, metaclass=AbstractQObjectMeta):
         layer = self.getMapLayer()
 
         if layer is None:
-            qgsDebug(f"Did not find layer {self.getMapLayerName()}")
+            # qgsDebug(f"Did not find layer {self.getMapLayerName()}")
             self.addMapLayer()
         else:
-            qgsDebug(f"Found layer {self.getMapLayerName()}")
+            # qgsDebug(f"Found layer {self.getMapLayerName()}")
             self.impl = layer
-

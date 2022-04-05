@@ -114,16 +114,6 @@ class WorkingLayer(QObject, AbstractLayer):
         """Get an appropriate map layer name for this layer."""
         return f"Working Layer #{self.index}"
 
-    # def getMapLayer(self, groupLayer=None):
-    #     """Get the QGIS map layer corresponding to this layer, if any."""
-    #     if self.impl is None:
-    #         return None
-
-    #     if groupLayer is None:
-    #         groupLayer = QgsProject.instance().layerTreeRoot()
-
-    #     return self.getSubGroupLayer(groupLayer).findLayer(self.impl)
-
     def loadStyle(self, styleName):
         """Apply a packaged style to this layer."""
         stylePath = resolveStylePath(styleName)

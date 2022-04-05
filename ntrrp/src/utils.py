@@ -17,6 +17,7 @@ NTRRP_DATA_URL = f"https://test.firenorth.org.au/bfnt/downloads"
 NTRRP_UPLOAD_URL = "https://test.firenorth.org.au/bfnt/upload.php"
 NTRRP_API_URL = "https://test.firenorth.org.au/bfnt/api"
 
+
 def getSetting(setting, default=None):
     """Retrieve an NTRRP setting."""
     settings = QgsSettings()
@@ -26,16 +27,19 @@ def getSetting(setting, default=None):
         settings.setValue(f"NTRRP/{setting}", current)
     return current
 
+
 def setSetting(setting, value):
     """Set an NTRRP setting."""
     settings = QgsSettings()
     settings.setValue(f"NTRRP/{setting}", value)
+
 
 def restoreDefaults():
     settings = QgsSettings()
     settings.setValue(f"NTRRP/NTRRP_WMS_URL", NTRRP_WMS_URL)
     settings.setValue(f"NTRRP/NTRRP_WMTS_URL", NTRRP_WMTS_URL)
     settings.setValue(f"NTRRP/NTRRP_DATA_URL", NTRRP_DATA_URL)
+
 
 def getNtrrpWmsUrl():
     return getSetting("NTRRP_WMS_URL", NTRRP_WMS_URL)

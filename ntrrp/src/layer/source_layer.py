@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import dateutil
 
-from qgis.PyQt.QtCore import pyqtSignal, QObject
+from qgis.PyQt.QtCore import QObject
 from qgis.core import QgsLayerTreeGroup, QgsProject, QgsVectorLayer
 
 from .abstract_layer import AbstractLayer
@@ -33,7 +33,7 @@ class SourceLayer(QObject, AbstractLayer):
         # self.regionGroup = f"{self.region} Burnt Areas (Area {self.subArea})"
         if self.subArea is not None:
             self.subAreaGroup = f"Subarea {self.subArea}"
-        
+
         self.differenceGroup = f"{self.difference} Differences ({self.endDate.strftime('%b %d')}–{self.startDate.strftime('%b %d')})"
 
     def getSubGroupLayer(self):
@@ -50,8 +50,10 @@ class SourceLayer(QObject, AbstractLayer):
             subAreaLayer = differenceGroupLayer.findGroup(self.subAreaGroup)
             if subAreaLayer == None:
                 # put the subareas in in numerical order
-                differenceGroupLayer.addChildNode(QgsLayerTreeGroup(self.subAreaGroup))
-                subAreaLayer = differenceGroupLayer.findGroup(self.subAreaGroup)
+                differenceGroupLayer.addChildNode(
+                    QgsLayerTreeGroup(self.subAreaGroup))
+                subAreaLayer = differenceGroupLayer.findGroup(
+                    self.subAreaGroup)
             return subAreaLayer
         else:
             return differenceGroupLayer
@@ -65,7 +67,7 @@ class SourceLayer(QObject, AbstractLayer):
         """Add an NTRRP data layer to the map."""
         # create the QgsVectorLayer object
         self.load()
-        
+
         self.impl.willBeDeleted.connect(lambda: self.layerRemoved.emit(self))
         QgsProject.instance().addMapLayer(self.impl, False)
 

@@ -2,6 +2,7 @@
 from pathlib import Path
 from osgeo import gdal
 
+
 def getColorTable(gdalDatasetPath):
     """Get the colour table from an image supported by GDAL."""
     assert isinstance(gdalDatasetPath, Path)

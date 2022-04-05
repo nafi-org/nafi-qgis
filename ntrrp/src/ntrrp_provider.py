@@ -9,6 +9,8 @@ from .processing.download_segmentation_data import DownloadSegmentationData
 from .processing.full_burnt_areas_process import FullBurntAreasProcess
 from .processing.rasterise_burnt_areas import RasteriseBurntAreas
 from .processing.upload_burnt_areas import UploadBurntAreas
+
+
 class NtrrpProvider(QgsProcessingProvider):
 
     def __init__(self):

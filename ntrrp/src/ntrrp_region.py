@@ -5,13 +5,13 @@ from qgis.core import QgsProject
 
 import processing
 
-from .ntrrp_data_client import NtrrpDataClient
 from .layer.current_mapping_layer import CurrentMappingLayer
 from .layer.source_layer import SourceLayer
 from .layer.working_layer import WorkingLayer
 from .ntrrp_item import NtrrpItem
 from .state import State
-from .utils import guiWarning, qgsDebug, NTRRP_REGIONS
+from .utils import qgsDebug, NTRRP_REGIONS
+
 
 class NtrrpRegion(QObject):
     # emit this signal when the data download finishes
@@ -66,8 +66,10 @@ class NtrrpRegion(QObject):
             'Region': NTRRP_REGIONS.index(self.name),
             'WorkingFolder': State.workingFolder
         }
-        dialog = processing.createAlgorithmDialog('BurntAreas:DownloadCurrentMapping', params)
-        dialog.algorithmFinished.connect(lambda _: self.addCurrentMappingLayer(dialog.results()['CurrentMappingFolder']))
+        dialog = processing.createAlgorithmDialog(
+            'BurntAreas:DownloadCurrentMapping', params)
+        dialog.algorithmFinished.connect(lambda _: self.addCurrentMappingLayer(
+            dialog.results()['CurrentMappingFolder']))
         for signal in [dialog.algorithmFinished, dialog.accepted, dialog.rejected, dialog.destroyed]:
             signal.connect(lambda: self.currentMappingDownloadFinished.emit())
         dialog.show()
@@ -79,23 +81,25 @@ class NtrrpRegion(QObject):
         """Download burnt areas features from NAFI and call back to add them to the map."""
         qgsDebug("Downloading data …")
 
-        # if State.workingFolder is None:
-        #     if State.deriveWorkingFolder() is None:
-        #         return None
-        #     State.saveState()
+        if State.workingFolder is None:
+            if State.deriveWorkingFolder() is None:
+                return None
+            State.saveState()
 
-        # params = {
-        #     'Region': NTRRP_REGIONS.index(self.name),
-        #     'WorkingFolder': State.workingFolder
-        # }
-        # dialog = processing.createAlgorithmDialog('BurntAreas:DownloadSegmentationData', params)
-        # dialog.algorithmFinished.connect(lambda _: self.addSourceLayers(dialog.results()['SegmentationDataFolder']))
-        # for signal in [dialog.algorithmFinished, dialog.accepted, dialog.rejected, dialog.destroyed]:
-        #     signal.connect(lambda: self.dataDownloadFinished.emit())
-        # dialog.show()
-        # dialog.runButton().click()
+        params = {
+            'Region': NTRRP_REGIONS.index(self.name),
+            'WorkingFolder': State.workingFolder
+        }
+        dialog = processing.createAlgorithmDialog(
+            'BurntAreas:DownloadSegmentationData', params)
+        dialog.algorithmFinished.connect(lambda _: self.addSourceLayers(
+            dialog.results()['SegmentationDataFolder']))
+        for signal in [dialog.algorithmFinished, dialog.accepted, dialog.rejected, dialog.destroyed]:
+            signal.connect(lambda: self.dataDownloadFinished.emit())
+        dialog.show()
+        dialog.runButton().click()
 
-        self.addSourceLayers(Path('C:/Users/tom.lynch/Desktop/Working/Darwin'))
+        # self.addSourceLayers(Path('C:/Users/tom.lynch/Desktop/Working/Darwin'))
 
     # add things to the map
     def getSubGroupLayer(self):
@@ -129,8 +133,8 @@ class NtrrpRegion(QObject):
 
     def getSourceLayerByMapLayer(self, mapLayer):
         """Retrieve a current source layer from its map layer."""
-        
-        matches = [sourceLayer for sourceLayer in self.sourceLayers 
+
+        matches = [sourceLayer for sourceLayer in self.sourceLayers
                    if sourceLayer.impl.id() == mapLayer.id()]
         return next(iter(matches), None)
 
@@ -139,7 +143,8 @@ class NtrrpRegion(QObject):
         if unzipLocation is None:
             return
         rasterFile = next(unzipLocation.rglob("*.tif"))
-        self.currentMappingLayer = CurrentMappingLayer(self.name, Path(rasterFile))
+        self.currentMappingLayer = CurrentMappingLayer(
+            self.name, Path(rasterFile))
         self.currentMappingLayer.addMapLayerIfNotPresent()
 
     def addSourceLayers(self, unzipLocation):
@@ -150,10 +155,11 @@ class NtrrpRegion(QObject):
                              for path in unzipLocation.rglob("*.shp")]
 
         # do not add the layers with no threshold information
-        self.sourceLayers = [sourceLayer for sourceLayer in self.sourceLayers if sourceLayer.threshold is not None]
+        self.sourceLayers = [
+            sourceLayer for sourceLayer in self.sourceLayers if sourceLayer.threshold is not None]
 
         for sourceLayer in self.sourceLayers:
-            qgsDebug(f"Adding source layer {sourceLayer.getDisplayName()}")
+            # qgsDebug(f"Adding source layer {sourceLayer.getDisplayName()}")
             sourceLayer.layerRemoved.connect(
                 lambda layer: self.removeSourceLayer(layer))
             sourceLayer.addMapLayerIfNotPresent()
@@ -174,9 +180,13 @@ class NtrrpRegion(QObject):
     # upload data
     def processAndUploadBurntAreas(self):
         """Upload the curated working layer to NAFI."""
+
         params = {
-            'Region': self.name
+            'Region': NTRRP_REGIONS.index(self.name),
         }
+
+        if self.region.activeWorkingLayer is not None:
+            params['ApprovedBurntAreas'] = self.region.activeWorkingLayer.impl
 
         # default current mapping layer if present
         if self.currentMappingLayer is not None:
