@@ -81,25 +81,25 @@ class NtrrpRegion(QObject):
         """Download burnt areas features from NAFI and call back to add them to the map."""
         qgsDebug("Downloading data …")
 
-        # if State.workingFolder is None:
-        #     if State.deriveWorkingFolder() is None:
-        #         return None
-        #     State.saveState()
+        if State.workingFolder is None:
+            if State.deriveWorkingFolder() is None:
+                return None
+            State.saveState()
 
-        # params = {
-        #     'Region': NTRRP_REGIONS.index(self.name),
-        #     'WorkingFolder': State.workingFolder
-        # }
-        # dialog = processing.createAlgorithmDialog(
-        #     'BurntAreas:DownloadSegmentationData', params)
-        # dialog.algorithmFinished.connect(lambda _: self.addSourceLayers(
-        #     dialog.results()['SegmentationDataFolder']))
-        # for signal in [dialog.algorithmFinished, dialog.accepted, dialog.rejected, dialog.destroyed]:
-        #     signal.connect(lambda: self.dataDownloadFinished.emit())
-        # dialog.show()
-        # dialog.runButton().click()
+        params = {
+            'Region': NTRRP_REGIONS.index(self.name),
+            'WorkingFolder': State.workingFolder
+        }
+        dialog = processing.createAlgorithmDialog(
+            'BurntAreas:DownloadSegmentationData', params)
+        dialog.algorithmFinished.connect(lambda _: self.addSourceLayers(
+            dialog.results()['SegmentationDataFolder']))
+        for signal in [dialog.algorithmFinished, dialog.accepted, dialog.rejected, dialog.destroyed]:
+            signal.connect(lambda: self.dataDownloadFinished.emit())
+        dialog.show()
+        dialog.runButton().click()
 
-        self.addSourceLayers(Path('C:/Users/tom.lynch/Desktop/Working/Darwin'))
+        # self.addSourceLayers(Path('C:/Users/tom.lynch/Desktop/Working/Darwin'))
 
     # add things to the map
     def getSubGroupLayer(self):
