@@ -35,6 +35,9 @@ class FullBurntAreasProcess(QgsProcessingAlgorithm):
         results = {}
         outputs = {}
 
+        # Set up transfer parameters
+        region = NTRRP_REGIONS[parameters['Region']]
+
         # Dissolve Burnt Areas
         alg_params = {
             'BurntAreas': parameters['ApprovedBurntAreas'],
@@ -51,7 +54,7 @@ class FullBurntAreasProcess(QgsProcessingAlgorithm):
         alg_params = {
             'Comments': parameters['Comments'],
             'DissolvedBurntAreas': outputs['DissolveBurntAreas']['DissolvedBurntAreas'],
-            'Region': parameters['Region'],
+            'Region': region,
             'AttributedBurntAreas': QgsProcessing.TEMPORARY_OUTPUT
         }
         outputs['AttributeBurntAreas'] = processing.run(

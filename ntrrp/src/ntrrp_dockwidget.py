@@ -168,7 +168,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
 
     def runUpload(self):
         """Convert the currently active working layer to a raster, attribute it and upload to NAFI."""
-        self.region.processAndUploadBurntAreas()
+        self.region.processAndUploadBurntAreas(self.activeWorkingLayer)
 
     def downloadData(self):
         """Download the segmentation data."""

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from pathlib import Path
-from zipfile import ZipFile
+import json
 
 from qgis.core import QgsProcessing
 from qgis.core import QgsProcessingAlgorithm
@@ -9,10 +9,11 @@ from qgis.core import QgsProcessingParameterEnum
 from qgis.core import QgsProcessingParameterFile
 import processing
 
-from ..utils import getNtrrpDataUrl, getTempDownloadPath, NTRRP_REGIONS
+from ..ntrrp_fsid_record import NtrrpFsidRecord
+from ..utils import getNtrrpApiUrl, fsidsError, NTRRP_REGIONS
 
 
-class DownloadCurrentMapping(QgsProcessingAlgorithm):
+class CalculateNextFsid(QgsProcessingAlgorithm):
 
     def initAlgorithm(self, config=None):
         self.addParameter(QgsProcessingParameterEnum('Region', 'Region', options=NTRRP_REGIONS,
@@ -25,43 +26,48 @@ class DownloadCurrentMapping(QgsProcessingAlgorithm):
         # overall progress through the model
         feedback = QgsProcessingMultiStepFeedback(1, model_feedback)
         results = {
-            'CurrentMappingFolder': None
+            'NextFSID': None
         }
 
         # Set up transfer parameters
         region = NTRRP_REGIONS[parameters['Region']]
         regionDataFolder = Path(parameters['WorkingFolder']) / region
-        downloadUrl = f"{getNtrrpDataUrl()}/bfnt_{region.lower()}_current_sr3577_tif.zip"
-        tempFile = getTempDownloadPath()
+        downloadUrl = fsidsUrl = f"{getNtrrpApiUrl()}/mapping/?area={region.lower()}"
+        fsidsFile = regionDataFolder / "fsids.json"
 
         # Download ZIP to temp location
         alg_params = {
-            'OUTPUT': tempFile,
+            'OUTPUT': fsidsFile,
             'URL': downloadUrl
         }
         processing.run('native:filedownloader', alg_params,
                        context=context, feedback=feedback, is_child_algorithm=True)
 
-        # Unzip ZIP to region data folder
-        if not Path(tempFile).exists():
+        # Parse FSID data
+        if not Path(fsidsFile).exists():
             return results
         else:
-            with ZipFile(Path(tempFile), 'r') as zf:
-                zf.extractall(regionDataFolder)
-                zf.close()
-                Path(tempFile).unlink()
+            try:
+                fsidArray = json.load(fsidsFile)
 
-            results = {
-                'CurrentMappingFolder': regionDataFolder
-            }
+                if not isinstance(fsidArray, list):
+                    raise RuntimeError("Expected a list of FSIDs")
+
+                fsids = [NtrrpFsidRecord(fsidJson) for fsidJson in fsidArray]
+                fsids.sort(key=lambda x: int(x.fsid), reverse=True)
+                lastFsid = int(fsids[0].fsid)
+                results['NextFSID'] = lastFsid + 1
+
+            except:
+                fsidsError()
 
         return results
 
     def name(self):
-        return 'DownloadCurrentMapping'
+        return 'CalculateNextFSID'
 
     def displayName(self):
-        return 'Download NAFI Current Burnt Areas Mapping'
+        return 'Calculate Next Fire Scar ID'
 
     def group(self):
         return ''
