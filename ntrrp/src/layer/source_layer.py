@@ -2,7 +2,7 @@
 import dateutil
 
 from qgis.PyQt.QtCore import pyqtSignal, QObject
-from qgis.core import QgsProject, QgsVectorLayer
+from qgis.core import QgsLayerTreeGroup, QgsProject, QgsVectorLayer
 
 from .abstract_layer import AbstractLayer
 from ..utils import resolveStylePath
@@ -28,29 +28,44 @@ class SourceLayer(QObject, AbstractLayer):
         if len(segments) > 6:
             self.threshold = segments[6][1:]
         else:
-            self.threshold = 0
+            self.threshold = None
 
         # self.regionGroup = f"{self.region} Burnt Areas (Area {self.subArea})"
-        self.differenceGroup = f"{self.difference} Differences ({self.startDate.strftime('%b %d')}–{self.endDate.strftime('%b %d')})"
+        if self.subArea is not None:
+            self.subAreaGroup = f"Subarea {self.subArea}"
+        
+        self.differenceGroup = f"{self.difference} Differences ({self.endDate.strftime('%b %d')}–{self.startDate.strftime('%b %d')})"
 
-        self.load()
-
-    def getSubGroupLayer(self, groupLayer):
+    def getSubGroupLayer(self):
         """Get or create the right dMIRBI difference layer group for an NTRRP data layer."""
 
-        subGroupLayer = groupLayer.findGroup(self.differenceGroup)
-        if subGroupLayer == None:
+        groupLayer = self.getRegionLayer()
+
+        differenceGroupLayer = groupLayer.findGroup(self.differenceGroup)
+        if differenceGroupLayer == None:
             groupLayer.insertGroup(0, self.differenceGroup)
-            subGroupLayer = groupLayer.findGroup(self.differenceGroup)
-        return subGroupLayer
+            differenceGroupLayer = groupLayer.findGroup(self.differenceGroup)
+
+        if self.subArea is not None:
+            subAreaLayer = differenceGroupLayer.findGroup(self.subAreaGroup)
+            if subAreaLayer == None:
+                # put the subareas in in numerical order
+                differenceGroupLayer.addChildNode(QgsLayerTreeGroup(self.subAreaGroup))
+                subAreaLayer = differenceGroupLayer.findGroup(self.subAreaGroup)
+            return subAreaLayer
+        else:
+            return differenceGroupLayer
 
     def load(self):
         """Load the source layer."""
         self.impl = QgsVectorLayer(
             self.shapefilePath.as_posix(), self.getMapLayerName(), "ogr")
 
-    def addMapLayer(self, groupLayer):
+    def addMapLayer(self):
         """Add an NTRRP data layer to the map."""
+        # create the QgsVectorLayer object
+        self.load()
+        
         self.impl.willBeDeleted.connect(lambda: self.layerRemoved.emit(self))
         QgsProject.instance().addMapLayer(self.impl, False)
 
@@ -61,7 +76,7 @@ class SourceLayer(QObject, AbstractLayer):
             self.loadStyle("higher_threshold")
 
         self.layerAdded.emit(self)
-        subGroupLayer = self.getSubGroupLayer(groupLayer)
+        subGroupLayer = self.getSubGroupLayer()
         subGroupLayer.addLayer(self.impl)
 
     def getMapLayerName(self):
@@ -70,17 +85,10 @@ class SourceLayer(QObject, AbstractLayer):
 
     def getDisplayName(self):
         """Get an appropriate UX display name for non-hierarchical widgets like combos."""
-        return f"{self.difference} {self.getMapLayerName()}"
-
-    def getMapLayer(self, groupLayer=None):
-        """Get the QGIS map layer corresponding to this layer, if any."""
-        if self.impl is None:
-            return None
-
-        if groupLayer is None:
-            groupLayer = QgsProject.instance().layerTreeRoot()
-
-        return self.getSubGroupLayer(groupLayer).findLayer(self.impl)
+        if self.subArea is not None:
+            return f"Subarea {self.subArea} {self.difference} Threshold {self.threshold}"
+        else:
+            return f"{self.difference} Threshold {self.threshold}"
 
     def loadStyle(self, styleName):
         """Apply a packaged style to this layer."""

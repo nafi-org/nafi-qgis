@@ -8,18 +8,16 @@ from ..utils import getNtrrpWmtsUrl, guiError, setDefaultProjectCrs
 
 
 class WmtsLayer(QObject, AbstractLayer):
-    def __init__(self, wmsUrl, owsLayer):
+    def __init__(self, region, wmsUrl, owsLayer):
         """Constructor."""
         super(QObject, self).__init__()
+        self.region = region
         self.wmsUrl = wmsUrl
         self.owsLayer = owsLayer
         self.mapLayerId = None
         self.impl = None
 
-    def getSubGroupLayer(self, groupLayer):
-        return groupLayer
-
-    def addMapLayer(self, groupLayer):
+    def addMapLayer(self):
         """Create a QgsRasterLayer from WMTS given an OWS ContentMetadata object."""
         # only create a WMTS layer from a child
         # NtrrpItem keeps a reference to any active QgsMapLayer in order to avoid being added twice
@@ -46,11 +44,12 @@ class WmtsLayer(QObject, AbstractLayer):
                 self.layerAdded.emit(self)
                 self.mapLayerId = self.impl.id()
 
-                subGroupLayer = self.getSubGroupLayer(groupLayer)
+                subGroupLayer = self.getSubGroupLayer()
                 subGroupLayer.addLayer(self.impl)
 
                 # don't show legend initially
                 displayLayer = project.layerTreeRoot().findLayer(self.impl)
+                displayLayer.setExpanded(True)
                 displayLayer.setExpanded(False)
             else:
                 error = (f"An error occurred adding the layer {self.getMapLayerName()} to the map.\n"
@@ -98,8 +97,8 @@ class WmtsLayer(QObject, AbstractLayer):
         """Get an appropriate map layer name for this layer."""
         return parseNtrrpLayerDescription(self.owsLayer)
 
-    def getMapLayer(self, groupLayer=None):
-        """Get the QGIS map layer corresponding to this layer, if any."""
+    # def getMapLayer(self, groupLayer=None):
+    #     """Get the QGIS map layer corresponding to this layer, if any."""
 
-        matches = QgsProject.instance().mapLayersByName(self.getMapLayerName())
-        return matches and matches[0]
+    #     matches = QgsProject.instance().mapLayersByName(self.getMapLayerName())
+    #     return matches and matches[0]

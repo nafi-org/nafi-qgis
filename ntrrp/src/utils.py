@@ -9,6 +9,8 @@ from pathlib import Path
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsMessageLog, QgsProject, QgsSettings
 
+NTRRP_REGIONS = ['Darwin', 'Katherine']
+
 NTRRP_WMS_URL = "https://test.firenorth.org.au/mapserver/bfnt/gwc/service/wms"
 NTRRP_WMTS_URL = "https://test.firenorth.org.au/mapserver/bfnt/gwc/service/wmts"
 NTRRP_DATA_URL = f"https://test.firenorth.org.au/bfnt/downloads"
@@ -24,13 +26,16 @@ def getSetting(setting, default=None):
         settings.setValue(f"NTRRP/{setting}", current)
     return current
 
+def setSetting(setting, value):
+    """Set an NTRRP setting."""
+    settings = QgsSettings()
+    settings.setValue(f"NTRRP/{setting}", value)
 
 def restoreDefaults():
     settings = QgsSettings()
     settings.setValue(f"NTRRP/NTRRP_WMS_URL", NTRRP_WMS_URL)
     settings.setValue(f"NTRRP/NTRRP_WMTS_URL", NTRRP_WMTS_URL)
     settings.setValue(f"NTRRP/NTRRP_DATA_URL", NTRRP_DATA_URL)
-
 
 def getNtrrpWmsUrl():
     return getSetting("NTRRP_WMS_URL", NTRRP_WMS_URL)

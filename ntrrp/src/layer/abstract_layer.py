@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 from abc import ABC, ABCMeta, abstractmethod
+from tokenize import group
 
 from qgis.PyQt.QtCore import pyqtSignal, QObject
 from qgis.core import QgsMapLayer, QgsProject
+
+from ..utils import qgsDebug
 
 
 class AbstractQObjectMeta(ABCMeta, type(QObject)):
@@ -12,18 +15,15 @@ class AbstractQObjectMeta(ABCMeta, type(QObject)):
 
 class AbstractLayer(ABC, metaclass=AbstractQObjectMeta):
     """Abstract base class for burnt areas layers."""
+    impl = None
+    region = None
 
     # emit this signal if the map layer is removed
     layerAdded = pyqtSignal(object)
     layerRemoved = pyqtSignal(object)
 
     @abstractmethod
-    def getSubGroupLayer(self, groupLayer):
-        """Get the right layer subgroup within a specified group layer for this layer."""
-        return groupLayer
-
-    @abstractmethod
-    def addMapLayer(self, groupLayer):
+    def addMapLayer(self):
         """Add an NTRRP layer to the map."""
         pass
 
@@ -32,12 +32,40 @@ class AbstractLayer(ABC, metaclass=AbstractQObjectMeta):
         """Get an appropriate map layer name for this layer."""
         pass
 
-    def getMapLayer(self, groupLayer=None):
-        """Get the QGIS map layer corresponding to this layer, if any."""
-        # TODO might be aliased
-        matches = QgsProject.instance().mapLayersByName(self.getMapLayerName())
+    def getSubGroupLayer(self):
+        """Get the right layer subgroup within a specified group layer for this layer."""
+        return self.getRegionLayer()
 
+    def getRegionLayer(self):
+        """Get or create the right layer group for an NTRRP data layer."""
+        root = QgsProject.instance().layerTreeRoot()
+        regionGroup = f"{self.region} Burnt Areas"
+        groupLayer = root.findGroup(regionGroup)
+        if groupLayer == None:
+            root.insertGroup(0, regionGroup)
+            groupLayer = root.findGroup(regionGroup)
+        return groupLayer
+
+    def getMapLayer(self):
+        """Get the QGIS map layer corresponding to this layer, if any."""
+        matches = QgsProject.instance().mapLayersByName(self.getMapLayerName())
         if len(matches) == 0:
             return None
         elif len(matches) >= 1:
-            return matches[0]
+            subGroupLayer = self.getSubGroupLayer()
+            matches = [layer for layer in matches if subGroupLayer.findLayer(layer) is not None]
+            if len(matches) >= 1:
+                return matches[0]
+            else:
+                return None
+
+    def addMapLayerIfNotPresent(self):
+        layer = self.getMapLayer()
+
+        if layer is None:
+            qgsDebug(f"Did not find layer {self.getMapLayerName()}")
+            self.addMapLayer()
+        else:
+            qgsDebug(f"Found layer {self.getMapLayerName()}")
+            self.impl = layer
+

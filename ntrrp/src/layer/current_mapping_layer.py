@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from pathlib import Path
+
 from qgis.core import QgsProject, QgsRasterLayer
 from qgis.PyQt.QtCore import QObject
 
@@ -7,16 +9,13 @@ from .abstract_layer import AbstractLayer
 
 
 class CurrentMappingLayer(QObject, AbstractLayer):
-    def __init__(self, rasterFile, region):
+    def __init__(self, region, rasterFile):
         """Constructor."""
         super(QObject, self).__init__()
-        self.rasterFile = rasterFile
+        self.rasterFile = Path(rasterFile)
         self.region = region
 
-    def getSubGroupLayer(self, groupLayer):
-        return groupLayer
-
-    def addMapLayer(self, groupLayer):
+    def addMapLayer(self):
         """Create a QgsRasterLayer from the location of a TIF of current mapping imagery."""
         self.impl = QgsRasterLayer(
             self.rasterFile.as_posix(), self.getMapLayerName(), "gdal")
@@ -30,11 +29,12 @@ class CurrentMappingLayer(QObject, AbstractLayer):
             self.layerAdded.emit(self)
             self.mapLayerId = self.impl.id()
 
-            subGroupLayer = self.getSubGroupLayer(groupLayer)
+            subGroupLayer = self.getSubGroupLayer()
             subGroupLayer.addLayer(self.impl)
 
             # don't show legend initially
-            displayLayer = project.layerTreeRoot().findLayer(self.impl)
+            displayLayer = project.layerTreeRoot().findLayer(self.impl.id())
+            displayLayer.setExpanded(True)
             displayLayer.setExpanded(False)
         else:
             error = (f"An error occurred adding the layer {self.getMapLayerName()} to the map.\n"
@@ -45,8 +45,3 @@ class CurrentMappingLayer(QObject, AbstractLayer):
         """Get an appropriate map layer name for this layer."""
         return f"{self.region} Current Mapping"
 
-    def getMapLayer(self, groupLayer=None):
-        """Get the QGIS map layer corresponding to this layer, if any."""
-
-        matches = QgsProject.instance().mapLayersByName(self.getMapLayerName())
-        return matches and matches[0]

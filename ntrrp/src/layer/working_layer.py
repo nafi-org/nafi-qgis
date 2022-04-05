@@ -13,22 +13,13 @@ from ..utils import ensureDirectory, getWorkingShapefilePath, guiError, resolveS
 
 class WorkingLayer(QObject, AbstractLayer):
 
-    def __init__(self, templateSourceLayer):
+    def __init__(self, region, templateSourceLayer):
         """Constructor."""
         super(QObject, self).__init__()
 
+        self.region = region
         self.index = 0
-        self.impl = QgsVectorLayer(
-            "Polygon?crs=epsg:3577", self.getMapLayerName(), "memory")
-        self.shapefilePath = getWorkingShapefilePath()
-
-        # templateSourceLayer sets initial attributes
-        if templateSourceLayer is not None:
-            sourceImpl = templateSourceLayer.impl
-            fields = [sourceImpl.fields()[index]
-                      for index in sourceImpl.fields().allAttributesList()]
-            self.impl.dataProvider().addAttributes(fields)
-            self.impl.updateFields()
+        self.templateSourceLayer = templateSourceLayer
 
         # source layer is not initially set
         self.sourceLayer = None
@@ -65,8 +56,9 @@ class WorkingLayer(QObject, AbstractLayer):
         # Save after adding
         self.save()
 
-    def getSubGroupLayer(self, groupLayer):
+    def getSubGroupLayer(self):
         """Get or create the right dMIRBI difference layer group for an NTRRP data layer."""
+        groupLayer = self.getRegionLayer()
         subGroupLayerName = "Approved Burnt Areas"
         subGroupLayer = groupLayer.findGroup(subGroupLayerName)
         if subGroupLayer == None:
@@ -74,20 +66,31 @@ class WorkingLayer(QObject, AbstractLayer):
             subGroupLayer = groupLayer.findGroup(subGroupLayerName)
         return subGroupLayer
 
-    def addMapLayer(self, groupLayer):
+    def addMapLayer(self):
         """Add an NTRRP data layer to the map."""
+        self.impl = QgsVectorLayer(
+            "Polygon?crs=epsg:3577", self.getMapLayerName(), "memory")
+        self.shapefilePath = getWorkingShapefilePath()
+
+        # templateSourceLayer sets initial attributes
+        if self.templateSourceLayer is not None:
+            sourceImpl = self.templateSourceLayer.impl
+            fields = [sourceImpl.fields()[index]
+                      for index in sourceImpl.fields().allAttributesList()]
+            self.impl.dataProvider().addAttributes(fields)
+            self.impl.updateFields()
+
         QgsProject.instance().addMapLayer(self.impl, False)
         self.impl.willBeDeleted.connect(lambda: self.layerRemoved.emit(self))
         self.loadStyle("approved")
         self.layerAdded.emit(self)
-        subGroupLayer = self.getSubGroupLayer(groupLayer)
+        subGroupLayer = self.getSubGroupLayer()
         displayLayer = subGroupLayer.addLayer(self.impl)
-        displayLayer.setName(self.getUniqueMapLayerName(groupLayer))
+        displayLayer.setName(self.getUniqueMapLayerName())
 
     # TODO does not currently work
-    def getUniqueMapLayerName(self, groupLayer):
-        if groupLayer is None:
-            groupLayer = QgsProject.instance().layerTreeRoot()
+    def getUniqueMapLayerName(self):
+        groupLayer = self.getRegionLayer()
 
         existingMapLayers = QgsProject.instance().mapLayersByName(self.getMapLayerName())
         existingDisplayLayers = [groupLayer.findLayer(
@@ -111,15 +114,15 @@ class WorkingLayer(QObject, AbstractLayer):
         """Get an appropriate map layer name for this layer."""
         return f"Working Layer #{self.index}"
 
-    def getMapLayer(self, groupLayer=None):
-        """Get the QGIS map layer corresponding to this layer, if any."""
-        if self.impl is None:
-            return None
+    # def getMapLayer(self, groupLayer=None):
+    #     """Get the QGIS map layer corresponding to this layer, if any."""
+    #     if self.impl is None:
+    #         return None
 
-        if groupLayer is None:
-            groupLayer = QgsProject.instance().layerTreeRoot()
+    #     if groupLayer is None:
+    #         groupLayer = QgsProject.instance().layerTreeRoot()
 
-        return self.getSubGroupLayer(groupLayer).findLayer(self.impl)
+    #     return self.getSubGroupLayer(groupLayer).findLayer(self.impl)
 
     def loadStyle(self, styleName):
         """Apply a packaged style to this layer."""

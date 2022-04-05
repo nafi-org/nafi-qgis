@@ -19,7 +19,7 @@ class NtrrpItem(QStandardItem):
         self.region = parseNtrrpLayerRegion(owsLayer)
         self.description = parseNtrrpLayerDescription(owsLayer)
 
-        self.itemLayer = WmtsLayer(wmsUrl, owsLayer)
+        self.itemLayer = WmtsLayer(self.region, wmsUrl, owsLayer)
         self.setText(self.description)
 
         self.setFlags(Qt.ItemIsEnabled)
