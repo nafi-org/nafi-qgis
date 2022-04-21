@@ -61,8 +61,6 @@ class AbstractLayer(ABC, metaclass=AbstractQObjectMeta):
         layer = self.getMapLayer()
 
         if layer is None:
-            # qgsDebug(f"Did not find layer {self.getMapLayerName()}")
             self.addMapLayer()
         else:
-            # qgsDebug(f"Found layer {self.getMapLayerName()}")
             self.impl = layer

@@ -209,7 +209,6 @@
           </widget>
         </item>
         <item row="3" column="2" colspan="6">
-          <!-- <widget class="QComboBox" name="sourceLayerComboBox"/> -->
           <widget class="QLabel" name="activeSourceLayerLabel">
             <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -231,6 +230,7 @@
             </property>
             <property name="font">
               <font>
+                <pointsize>10</pointsize>
                 <weight>75</weight>
                 <bold>true</bold>
               </font>
@@ -239,7 +239,7 @@
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Select segmentation layer …&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              <set>Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
           </widget>
         </item>

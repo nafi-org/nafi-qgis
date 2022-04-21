@@ -54,7 +54,7 @@ class NtrrpRegion(QObject):
 
     def downloadCurrentMapping(self):
         """Download current mapping for the region and add it to the map."""
-        qgsDebug("Downloading current mapping …")
+        qgsDebug("Downloading current NAFI burnt areas mapping …")
 
         if deriveWorkingDirectory() is None:
             return None
@@ -76,7 +76,7 @@ class NtrrpRegion(QObject):
 
     def downloadData(self):
         """Download segmentation features from NAFI and call back to add them to the map."""
-        qgsDebug("Downloading data …")
+        qgsDebug("Downloading NAFI segmentation features …")
 
         if deriveWorkingDirectory() is None:
             return None
@@ -146,6 +146,7 @@ class NtrrpRegion(QObject):
         """Add all shapefiles in a directory as data layers to the region group."""
         if unzipLocation is None:
             return
+
         self.sourceLayers = [SourceLayer(path)
                              for path in unzipLocation.rglob("*.shp")]
 
@@ -154,7 +155,6 @@ class NtrrpRegion(QObject):
             sourceLayer for sourceLayer in self.sourceLayers if sourceLayer.threshold is not None]
 
         for sourceLayer in self.sourceLayers:
-            # qgsDebug(f"Adding source layer {sourceLayer.getDisplayName()}")
             sourceLayer.layerRemoved.connect(
                 lambda layer: self.removeSourceLayer(layer))
             sourceLayer.addMapLayerIfNotPresent()

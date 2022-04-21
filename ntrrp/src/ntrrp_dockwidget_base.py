@@ -166,11 +166,12 @@ class Ui_NtrrpDockWidgetBase(object):
         self.activeSourceLayerLabel.setMinimumSize(QtCore.QSize(100, 0))
         self.activeSourceLayerLabel.setMaximumSize(QtCore.QSize(300, 16777215))
         font = QtGui.QFont()
+        font.setPointSize(10)
         font.setBold(True)
         font.setWeight(75)
         self.activeSourceLayerLabel.setFont(font)
         self.activeSourceLayerLabel.setAlignment(
-            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
+            QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         self.activeSourceLayerLabel.setObjectName("activeSourceLayerLabel")
         self.gridLayout.addWidget(self.activeSourceLayerLabel, 3, 2, 1, 6)
         self.sourceLayerLabel = QtWidgets.QLabel(self.dockWidgetContents)

@@ -190,11 +190,9 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
             matchingSourceLayer = self.region.getSourceLayerByMapLayer(
                 activeLayer)
             if matchingSourceLayer is not None:
-                # qgsDebug(f"Changing active source layer to {matchingSourceLayer.getDisplayName()}")
                 self.activeSourceLayer = matchingSourceLayer
                 self.updateSourceLayerLabel(self.activeSourceLayer)
                 self.updateState.emit()
-                # self.updateSourceLayerComboBox(self.activeSourceLayer)
 
     def regionComboBoxChanged(self, regionIndex):
         """Switch the active region."""
@@ -220,12 +218,16 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         """Update the source layer label."""
         if sourceLayer is None:
             self.activeSourceLayerLabel.setText(self.NO_SELECTION_TEXT)
+            self.activeSourceLayerLabel.setStyleSheet(None)
         else:
             self.activeSourceLayerLabel.setText(sourceLayer.getDisplayName())
+            self.activeSourceLayerLabel.setStyleSheet(("color: rgb(158,16,21); "
+                                                       "border: 1px solid black;"))
 
     # TODO: factor this into a custom ComboBox widget
+
     def updateWorkingLayerComboBox(self, workingLayers):
-        """Update the source layers."""
+        """Update the working layers."""
         currentActiveItem = self.workingLayerComboBox.currentText()
         items = [workingLayer.getMapLayerName()
                  for workingLayer in workingLayers]
@@ -240,6 +242,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         # new item?
         if len(items) > len(oldItems):
             newItems = list(set(items) - set(oldItems))
+            qgsDebug(f"New items: {str(newItems)}")
             newItem = newItems[0]
 
             index = self.workingLayerComboBox.findText(

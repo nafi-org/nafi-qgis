@@ -175,4 +175,3 @@ def fsidsError(fsidData):
     guiError(error)
     logMessage = f"NAFI FSID data retrieved: {html.escape(fsidData)}"
     qgsDebug(logMessage, Qgis.Critical)
-

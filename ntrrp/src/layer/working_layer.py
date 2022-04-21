@@ -26,7 +26,6 @@ class WorkingLayer(QObject, AbstractLayer):
         self.sourceLayer = None
         self.shapefilePath = self.getShapefilePath()
 
-        guiError(self.shapefilePath)
         self.createShapefile()
 
     def setSourceLayer(self, sourceLayer):
@@ -40,16 +39,17 @@ class WorkingLayer(QObject, AbstractLayer):
         # templateSourceLayer sets initial attributes
         if self.templateSourceLayer is not None:
             sourceImpl = self.templateSourceLayer.impl
-            writer = QgsVectorFileWriter(self.shapefilePath, 'UTF-8', self.templateSourceLayer.impl.fields(), QgsWkbTypes.Polygon, QgsCoordinateReferenceSystem('EPSG:3577'), 'ESRI Shapefile')
+            writer = QgsVectorFileWriter(self.shapefilePath, 'UTF-8', self.templateSourceLayer.impl.fields(
+            ), QgsWkbTypes.Polygon, QgsCoordinateReferenceSystem('EPSG:3577'), 'ESRI Shapefile')
         else:
             guiError("No template source layer!")
 
     def getShapefilePath(self):
         """Get a path for a working layer shapefile."""
         outputDir = path.normpath(
-            path.join(deriveWorkingDirectory(), self.region, "working"))
+            path.join(deriveWorkingDirectory(), f"{self.region} Working"))
         ensureDirectory(outputDir)
-        
+
         return path.normpath(path.join(outputDir, f"{self.getMapLayerName()}.shp"))
 
     def save(self):
@@ -68,20 +68,20 @@ class WorkingLayer(QObject, AbstractLayer):
             QgsInterface.setActiveLayer(self.sourceLayer.impl)
             QgsInterface.actionCopyFeatures().trigger()
             QgsInterface.setActiveLayer(self.impl)
-            
+
             # if not currently editing, start editing this layer
             wasEditing = self.impl.isEditable()
             if not wasEditing:
                 self.impl.startEditing()
 
             QgsInterface.actionPasteFeatures().trigger()
-            
+
             # commit the changes, and stop editing if we weren't before
             self.impl.commitChanges(stopEditing=(not wasEditing))
 
             QgsInterface.mainWindow().findChild(QAction, 'mActionDeselectAll').trigger()
             QgsInterface.setActiveLayer(self.sourceLayer.impl)
-            
+
             # repopulate the clipboard with no features to avoid re-pasting
             QgsInterface.actionCopyFeatures().trigger()
 
@@ -100,7 +100,8 @@ class WorkingLayer(QObject, AbstractLayer):
 
     def addMapLayer(self):
         """Add an NTRRP data layer to the map."""
-        self.impl = QgsVectorLayer(self.shapefilePath, self.getMapLayerName(), "ogr")
+        self.impl = QgsVectorLayer(
+            self.shapefilePath, self.getMapLayerName(), "ogr")
 
         QgsProject.instance().addMapLayer(self.impl, False)
         self.impl.willBeDeleted.connect(lambda: self.layerRemoved.emit(self))
