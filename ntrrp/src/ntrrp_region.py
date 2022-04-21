@@ -9,8 +9,7 @@ from .layer.current_mapping_layer import CurrentMappingLayer
 from .layer.source_layer import SourceLayer
 from .layer.working_layer import WorkingLayer
 from .ntrrp_item import NtrrpItem
-from .state import State
-from .utils import qgsDebug, NTRRP_REGIONS
+from .utils import deriveWorkingDirectory, qgsDebug, NTRRP_REGIONS
 
 
 class NtrrpRegion(QObject):
@@ -57,14 +56,12 @@ class NtrrpRegion(QObject):
         """Download current mapping for the region and add it to the map."""
         qgsDebug("Downloading current mapping …")
 
-        if State.workingFolder is None:
-            if State.deriveWorkingFolder() is None:
-                return None
-            State.saveState()
+        if deriveWorkingDirectory() is None:
+            return None
 
         params = {
             'Region': NTRRP_REGIONS.index(self.name),
-            'WorkingFolder': State.workingFolder
+            'WorkingFolder': deriveWorkingDirectory()
         }
         dialog = processing.createAlgorithmDialog(
             'BurntAreas:DownloadCurrentMapping', params)
@@ -78,17 +75,15 @@ class NtrrpRegion(QObject):
         return True
 
     def downloadData(self):
-        """Download burnt areas features from NAFI and call back to add them to the map."""
+        """Download segmentation features from NAFI and call back to add them to the map."""
         qgsDebug("Downloading data …")
 
-        if State.workingFolder is None:
-            if State.deriveWorkingFolder() is None:
-                return None
-            State.saveState()
+        if deriveWorkingDirectory() is None:
+            return None
 
         params = {
             'Region': NTRRP_REGIONS.index(self.name),
-            'WorkingFolder': State.workingFolder
+            'WorkingFolder': deriveWorkingDirectory()
         }
         dialog = processing.createAlgorithmDialog(
             'BurntAreas:DownloadSegmentationData', params)

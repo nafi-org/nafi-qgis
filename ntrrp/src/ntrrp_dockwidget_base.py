@@ -231,7 +231,7 @@ class Ui_NtrrpDockWidgetBase(object):
         self.refreshButton.setToolTip(_translate(
             "NtrrpDockWidgetBase", "Refresh Region Layers"))
         self.downloadButton.setToolTip(_translate(
-            "NtrrpDockWidgetBase", "Download Burnt Areas"))
+            "NtrrpDockWidgetBase", "Download NAFI Segmentation Features"))
         self.currentMappingButton.setToolTip(_translate(
             "NtrrpDockWidgetBase", "Download Current Mapping"))
         self.createButton.setToolTip(_translate(

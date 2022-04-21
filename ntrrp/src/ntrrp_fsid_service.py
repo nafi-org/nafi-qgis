@@ -25,8 +25,7 @@ class NtrrpFsidService(QObject):
         """Download and parse remote capabilities file."""
 
         fsidsUrl = f"{apiBaseUrl}/mapping/?area={regionName.lower()}"
-        # https://test.firenorth.org.au/bfnt/api/mapping/?area=darwin f"{wmsUrl}?request=GetCapabilities&version=1.1.1"
-
+        # https://test.firenorth.org.au/bfnt/api/mapping/?area=darwin 
         request = QNetworkRequest(QUrl(fsidsUrl))
 
         # suppress errors from SSL for the capabilities request (NTG network is dodgy)

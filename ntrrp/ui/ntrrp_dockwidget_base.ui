@@ -117,7 +117,7 @@
               </sizepolicy>
             </property>
             <property name="toolTip">
-              <string>Download Burnt Areas</string>
+              <string>Download NAFI Segmentation Features</string>
             </property>
             <property name="text">
               <string/>

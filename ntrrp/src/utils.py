@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import html
+import json
 import os
 import os.path as path
 import random
@@ -7,7 +8,7 @@ import string
 from pathlib import Path
 
 from qgis.PyQt.QtWidgets import QMessageBox
-from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsMessageLog, QgsProject, QgsSettings
+from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsMessageLog, QgsProject
 
 NTRRP_REGIONS = ['Darwin', 'Katherine']
 
@@ -18,27 +19,55 @@ NTRRP_UPLOAD_URL = "https://test.firenorth.org.au/bfnt/upload.php"
 NTRRP_API_URL = "https://test.firenorth.org.au/bfnt/api"
 
 
+def qgsDebug(message, level=Qgis.Info):
+    """Print a debug message."""
+    QgsMessageLog.logMessage(
+        message, tag="NAFI Burnt Areas Mapping", level=level)
+
+
+def guiInformation(message):
+    """Show an info message box."""
+    QMessageBox.information(None, "NAFI Burnt Areas Mapping", message)
+
+
+def guiError(message):
+    """Show an error message box."""
+    QMessageBox.critical(None, "NAFI Burnt Areas Mapping", message)
+
+
+def guiWarning(message):
+    """Show a warning message box."""
+    QMessageBox.warning(None, "NAFI Burnt Areas Mapping", message)
+
+
+def resolvePluginPath(relative, base=None):
+    """Resolve a relative path in the plug-in deployment directory."""
+    if not base:
+        base = path.dirname(os.path.realpath(__file__))
+        # note this function will break if this code in src/utils.py is moved to a different directory
+        base = path.normpath(path.join(base, os.pardir))
+    return path.normpath(path.join(base, relative))
+
+
+def deriveWorkingDirectory():
+    """Derive the working folder from the current QGS project file."""
+    project = QgsProject.instance()
+    projectFilePath = project.fileName()
+    if projectFilePath is None or projectFilePath == '':
+        guiError("Save your burnt areas mapping project before continuing.")
+        return None
+    return path.dirname(projectFilePath)
+
+
 def getSetting(setting, default=None):
     """Retrieve an NTRRP setting."""
-    settings = QgsSettings()
-    current = settings.value(f"NTRRP/{setting}", default)
-
-    if current == default:
-        settings.setValue(f"NTRRP/{setting}", current)
-    return current
-
-
-def setSetting(setting, value):
-    """Set an NTRRP setting."""
-    settings = QgsSettings()
-    settings.setValue(f"NTRRP/{setting}", value)
-
-
-def restoreDefaults():
-    settings = QgsSettings()
-    settings.setValue(f"NTRRP/NTRRP_WMS_URL", NTRRP_WMS_URL)
-    settings.setValue(f"NTRRP/NTRRP_WMTS_URL", NTRRP_WMTS_URL)
-    settings.setValue(f"NTRRP/NTRRP_DATA_URL", NTRRP_DATA_URL)
+    try:
+        with open(resolvePluginPath("ntrrp.json")) as settingsFile:
+            settings = json.load(settingsFile)
+            return settings.get(setting, default)
+    except:
+        qgsDebug("Error reading NTRRP settings file.")
+        return default
 
 
 def getNtrrpWmsUrl():
@@ -101,47 +130,10 @@ def getTempDownloadPath():
     return dataFile
 
 
-def getWorkingShapefilePath():
-    """Get a path for a working layer shapefile."""
-    outputDir = path.normpath(
-        path.join(getWorkingDirectory(), getRandomFilename()))
-    return path.normpath(path.join(outputDir, "working.shp"))
-
-
-def resolvePluginPath(relative, base=None):
-    """Resolve a relative path in the plug-in deployment directory."""
-    if not base:
-        base = path.dirname(os.path.realpath(__file__))
-        # note this function will break if this code in src/utils.py is moved to a different directory
-        base = path.normpath(path.join(base, os.pardir))
-    return path.normpath(path.join(base, relative))
-
-
 def resolveStylePath(styleName):
     """Load a style file packaged with the plug-in."""
     relative = f"styles\\{styleName}.qml"
     return resolvePluginPath(relative)
-
-
-def qgsDebug(message, level=Qgis.Info):
-    """Print a debug message."""
-    QgsMessageLog.logMessage(
-        message, tag="NAFI Burnt Areas Mapping", level=level)
-
-
-def guiInformation(message):
-    """Show an info message box."""
-    QMessageBox.information(None, "NAFI Burnt Areas Mapping", message)
-
-
-def guiError(message):
-    """Show an error message box."""
-    QMessageBox.critical(None, "NAFI Burnt Areas Mapping", message)
-
-
-def guiWarning(message):
-    """Show a warning message box."""
-    QMessageBox.warning(None, "NAFI Burnt Areas Mapping", message)
 
 
 def setDefaultProjectCrs(project):
@@ -183,3 +175,4 @@ def fsidsError(fsidData):
     guiError(error)
     logMessage = f"NAFI FSID data retrieved: {html.escape(fsidData)}"
     qgsDebug(logMessage, Qgis.Critical)
+

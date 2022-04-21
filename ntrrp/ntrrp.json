@@ -1,0 +1,11 @@
+{
+    "NTRRP_REGIONS": [
+        "Darwin",
+        "Katherine"
+    ],
+    "NTRRP_WMS_URL": "https://test.firenorth.org.au/mapserver/bfnt/gwc/service/wms",
+    "NTRRP_WMTS_URL": "https://test.firenorth.org.au/mapserver/bfnt/gwc/service/wmts",
+    "NTRRP_DATA_URL": "https://test.firenorth.org.au/bfnt/downloads",
+    "NTRRP_UPLOAD_URL": "https://test.firenorth.org.au/bfnt/upload.php",
+    "NTRRP_API_URL": "https://test.firenorth.org.au/bfnt/api"
+}

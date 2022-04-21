@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
+import os.path as path
 from pathlib import Path
 
 from qgis.PyQt.QtCore import QObject
 from qgis.PyQt.QtWidgets import QAction
-from qgis.core import QgsProject, QgsVectorFileWriter, QgsVectorLayer
+from qgis.core import QgsCoordinateReferenceSystem, QgsFields, QgsProject, QgsVectorFileWriter, QgsVectorLayer, QgsWkbTypes
 from qgis.utils import iface as QgsInterface
 
 from .abstract_layer import AbstractLayer
 from .source_layer import SourceLayer
-from ..utils import ensureDirectory, getWorkingShapefilePath, guiError, resolveStylePath
+from ..utils import ensureDirectory, deriveWorkingDirectory, guiError, resolveStylePath
 
 
 class WorkingLayer(QObject, AbstractLayer):
@@ -18,16 +19,38 @@ class WorkingLayer(QObject, AbstractLayer):
         super(QObject, self).__init__()
 
         self.region = region
-        self.index = 0
+        self.index = 1
         self.templateSourceLayer = templateSourceLayer
 
         # source layer is not initially set
         self.sourceLayer = None
+        self.shapefilePath = self.getShapefilePath()
+
+        guiError(self.shapefilePath)
+        self.createShapefile()
 
     def setSourceLayer(self, sourceLayer):
         """Set the source layer for this working layer."""
         assert isinstance(sourceLayer, SourceLayer)
         self.sourceLayer = sourceLayer
+
+    def createShapefile(self):
+        """Create a shapefile for this layer."""
+
+        # templateSourceLayer sets initial attributes
+        if self.templateSourceLayer is not None:
+            sourceImpl = self.templateSourceLayer.impl
+            writer = QgsVectorFileWriter(self.shapefilePath, 'UTF-8', self.templateSourceLayer.impl.fields(), QgsWkbTypes.Polygon, QgsCoordinateReferenceSystem('EPSG:3577'), 'ESRI Shapefile')
+        else:
+            guiError("No template source layer!")
+
+    def getShapefilePath(self):
+        """Get a path for a working layer shapefile."""
+        outputDir = path.normpath(
+            path.join(deriveWorkingDirectory(), self.region, "working"))
+        ensureDirectory(outputDir)
+        
+        return path.normpath(path.join(outputDir, f"{self.getMapLayerName()}.shp"))
 
     def save(self):
         """Write the content of this layer to a shapefile."""
@@ -68,17 +91,7 @@ class WorkingLayer(QObject, AbstractLayer):
 
     def addMapLayer(self):
         """Add an NTRRP data layer to the map."""
-        self.impl = QgsVectorLayer(
-            "Polygon?crs=epsg:3577", self.getMapLayerName(), "memory")
-        self.shapefilePath = getWorkingShapefilePath()
-
-        # templateSourceLayer sets initial attributes
-        if self.templateSourceLayer is not None:
-            sourceImpl = self.templateSourceLayer.impl
-            fields = [sourceImpl.fields()[index]
-                      for index in sourceImpl.fields().allAttributesList()]
-            self.impl.dataProvider().addAttributes(fields)
-            self.impl.updateFields()
+        self.impl = QgsVectorLayer(self.shapefilePath, self.getMapLayerName(), "ogr")
 
         QgsProject.instance().addMapLayer(self.impl, False)
         self.impl.willBeDeleted.connect(lambda: self.layerRemoved.emit(self))
@@ -86,29 +99,7 @@ class WorkingLayer(QObject, AbstractLayer):
         self.layerAdded.emit(self)
         subGroupLayer = self.getSubGroupLayer()
         displayLayer = subGroupLayer.addLayer(self.impl)
-        displayLayer.setName(self.getUniqueMapLayerName())
-
-    # TODO does not currently work
-    def getUniqueMapLayerName(self):
-        groupLayer = self.getRegionLayer()
-
-        existingMapLayers = QgsProject.instance().mapLayersByName(self.getMapLayerName())
-        existingDisplayLayers = [groupLayer.findLayer(
-            layer) for layer in existingMapLayers]
-        existingDisplayLayers = [
-            layer for layer in existingDisplayLayers if layer is not None]
-
-        while len(existingDisplayLayers) > 0:
-            self.index += 1
-            # qgsDebug(str(existingDisplayLayers))
-            # qgsDebug(self.getMapLayerName())
-            existingMapLayers = QgsProject.instance().mapLayersByName(self.getMapLayerName())
-            existingDisplayLayers = [groupLayer.findLayer(
-                layer) for layer in existingMapLayers]
-        existingDisplayLayers = [
-            layer for layer in existingDisplayLayers if layer is not None]
-
-        return self.getMapLayerName()
+        displayLayer.setName(self.getMapLayerName())
 
     def getMapLayerName(self):
         """Get an appropriate map layer name for this layer."""
