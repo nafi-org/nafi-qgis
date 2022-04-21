@@ -2,13 +2,14 @@
 from qgis.core import QgsProcessing
 from qgis.core import QgsProcessingAlgorithm
 from qgis.core import QgsProcessingMultiStepFeedback
+from qgis.core import QgsProcessingParameterEnum
 from qgis.core import QgsProcessingParameterFeatureSink
 from qgis.core import QgsProcessingParameterString
 from qgis.core import QgsProcessingParameterVectorLayer
 import processing
 
 from ..ntrrp_fsid_service import NtrrpFsidService
-from ..utils import getNtrrpApiUrl
+from ..utils import getNtrrpApiUrl, NTRRP_REGIONS
 
 
 class AttributeBurntAreas(QgsProcessingAlgorithm):
@@ -20,9 +21,8 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
             'IGNORE_INVALID_FEATURES', 1)
         self.addParameter(QgsProcessingParameterVectorLayer('DissolvedBurntAreas', 'Your burnt areas (should already be dissolved)', types=[
                           QgsProcessing.TypeVectorPolygon], defaultValue=None))
-        # self.addParameter(QgsProcessingParameterNumber('FSID', 'FSID', type=QgsProcessingParameterNumber.Integer, minValue=0, defaultValue=None))
-        self.addParameter(QgsProcessingParameterString(
-            'Region', 'Region', multiLine=False, defaultValue=None))
+        self.addParameter(QgsProcessingParameterEnum('Region', 'Region', options=NTRRP_REGIONS,
+                          allowMultiple=False, usesStaticStrings=False, defaultValue=0))
         self.addParameter(QgsProcessingParameterString(
             'Comments', 'Comments', multiLine=True, defaultValue=None))
         self.addParameter(QgsProcessingParameterFeatureSink('AttributedBurntAreas', 'Burnt areas attributed with FSID and other NAFI attributes',
@@ -40,6 +40,9 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
         # Curent – enter “yes” for the latest mapping for an area.
         # Comments – add any other additional information about a mapping period – ie note mapping problems due to cloud.
 
+        # Derive region string from enum parameter
+        region = NTRRP_REGIONS[parameters['Region']]
+
         # Get the next available FSID
         feedback.pushInfo(
             "Retrieving next available FSID from NAFI endpoint …")
@@ -47,7 +50,7 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
         self.fsidService.fsidsParsed.connect(
             lambda fsids: self.calculateNextFsid(fsids))
         self.fsidService.downloadAndParseFsids(
-            getNtrrpApiUrl(), f'{parameters["Region"]}')
+            getNtrrpApiUrl(), f'{region}')
 
         feedback.pushInfo(f"Next FSID: {self.nextFsid}")
 
@@ -102,7 +105,7 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
             'FIELD_NAME': 'region',
             'FIELD_PRECISION': 0,
             'FIELD_TYPE': 2,
-            'FORMULA': f'value = "{parameters["Region"]}"',
+            'FORMULA': f'value = "{region}"',
             'GLOBAL': '',
             'INPUT': outputs['AddMonth']['OUTPUT'],
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
