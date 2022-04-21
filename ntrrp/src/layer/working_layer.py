@@ -68,11 +68,20 @@ class WorkingLayer(QObject, AbstractLayer):
             QgsInterface.setActiveLayer(self.sourceLayer.impl)
             QgsInterface.actionCopyFeatures().trigger()
             QgsInterface.setActiveLayer(self.impl)
-            self.impl.startEditing()
+            
+            # if not currently editing, start editing this layer
+            wasEditing = self.impl.isEditable()
+            if not wasEditing:
+                self.impl.startEditing()
+
             QgsInterface.actionPasteFeatures().trigger()
-            self.impl.commitChanges()
+            
+            # commit the changes, and stop editing if we weren't before
+            self.impl.commitChanges(stopEditing=(not wasEditing))
+
             QgsInterface.mainWindow().findChild(QAction, 'mActionDeselectAll').trigger()
             QgsInterface.setActiveLayer(self.sourceLayer.impl)
+            
             # repopulate the clipboard with no features to avoid re-pasting
             QgsInterface.actionCopyFeatures().trigger()
 
