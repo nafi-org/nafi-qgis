@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/naficp" >
+        <file>icon.png</file>
+    </qresource>
+</RCC>
