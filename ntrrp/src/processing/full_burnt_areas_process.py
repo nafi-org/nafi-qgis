@@ -54,7 +54,7 @@ class FullBurntAreasProcess(QgsProcessingAlgorithm):
         alg_params = {
             'Comments': parameters['Comments'],
             'DissolvedBurntAreas': outputs['DissolveBurntAreas']['DissolvedBurntAreas'],
-            'Region': region,
+            'Region': parameters['Region'],
             'AttributedBurntAreas': QgsProcessing.TEMPORARY_OUTPUT
         }
         outputs['AttributeBurntAreas'] = processing.run(
