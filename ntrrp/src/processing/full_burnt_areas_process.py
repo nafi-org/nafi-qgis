@@ -81,7 +81,8 @@ class FullBurntAreasProcess(QgsProcessingAlgorithm):
         # Upload Burnt Areas
         alg_params = {
             'AttributedBurntAreas': outputs['AttributeBurntAreas']['AttributedBurntAreas'],
-            'RasterisedBurntAreas': outputs['RasteriseBurntAreas']['RasterisedBurntAreas']
+            'RasterisedBurntAreas': outputs['RasteriseBurntAreas']['RasterisedBurntAreas'],
+            'Region': parameters['Region']
         }
         outputs['UploadBurntAreas'] = processing.run(
             'BurntAreas:UploadBurntAreas', alg_params, context=context, feedback=feedback, is_child_algorithm=True)

@@ -8,7 +8,7 @@ from qgis.core import QgsCoordinateReferenceSystem, QgsFields, QgsProject, QgsVe
 from qgis.utils import iface as QgsInterface
 
 from .abstract_layer import AbstractLayer
-from .source_layer import SourceLayer
+from .segmentation_layer import SegmentationLayer
 from ..utils import ensureDirectory, deriveWorkingDirectory, guiError, resolveStylePath
 
 
@@ -30,7 +30,7 @@ class WorkingLayer(QObject, AbstractLayer):
 
     def setSourceLayer(self, sourceLayer):
         """Set the source layer for this working layer."""
-        assert isinstance(sourceLayer, SourceLayer)
+        assert isinstance(sourceLayer, SegmentationLayer)
         self.sourceLayer = sourceLayer
 
     def createShapefile(self):

@@ -2,14 +2,13 @@
 from pathlib import Path
 from zipfile import ZipFile
 
-from qgis.core import QgsProcessing
 from qgis.core import QgsProcessingAlgorithm
 from qgis.core import QgsProcessingMultiStepFeedback
 from qgis.core import QgsProcessingParameterEnum
 from qgis.core import QgsProcessingParameterFile
 import processing
 
-from ..utils import getNtrrpDataUrl, getTempDownloadPath, NTRRP_REGIONS
+from ..utils import ensureTempDirectories, getNtrrpDataUrl, getTempDownloadPath, qgsDebug, NTRRP_REGIONS
 
 
 class DownloadSegmentationData(QgsProcessingAlgorithm):
@@ -28,11 +27,16 @@ class DownloadSegmentationData(QgsProcessingAlgorithm):
             'SegmentationDataFolder': None
         }
 
+        # Ensure all temp directories exist
+        ensureTempDirectories()
+
         # Set up transfer parameters
         region = NTRRP_REGIONS[parameters['Region']]
         regionDataFolder = Path(parameters['WorkingFolder']) / region
         downloadUrl = f"{getNtrrpDataUrl()}/{region.lower()}/{region.lower()}.zip"
         tempFile = getTempDownloadPath()
+
+        qgsDebug(f"Downloading {downloadUrl} to {tempFile}")
 
         # Download ZIP to temp location
         alg_params = {

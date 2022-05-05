@@ -244,6 +244,6 @@ class Ui_NtrrpDockWidgetBase(object):
         self.activeSourceLayerLabel.setText(_translate(
             "NtrrpDockWidgetBase", "<html><head/><body><p><span style=\" font-weight:600;\">Select segmentation layer …</span></p></body></html>"))
         self.sourceLayerLabel.setText(_translate(
-            "NtrrpDockWidgetBase", "<html><head/><body><p><span style=\" font-weight:600;\">Source layer</span></p></body></html>"))
+            "NtrrpDockWidgetBase", "<html><head/><body><p><span style=\" font-weight:600;\">Segmentation layer</span></p></body></html>"))
         self.workingLayerLabel.setText(_translate(
             "NtrrpDockWidgetBase", "<html><head/><body><p><span style=\" font-weight:600;\">Working layer</span></p></body></html>"))
