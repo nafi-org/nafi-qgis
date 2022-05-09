@@ -288,7 +288,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
 
         if not haveSourceLayers:
             self.activeSourceLayerLabel.setText(
-                "Download NAFI burnt areas first …")
+                "Download segmentation …")
 
         # need a selection
         self.workingLayerComboBox.setEnabled(haveWorkingLayers)

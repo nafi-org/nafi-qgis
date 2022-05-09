@@ -138,8 +138,6 @@ def resolveStylePath(styleName):
 
 def setDefaultProjectCrs(project):
     """Set the Project CRS to the default value of GDA94 geographic."""
-    assert isinstance(project, QgsProject)
-
     ausAlbers = QgsCoordinateReferenceSystem("EPSG:3577")
     warning = (f"A default coordinate system of "
                f"{ausAlbers.userFriendlyIdentifier()} has been applied to interact with "

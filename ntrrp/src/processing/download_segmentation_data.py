@@ -65,7 +65,7 @@ class DownloadSegmentationData(QgsProcessingAlgorithm):
         return 'DownloadSegmentationData'
 
     def displayName(self):
-        return 'Download NAFI Burnt Areas Segmentation Data'
+        return 'Download NAFI Segmentation Data'
 
     def group(self):
         return ''
