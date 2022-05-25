@@ -6,7 +6,7 @@ import os.path as path
 from pathlib import Path
 
 from src.layer.working_layer import WorkingLayer
-from src.layer.source_layer import SourceLayer
+from layer.segmentation_layer import SegmentationLayer
 from src.utils import getWorkingDirectory
 
 TEST_SOURCE = Path(path.normpath(path.join(path.dirname(__file__), os.pardir, os.pardir,
@@ -17,7 +17,7 @@ class TestWorkingLayer(unittest.TestCase):
 
     # a WorkingLayer is created from a template SourceLayer
     def getSourceLayer(self):
-        return SourceLayer(TEST_SOURCE)
+        return SegmentationLayer(TEST_SOURCE)
 
     def test_create(self):
         workingLayer = WorkingLayer(self.getSourceLayer())

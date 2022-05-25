@@ -23,10 +23,18 @@ class DissolveBurntAreas(QgsProcessingAlgorithm):
         results = {}
         outputs = {}
 
+        # Fix geometries
+        alg_params = {
+            'INPUT': parameters['BurntAreas'],
+            'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
+        }
+        outputs['FixGeometries'] = processing.run(
+            'native:fixgeometries', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+
         # Dissolve
         alg_params = {
             'FIELD': [''],
-            'INPUT': parameters['BurntAreas'],
+            'INPUT': outputs['FixGeometries']['OUTPUT'],
             'OUTPUT': parameters['DissolvedBurntAreas']
         }
 

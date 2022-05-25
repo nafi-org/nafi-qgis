@@ -6,7 +6,7 @@ from qgis.core import QgsProject
 import processing
 
 from .layer.current_mapping_layer import CurrentMappingLayer
-from .layer.source_layer import SourceLayer
+from .layer.segmentation_layer import SegmentationLayer
 from .layer.working_layer import WorkingLayer
 from .ntrrp_item import NtrrpItem
 from .utils import deriveWorkingDirectory, qgsDebug, NTRRP_REGIONS
@@ -147,7 +147,7 @@ class NtrrpRegion(QObject):
         if unzipLocation is None:
             return
 
-        self.sourceLayers = [SourceLayer(path)
+        self.sourceLayers = [SegmentationLayer(path)
                              for path in unzipLocation.rglob("*.shp")]
 
         # do not add the layers with no threshold information

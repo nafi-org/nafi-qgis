@@ -8,7 +8,7 @@ from .abstract_layer import AbstractLayer
 from ..utils import resolveStylePath
 
 
-class SourceLayer(QObject, AbstractLayer):
+class SegmentationLayer(QObject, AbstractLayer):
 
     def __init__(self, shapefilePath):
         """Constructor."""
@@ -22,17 +22,17 @@ class SourceLayer(QObject, AbstractLayer):
         self.region = segments[1].capitalize()
         self.endDate = dateutil.parser.parse(segments[2])
         self.startDate = dateutil.parser.parse(segments[3])
-        self.subArea = segments[5][2:]
+        # self.subArea = segments[5][2:]
 
         # Patrice has started adding files with no threshold in the name
-        if len(segments) > 6:
-            self.threshold = segments[6][1:]
+        if len(segments) > 5:
+            self.threshold = segments[5][1:]
         else:
             self.threshold = None
 
         # self.regionGroup = f"{self.region} Burnt Areas (Area {self.subArea})"
-        if self.subArea is not None:
-            self.subAreaGroup = f"Subarea {self.subArea}"
+        # if self.subArea is not None:
+        #    self.subAreaGroup = f"Subarea {self.subArea}"
 
         self.differenceGroup = f"{self.difference} Differences ({self.endDate.strftime('%b %d')}–{self.startDate.strftime('%b %d')})"
 
@@ -46,17 +46,18 @@ class SourceLayer(QObject, AbstractLayer):
             groupLayer.insertGroup(0, self.differenceGroup)
             differenceGroupLayer = groupLayer.findGroup(self.differenceGroup)
 
-        if self.subArea is not None:
-            subAreaLayer = differenceGroupLayer.findGroup(self.subAreaGroup)
-            if subAreaLayer == None:
-                # put the subareas in in numerical order
-                differenceGroupLayer.addChildNode(
-                    QgsLayerTreeGroup(self.subAreaGroup))
-                subAreaLayer = differenceGroupLayer.findGroup(
-                    self.subAreaGroup)
-            return subAreaLayer
-        else:
-            return differenceGroupLayer
+        return differenceGroupLayer
+        # if self.subArea is not None:
+        #     subAreaLayer = differenceGroupLayer.findGroup(self.subAreaGroup)
+        #     if subAreaLayer == None:
+        #         # put the subareas in in numerical order
+        #         differenceGroupLayer.addChildNode(
+        #             QgsLayerTreeGroup(self.subAreaGroup))
+        #         subAreaLayer = differenceGroupLayer.findGroup(
+        #             self.subAreaGroup)
+        #     return subAreaLayer
+        # else:
+        #     return differenceGroupLayer
 
     def load(self):
         """Load the source layer."""
@@ -87,10 +88,10 @@ class SourceLayer(QObject, AbstractLayer):
 
     def getDisplayName(self):
         """Get an appropriate UX display name for non-hierarchical widgets like combos."""
-        if self.subArea is not None:
-            return f"Subarea {self.subArea} {self.difference} Threshold {self.threshold}"
-        else:
-            return f"{self.difference} Threshold {self.threshold}"
+        # if self.subArea is not None:
+        #     return f"Subarea {self.subArea} {self.difference} Threshold {self.threshold}"
+        # else:
+        return f"{self.difference} Threshold {self.threshold}"
 
     def loadStyle(self, styleName):
         """Apply a packaged style to this layer."""
