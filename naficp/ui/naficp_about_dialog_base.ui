@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+  <class>NafiCpAboutDialogBase</class>
+  <widget class="QDialog" name="NtrrpAboutDialogBase">
+    <property name="geometry">
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>1414</width>
+        <height>830</height>
+      </rect>
+    </property>
+    <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+      </sizepolicy>
+    </property>
+    <property name="windowTitle">
+      <string>About NAFI Copy &amp; Paste</string>
+    </property>
+    <property name="windowIcon">
+      <iconset>
+        <normaloff>:/plugins/naficp/images/icon.png</normaloff>:/plugins/naficp/images/icon.png</iconset>
+    </property>
+    <layout class="QVBoxLayout" name="outerVerticalLayout">
+      <property name="sizeConstraint">
+        <enum>QLayout::SetFixedSize</enum>
+      </property>
+      <item>
+        <layout class="QVBoxLayout" name="verticalLayout">
+          <property name="spacing">
+            <number>10</number>
+          </property>
+          <item>
+            <widget class="QLabel" name="iconLabel">
+              <property name="text">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/plugins/naficp/images/icon.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="scaledContents">
+                <bool>true</bool>
+              </property>
+              <property name="alignment">
+                <set>Qt::AlignCenter</set>
+              </property>
+              <property name="margin">
+                <number>0</number>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <widget class="QLabel" name="aboutLabel">
+              <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                </sizepolicy>
+              </property>
+              <property name="text">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This plugin allows the user to copy features between two compatible layers with a single click.&lt;/p&gt;&lt;p&gt;Acknowledgment&lt;/span&gt;: The development of the plugin was supported by a Northern Territory Government grant (&lt;a href=&quot;https://cmc.nt.gov.au/supporting-government/northern-territory-risk-reduction-program&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;NTRRP&lt;/span&gt;&lt;/a&gt;) though the &lt;a href=&quot;https://www.homeaffairs.gov.au/about-us/our-portfolios/emergency-management/resources&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;National Risk Reduction Framework&lt;/span&gt;&lt;/a&gt; initiative. It initially was produced in partnership with &lt;a href=&quot;https://depws.nt.gov.au/bushfire-information-and-management/about-bushfires-nt/bushfires-nt&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Bushfires NT&lt;/span&gt;&lt;/a&gt;, &lt;a href=&quot;https://www.pfes.nt.gov.au&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;NT Police, Fire &amp;amp; Emergency Services&lt;/span&gt;&lt;/a&gt; and the &lt;a href=&quot;https://bushfireresearch.org.au/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Darwin Centre for Bushfire Research&lt;/span&gt;&lt;/a&gt; to support strategic fuel reduction activities and emergency response for the greater Darwin and Katherine areas.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="textFormat">
+                <enum>Qt::RichText</enum>
+              </property>
+              <property name="alignment">
+                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+              </property>
+              <property name="wordWrap">
+                <bool>true</bool>
+              </property>
+              <property name="openExternalLinks">
+                <bool>true</bool>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <widget class="QLabel" name="firescarLabel">
+              <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                </sizepolicy>
+              </property>
+              <property name="maximumSize">
+                <size>
+                  <width>16777215</width>
+                  <height>400</height>
+                </size>
+              </property>
+              <property name="text">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/plugins/ntrrp/images/firescar.jpg&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="scaledContents">
+                <bool>true</bool>
+              </property>
+              <property name="alignment">
+                <set>Qt::AlignCenter</set>
+              </property>
+              <property name="margin">
+                <number>0</number>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <widget class="QDialogButtonBox" name="buttonBox">
+              <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="standardButtons">
+                <set>QDialogButtonBox::Ok</set>
+              </property>
+            </widget>
+          </item>
+        </layout>
+      </item>
+    </layout>
+  </widget>
+  <resources/>
+  <connections>
+    <connection>
+      <sender>buttonBox</sender>
+      <signal>accepted()</signal>
+      <receiver>NtrrpAboutDialogBase</receiver>
+      <slot>accept()</slot>
+      <hints>
+        <hint type="sourcelabel">
+          <x>20</x>
+          <y>20</y>
+        </hint>
+        <hint type="destinationlabel">
+          <x>20</x>
+          <y>20</y>
+        </hint>
+      </hints>
+    </connection>
+  </connections>
+</ui>

@@ -25,10 +25,10 @@ from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 # Initialize Qt resources from file resources.py
-from .resources import *
+from .resources_rc import *
 
 # Import the code for the DockWidget
-from .naficp_dockwidget import NafiCpDockWidget
+from .src.naficp_dockwidget import NafiCpDockWidget
 import os.path
 
 

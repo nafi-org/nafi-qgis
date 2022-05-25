@@ -17,6 +17,7 @@ cd /d %~dp0
 rem @ECHO ON
 ::Ui Compilation
 call pyuic5 ui\naficp_dockwidget_base.ui -o src\naficp_dockwidget_base.py
+call pyuic5 ui\naficp_about_dialog_base.ui -o src\naficp_about_dialog_base.py
 
 ::Resources
 call pyrcc5 resources.qrc -o resources_rc.py
