@@ -6,27 +6,52 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>232</width>
-    <height>141</height>
+    <width>468</width>
+    <height>306</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>NAFI Copy &amp; Paste</string>
+   <string>NAFI Copy and Paste</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QLabel" name="label">
+    <item row="2" column="0">
+     <widget class="QLabel" name="workingLayerLabel">
       <property name="text">
-       <string>Replace this QLabel
-with the desired
-plugin content.</string>
+       <string>Select working layer</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QgsMapLayerComboBox" name="sourceLayerComboBox"/>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="sourceLayerLabel">
+      <property name="text">
+       <string>Select source layer</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QgsMapLayerComboBox" name="workingLayerComboBox"/>
+    </item>
+    <item row="4" column="0">
+     <widget class="QPushButton" name="pasteFeaturesButton">
+      <property name="text">
+       <string>Paste features</string>
       </property>
      </widget>
     </item>
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QgsMapLayerComboBox</class>
+   <extends>QComboBox</extends>
+   <header>qgsmaplayercombobox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -26,7 +26,7 @@ class Ui_NafiCpDockWidgetBase(object):
 
     def retranslateUi(self, NafiCpDockWidgetBase):
         _translate = QtCore.QCoreApplication.translate
-        NafiCpDockWidgetBase.setWindowTitle(_translate("NafiCpDockWidgetBase", "NAFI Copy & Paste"))
+        NafiCpDockWidgetBase.setWindowTitle(_translate("NafiCpDockWidgetBase", "NAFI Copy and Paste"))
         self.label.setText(_translate("NafiCpDockWidgetBase", "Replace this QLabel\n"
 "with the desired\n"
 "plugin content."))
