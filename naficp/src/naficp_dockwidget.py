@@ -9,12 +9,10 @@ from qgis.PyQt.QtWidgets import QAction
 from qgis.core import QgsMapLayerProxyModel
 from qgis.utils import iface as QgsInterface
 
-from .utils import guiError, guiWarning
-from ..resources_rc import *
+from .utils import guiError
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), os.pardir, 'ui', 'naficp_dockwidget_base.ui'))
-
 
 class NafiCpDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
