@@ -24,8 +24,9 @@
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
+
 # Initialize Qt resources from file resources.py
-from .resources_rc import *
+from .resources import *
 
 # Import the code for the DockWidget
 from .src.naficp_dockwidget import NafiCpDockWidget
@@ -63,7 +64,7 @@ class NafiCp:
 
         # Declare instance attributes
         self.actions = []
-        self.menu = self.tr(u'&NAFI Copy & Paste')
+        self.menu = self.tr(u'&NAFI Copy and Paste')
         # TODO: We are going to let the user set this up in a future iteration
         self.toolbar = self.iface.addToolBar(u'NafiCp')
         self.toolbar.setObjectName(u'NafiCp')
@@ -170,7 +171,7 @@ class NafiCp:
         icon_path = ':/plugins/naficp/icon.png'
         self.add_action(
             icon_path,
-            text=self.tr(u'NAFI Copy & Paste'),
+            text=self.tr(u'NAFI Copy and Paste'),
             callback=self.run,
             parent=self.iface.mainWindow())
 
@@ -200,7 +201,7 @@ class NafiCp:
 
         for action in self.actions:
             self.iface.removePluginMenu(
-                self.tr(u'&NAFI Copy & Paste'),
+                self.tr(u'&NAFI Copy and Paste'),
                 action)
             self.iface.removeToolBarIcon(action)
         # remove the toolbar

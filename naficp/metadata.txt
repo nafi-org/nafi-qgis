@@ -3,7 +3,7 @@
 # This file should be included when you package your plugin.# Mandatory items:
 
 [general]
-name=NAFI Copy & Paste
+name=NAFI Copy and Paste
 qgisMinimumVersion=3.18
 description=Easily copy and paste features between QGIS layers
 version=0.1

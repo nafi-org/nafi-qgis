@@ -11,22 +11,22 @@ NAFICP_CONFIG_FILENAME="naficp.json"
 def qgsDebug(message, level=Qgis.Info):
     """Print a debug message."""
     QgsMessageLog.logMessage(
-        message, tag="NAFI Burnt Areas Mapping", level=level)
+        message, tag="NAFI Copy and Paste", level=level)
 
 
 def guiInformation(message):
     """Show an info message box."""
-    QMessageBox.information(None, "NAFI Burnt Areas Mapping", message)
+    QMessageBox.information(None, "NAFI Copy and Paste", message)
 
 
 def guiError(message):
     """Show an error message box."""
-    QMessageBox.critical(None, "NAFI Burnt Areas Mapping", message)
+    QMessageBox.critical(None, "NAFI Copy and Paste", message)
 
 
 def guiWarning(message):
     """Show a warning message box."""
-    QMessageBox.warning(None, "NAFI Burnt Areas Mapping", message)
+    QMessageBox.warning(None, "NAFI Copy and Paste", message)
 
 
 def resolvePluginPath(relative, base=None):
@@ -49,13 +49,13 @@ def deriveWorkingDirectory():
 
 
 def getSetting(setting, default=None):
-    """Retrieve a NAFI Copy & Paste setting."""
+    """Retrieve a NAFI Copy and Paste setting."""
     try:
         with open(resolvePluginPath("naficp.json")) as settingsFile:
             settings = json.load(settingsFile)
             return settings.get(setting, default)
     except:
-        qgsDebug("Error reading NAFI Copy & Paste settings file.")
+        qgsDebug("Error reading NAFI Copy and Paste settings file.")
         return default
 
 
