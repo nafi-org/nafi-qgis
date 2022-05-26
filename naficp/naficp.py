@@ -168,7 +168,7 @@ class NafiCp:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_path = ':/plugins/naficp/icon.png'
+        icon_path = ':/plugins/naficp/images/icon.png'
         self.add_action(
             icon_path,
             text=self.tr(u'NAFI Copy and Paste'),
