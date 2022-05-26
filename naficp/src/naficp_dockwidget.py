@@ -14,6 +14,7 @@ from .utils import guiError
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), os.pardir, 'ui', 'naficp_dockwidget_base.ui'))
 
+
 class NafiCpDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
     closingPlugin = pyqtSignal()
@@ -37,30 +38,36 @@ class NafiCpDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.workingLayerComboBox.setFilters(QgsMapLayerProxyModel.VectorLayer)
         self.workingLayerComboBox.setShowCrs(True)
 
-        self.pasteFeaturesButton.clicked.connect(self.copySelectedFeaturesFromSourceLayer)
+        self.pasteFeaturesButton.clicked.connect(
+            self.copySelectedFeaturesFromSourceLayer)
 
         self.pasteAction = QAction("Paste Features", QgsInterface.mainWindow())
-        QgsInterface.registerMainWindowAction(self.pasteAction, "Ctrl+Z")  
+        QgsInterface.registerMainWindowAction(self.pasteAction, "Ctrl+Z")
         # won't work without calling this method?
-        QgsInterface.addPluginToVectorMenu("NAFI Copy and Paste", self.pasteAction)
-        self.pasteAction.triggered.connect(self.copySelectedFeaturesFromSourceLayer)
+        QgsInterface.addPluginToVectorMenu(
+            "NAFI Copy and Paste", self.pasteAction)
+        self.pasteAction.triggered.connect(
+            self.copySelectedFeaturesFromSourceLayer)
 
     # miscellaneous sanity checks
     def checkLayersSelected(self, sourceLayer, workingLayer):
         if sourceLayer is None or workingLayer is None:
-            guiError("You must select both a source layer and a working layer to paste features.")
+            guiError(
+                "You must select both a source layer and a working layer to paste features.")
             return False
         return True
 
     def checkLayersHaveSameGeometryType(self, sourceLayer, workingLayer):
         if sourceLayer.geometryType() != workingLayer.geometryType():
-            guiError("Your source layer and working layer have different geometry types. Please select different layers.")
+            guiError(
+                "Your source layer and working layer have different geometry types. Please select different layers.")
             return False
         return True
 
     def checkNotSameLayer(self, sourceLayer, workingLayer):
         if sourceLayer.id() == workingLayer.id():
-            guiError("Your source layer is the same as your working layer. Please select different layers.")
+            guiError(
+                "Your source layer is the same as your working layer. Please select different layers.")
             return False
         return True
 
@@ -97,6 +104,7 @@ class NafiCpDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         QgsInterface.actionCopyFeatures().trigger()
 
     def closeEvent(self, event):
-        QgsInterface.removePluginVectorMenu("NAFI Copy and Paste", self.pasteAction)
+        QgsInterface.removePluginVectorMenu(
+            "NAFI Copy and Paste", self.pasteAction)
         self.closingPlugin.emit()
         event.accept()

@@ -6,7 +6,8 @@ import os.path as path
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.core import Qgis, QgsMessageLog, QgsProject
 
-NAFICP_CONFIG_FILENAME="naficp.json"
+NAFICP_CONFIG_FILENAME = "naficp.json"
+
 
 def qgsDebug(message, level=Qgis.Info):
     """Print a debug message."""
@@ -37,6 +38,7 @@ def resolvePluginPath(relative, base=None):
         base = path.normpath(path.join(base, os.pardir))
     return path.normpath(path.join(base, relative))
 
+
 def getSetting(setting, default=None):
     """Retrieve a NAFI Copy and Paste setting."""
     try:
@@ -46,5 +48,3 @@ def getSetting(setting, default=None):
     except:
         qgsDebug("Error reading NAFI Copy and Paste settings file.")
         return default
-
-
