@@ -37,17 +37,6 @@ def resolvePluginPath(relative, base=None):
         base = path.normpath(path.join(base, os.pardir))
     return path.normpath(path.join(base, relative))
 
-
-def deriveWorkingDirectory():
-    """Derive the working folder from the current QGS project file."""
-    project = QgsProject.instance()
-    projectFilePath = project.fileName()
-    if projectFilePath is None or projectFilePath == '':
-        guiError("Save your burnt areas mapping project before continuing.")
-        return None
-    return path.dirname(projectFilePath)
-
-
 def getSetting(setting, default=None):
     """Retrieve a NAFI Copy and Paste setting."""
     try:

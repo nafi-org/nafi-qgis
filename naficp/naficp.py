@@ -26,7 +26,7 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 
 # Initialize Qt resources from file resources.py
-from .resources import *
+from .resources_rc import *
 
 # Import the code for the DockWidget
 from .src.naficp_dockwidget import NafiCpDockWidget
@@ -172,6 +172,7 @@ class NafiCp:
         self.add_action(
             icon_path,
             text=self.tr(u'NAFI Copy and Paste'),
+            add_to_toolbar=True,
             callback=self.run,
             parent=self.iface.mainWindow())
 

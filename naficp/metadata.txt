@@ -6,7 +6,7 @@
 name=NAFI Copy and Paste
 qgisMinimumVersion=3.18
 description=Easily copy and paste features between QGIS layers
-version=0.1
+version=0.2
 author=Trailmarker
 email=tom@trailmarker.io
 

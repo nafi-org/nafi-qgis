@@ -20,7 +20,7 @@ rem call pyuic5 ui\naficp_dockwidget_base.ui -o src\naficp_dockwidget_base.py
 rem call pyuic5 ui\naficp_about_dialog_base.ui -o src\naficp_about_dialog_base.py
 
 ::Resources
-call pyrcc5 resources.qrc -o resources.py
+call pyrcc5 resources.qrc -o resources_rc.py
 
 rem @ECHO OFF
 GOTO END
