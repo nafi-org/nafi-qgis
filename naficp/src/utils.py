@@ -3,8 +3,8 @@ import json
 import os
 import os.path as path
 
+from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtWidgets import QMessageBox
-from qgis.core import Qgis, QgsMessageLog, QgsProject
 
 NAFICP_CONFIG_FILENAME = "naficp.json"
 

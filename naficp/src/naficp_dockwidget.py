@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
 
+from qgis.core import QgsMapLayerProxyModel
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
-
-from qgis.core import QgsMapLayerProxyModel
 from qgis.utils import iface as QgsInterface
 
 from .utils import guiError
@@ -17,6 +16,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 NAFICP_MENUNAME = "NAFI Copy and Paste"
 NAFICP_HOTKEY = "Ctrl+Z"
 
+
 class NafiCpDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
     closingPlugin = pyqtSignal()
@@ -24,13 +24,10 @@ class NafiCpDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
     def __init__(self, parent=None):
         """Constructor."""
         super(NafiCpDockWidget, self).__init__(parent)
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://doc.qt.io/qt-5/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
+
         self.setupUi(self)
 
+        # was having trouble getting this to lay out correctly, so have commented for now
         # self.pasteFeaturesButton.setIcon(QIcon(":/plugins/naficp/images/paintbrush.png"))
         # self.pasteFeaturesButton.updateGeometry()
 
@@ -74,7 +71,7 @@ class NafiCpDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         return True
 
     def copySelectedFeaturesFromSourceLayer(self):
-        """Add the currently selected features in the source layer to this working layer."""
+        """Paste the currently selected features in the source layer into the working layer."""
         sourceLayer = self.sourceLayerComboBox.currentLayer()
         workingLayer = self.workingLayerComboBox.currentLayer()
 
@@ -106,7 +103,8 @@ class NafiCpDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         QgsInterface.actionCopyFeatures().trigger()
 
     def closeEvent(self, event):
-        nafiCpMenu = next(a for a in QgsInterface.vectorMenu().actions() if NAFICP_MENUNAME in a.text())
+        nafiCpMenu = next(a for a in QgsInterface.vectorMenu(
+        ).actions() if NAFICP_MENUNAME in a.text())
         QgsInterface.vectorMenu().removeAction(nafiCpMenu)
         self.closingPlugin.emit()
         event.accept()
