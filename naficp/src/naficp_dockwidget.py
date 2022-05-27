@@ -14,6 +14,8 @@ from .utils import guiError
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), os.pardir, 'ui', 'naficp_dockwidget_base.ui'))
 
+NAFICP_MENUNAME = "NAFI Copy and Paste"
+NAFICP_HOTKEY = "Ctrl+Z"
 
 class NafiCpDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
@@ -42,10 +44,10 @@ class NafiCpDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             self.copySelectedFeaturesFromSourceLayer)
 
         self.pasteAction = QAction("Paste Features", QgsInterface.mainWindow())
-        QgsInterface.registerMainWindowAction(self.pasteAction, "Ctrl+Z")
+        QgsInterface.registerMainWindowAction(self.pasteAction, NAFICP_HOTKEY)
         # won't work without calling this method?
         QgsInterface.addPluginToVectorMenu(
-            "NAFI Copy and Paste", self.pasteAction)
+            NAFICP_MENUNAME, self.pasteAction)
         self.pasteAction.triggered.connect(
             self.copySelectedFeaturesFromSourceLayer)
 
@@ -104,7 +106,7 @@ class NafiCpDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         QgsInterface.actionCopyFeatures().trigger()
 
     def closeEvent(self, event):
-        QgsInterface.removePluginVectorMenu(
-            "NAFI Copy and Paste", self.pasteAction)
+        nafiCpMenu = next(a for a in QgsInterface.vectorMenu().actions() if NAFICP_MENUNAME in a.text())
+        QgsInterface.vectorMenu().removeAction(nafiCpMenu)
         self.closingPlugin.emit()
         event.accept()
