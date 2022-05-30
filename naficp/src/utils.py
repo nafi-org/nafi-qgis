@@ -6,28 +6,30 @@ import os.path as path
 from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtWidgets import QMessageBox
 
+NAFICP_NAME = "Easy Copy and Paste"
+NAFICP_DEFAULT_HOTKEY = "Ctrl+Z"
 NAFICP_CONFIG_FILENAME = "naficp.json"
 
 
 def qgsDebug(message, level=Qgis.Info):
     """Print a debug message."""
     QgsMessageLog.logMessage(
-        message, tag="NAFI Copy and Paste", level=level)
+        message, tag=NAFICP_NAME, level=level)
 
 
 def guiInformation(message):
     """Show an info message box."""
-    QMessageBox.information(None, "NAFI Copy and Paste", message)
+    QMessageBox.information(None, NAFICP_NAME, message)
 
 
 def guiError(message):
     """Show an error message box."""
-    QMessageBox.critical(None, "NAFI Copy and Paste", message)
+    QMessageBox.critical(None, NAFICP_NAME, message)
 
 
 def guiWarning(message):
     """Show a warning message box."""
-    QMessageBox.warning(None, "NAFI Copy and Paste", message)
+    QMessageBox.warning(None, NAFICP_NAME, message)
 
 
 def resolvePluginPath(relative, base=None):
@@ -40,11 +42,15 @@ def resolvePluginPath(relative, base=None):
 
 
 def getSetting(setting, default=None):
-    """Retrieve a NAFI Copy and Paste setting."""
+    """Retrieve an Easy Copy and Paste setting."""
     try:
         with open(resolvePluginPath("naficp.json")) as settingsFile:
             settings = json.load(settingsFile)
             return settings.get(setting, default)
     except:
-        qgsDebug("Error reading NAFI Copy and Paste settings file.")
+        qgsDebug(f"Error reading {NAFICP_NAME} settings file.")
         return default
+
+def getConfiguredHotKey():
+    """Get the configured hot key."""
+    return getSetting("hotkey", NAFICP_DEFAULT_HOTKEY)
