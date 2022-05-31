@@ -8,22 +8,24 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 from qgis.utils import iface as QgsInterface
 
-from .utils import getConfiguredHotKey, guiError, NAFICP_NAME
+from .utils import getConfiguredHotKey, guiError, NAFICP_NAME, guiWarning
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), os.pardir, 'ui', 'naficp_dockwidget_base.ui'))
+
 
 class NafiCpDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
     closingPlugin = pyqtSignal()
 
-    def __init__(self, parent=None):
+    def __init__(self, hotkey, pasteAction, parent=None):
         """Constructor."""
         super(NafiCpDockWidget, self).__init__(parent)
 
         self.setupUi(self)
 
-        self.hotkey = getConfiguredHotKey()
+        self.hotkey = hotkey
+        self.pasteAction = pasteAction
 
         # was having trouble getting this to lay out correctly, so have commented for now
         # self.pasteFeaturesButton.setIcon(QIcon(":/plugins/naficp/images/paintbrush.png"))
@@ -36,15 +38,10 @@ class NafiCpDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.workingLayerComboBox.setFilters(QgsMapLayerProxyModel.VectorLayer)
         self.workingLayerComboBox.setShowCrs(True)
 
-        self.pasteFeaturesButton.clicked.connect(
+        self.pasteAction.triggered.connect(
             self.copySelectedFeaturesFromSourceLayer)
 
-        self.pasteAction = QAction("Paste Features", QgsInterface.mainWindow())
-        QgsInterface.registerMainWindowAction(self.pasteAction, self.hotkey)
-        # won't work without calling this method?
-        QgsInterface.addPluginToVectorMenu(
-            NAFICP_NAME, self.pasteAction)
-        self.pasteAction.triggered.connect(
+        self.pasteFeaturesButton.clicked.connect(
             self.copySelectedFeaturesFromSourceLayer)
 
     # miscellaneous sanity checks
@@ -102,8 +99,5 @@ class NafiCpDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         QgsInterface.actionCopyFeatures().trigger()
 
     def closeEvent(self, event):
-        nafiCpMenu = next(a for a in QgsInterface.vectorMenu(
-        ).actions() if NAFICP_NAME in a.text())
-        QgsInterface.vectorMenu().removeAction(nafiCpMenu)
         self.closingPlugin.emit()
         event.accept()

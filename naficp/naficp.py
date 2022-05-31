@@ -4,12 +4,14 @@ import os.path
 from qgis.PyQt.QtCore import QCoreApplication, QSettings, Qt, QTranslator
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
+from qgis.utils import iface as QgsInterface
 
 # Initialize Qt resources from file resources.py
 from .resources_rc import *
 # Import the code for the DockWidget
 from .src.naficp_dockwidget import NafiCpDockWidget
-from .src.utils import NAFICP_NAME
+from .src.utils import getConfiguredHotKey, guiWarning, NAFICP_NAME
+
 
 class NafiCp:
     """QGIS Plugin Implementation."""
@@ -152,6 +154,14 @@ class NafiCp:
             callback=self.run,
             parent=self.iface.mainWindow())
 
+        self.hotkey = getConfiguredHotKey()
+
+        self.pasteAction = QAction("Paste Features", QgsInterface.mainWindow())
+        QgsInterface.registerMainWindowAction(self.pasteAction, self.hotkey)
+        # won't work without calling this method?
+        QgsInterface.addPluginToVectorMenu(
+            NAFICP_NAME, self.pasteAction)
+
     # --------------------------------------------------------------------------
 
     def onClosePlugin(self):
@@ -173,7 +183,12 @@ class NafiCp:
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
 
-        # print "** UNLOAD NafiCp"
+        # Remove 'Paste Features' action
+        nafiCpMenu = next(a for a in QgsInterface.vectorMenu().actions() if NAFICP_NAME in a.text())
+        QgsInterface.vectorMenu().removeAction(nafiCpMenu)
+
+        if not QgsInterface.unregisterMainWindowAction(self.pasteAction):
+            guiWarning("Error unregistering 'Paste Features' action.")
 
         for action in self.actions:
             self.iface.removePluginMenu(
@@ -198,7 +213,7 @@ class NafiCp:
             #    removed on close (see self.onClosePlugin method)
             if self.dockwidget == None:
                 # Create the dockwidget (after translation) and keep reference
-                self.dockwidget = NafiCpDockWidget()
+                self.dockwidget = NafiCpDockWidget(self.hotkey, self.pasteAction)
 
             # connect to provide cleanup on closing of dockwidget
             self.dockwidget.closingPlugin.connect(self.onClosePlugin)
