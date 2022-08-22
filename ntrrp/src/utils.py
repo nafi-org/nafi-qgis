@@ -166,10 +166,12 @@ def capabilitiesError(errorString, capsXml):
     qgsDebug(logMessage, Qgis.Critical)
 
 
-def fsidsError(fsidData):
+def fsidsError(fsidData=None):
     """Raise an error retrieving FSID data."""
     error = (f"Error parsing the retrieved NAFI FSID data!\n"
              f"Check the QGIS NAFI Burnt Areas Mapping message log for details.")
     guiError(error)
-    logMessage = f"NAFI FSID data retrieved: {html.escape(fsidData)}"
-    qgsDebug(logMessage, Qgis.Critical)
+
+    if fsidData:
+        logMessage = f"NAFI FSID data retrieved: {html.escape(fsidData)}"
+        qgsDebug(logMessage, Qgis.Critical)

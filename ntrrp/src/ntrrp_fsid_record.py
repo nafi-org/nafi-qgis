@@ -3,15 +3,15 @@ class NtrrpFsidRecord:
     def __init__(self, fsidJson):
         """Constructor."""
 
-        self.id = fsidJson["id"]
-        self.fsid = fsidJson["fsid"]
-        self.startDate = fsidJson["start_date"]
-        self.endDate = fsidJson["end_date"]
-        self.month = fsidJson["month"]
-        self.region = fsidJson["region"]
-        self.uploadDate = fsidJson["upload_date"]
-        self.author = fsidJson["author"]
-        self.comment = fsidJson["comment"]
+        self.id = fsidJson.get("id", None)
+        self.fsid = fsidJson.get("fsid", None)
+        self.startDate = fsidJson.get("start_date", None)
+        self.endDate = fsidJson.get("end_date", None)
+        self.month = fsidJson.get("month", None)
+        self.region = fsidJson.get("region", None)
+        self.uploadDate = fsidJson.get("upload_date", None)
+        self.author = fsidJson.get("author", None)
+        self.comment = fsidJson.get("comment", None)
 
 
 # Sample data showing structure
