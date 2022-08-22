@@ -2,6 +2,7 @@
 from qgis.core import QgsProcessing
 from qgis.core import QgsProcessingAlgorithm
 from qgis.core import QgsProcessingMultiStepFeedback
+from qgis.core import QgsProcessingParameterDateTime
 from qgis.core import QgsProcessingParameterEnum
 from qgis.core import QgsProcessingParameterFeatureSink
 from qgis.core import QgsProcessingParameterRasterLayer
@@ -24,7 +25,13 @@ class FullBurntAreasProcess(QgsProcessingAlgorithm):
                           allowMultiple=False, usesStaticStrings=False, defaultValue=0))
 
         self.addParameter(QgsProcessingParameterString(
-            'Comments', 'Your comments on this mapping', multiLine=True, defaultValue=''))
+            'Author', 'Mapping author', multiLine=False, defaultValue=None))
+        self.addParameter(QgsProcessingParameterString(
+            'Comments', 'Comments', multiLine=True, defaultValue=None))
+        self.addParameter(QgsProcessingParameterDateTime(
+            'StartDate', 'Mapping start date', type=QgsProcessingParameterDateTime.Date, defaultValue=None))
+        self.addParameter(QgsProcessingParameterDateTime(
+            'EndDate', 'Mapping end date', type=QgsProcessingParameterDateTime.Date, defaultValue=None))
         self.addParameter(QgsProcessingParameterFeatureSink('AttributedBurntAreas', 'Attributed Burnt Areas',
                           type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, defaultValue=None))
 
@@ -34,9 +41,6 @@ class FullBurntAreasProcess(QgsProcessingAlgorithm):
         feedback = QgsProcessingMultiStepFeedback(4, model_feedback)
         results = {}
         outputs = {}
-
-        # Set up transfer parameters
-        region = NTRRP_REGIONS[parameters['Region']]
 
         # Dissolve Burnt Areas
         alg_params = {
@@ -55,6 +59,9 @@ class FullBurntAreasProcess(QgsProcessingAlgorithm):
             'Comments': parameters['Comments'],
             'DissolvedBurntAreas': outputs['DissolveBurntAreas']['DissolvedBurntAreas'],
             'Region': parameters['Region'],
+            'StartDate': parameters['StartDate'],
+            'EndDate': parameters['EndDate'],
+            'Author': parameters['Author'],
             'AttributedBurntAreas': QgsProcessing.TEMPORARY_OUTPUT
         }
         outputs['AttributeBurntAreas'] = processing.run(

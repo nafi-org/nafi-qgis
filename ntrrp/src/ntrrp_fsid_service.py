@@ -5,6 +5,7 @@ from qgis.core import QgsBlockingNetworkRequest
 from qgis.PyQt.QtCore import QObject, QUrl, pyqtSignal
 from qgis.PyQt.QtNetwork import QNetworkReply, QNetworkRequest, QSslSocket
 
+from .api_post import apiPost
 from .ntrrp_fsid_record import NtrrpFsidRecord
 from .utils import connectionError, fsidsError, qgsDebug
 
@@ -23,7 +24,6 @@ class NtrrpFsidService(QObject):
 
     def downloadFsids(self, apiBaseUrl, regionName):
         """Download and parse remote capabilities file."""
-
         fsidsUrl = f"{apiBaseUrl}/mapping/?area={regionName.lower()}"
         # https://test.firenorth.org.au/bfnt/api/mapping/?area=darwin
         request = QNetworkRequest(QUrl(fsidsUrl))
@@ -51,9 +51,43 @@ class NtrrpFsidService(QObject):
 
         return None
 
+    def postNewMapping(self, apiBaseUrl, regionName, params):
+        """Post a new mapping record and retrieve and parse the response as an (incomplete) NtrrpFsidRecord."""
+        postUrl = f"{apiBaseUrl}/mapping/?area={regionName.lower()}"
+        # eg https://test.firenorth.org.au/bfnt/api/mapping/?area=darwin
+
+        try:
+            response = apiPost(postUrl, params)
+
+            statusCode = response.attribute(
+                QNetworkRequest.HttpStatusCodeAttribute)
+            responseContent = str(response.content(), 'utf-8')
+
+            qgsDebug(
+                f"NtrrpFsidService.postNewMapping responseContent: {responseContent}")
+
+            if statusCode == 200:  # NB, this is what Patrice's API returns, not 201 Created
+                try:
+                    jsonContent = json.loads(responseContent)
+                    if jsonContent is not None and jsonContent.get("new_record", None) is not None:
+                        # Just hard-coding aspects of this API here
+                        fsidJson = jsonContent["new_record"]
+                        # Note the response contains no "upload_date" for some reason
+                        fsid = NtrrpFsidRecord(fsidJson)
+                        return fsid
+                    else:
+                        fsidsError()
+                except:
+                    fsidsError()
+                    return None
+            else:
+                connectionError(
+                    f"HTTP status code {statusCode} returned from server with response content {responseContent}")
+        except:
+            connectionError("Unknown error posting new mapping record")
+
     def parseFsids(self, fsidsJson):
         """Parse the FSID JSON and return as a collection of NtrrpFsidRecord items."""
-
         try:
             fsidArray = json.loads(fsidsJson)
 
@@ -70,11 +104,5 @@ class NtrrpFsidService(QObject):
 
     def downloadAndParseFsids(self, apiBaseUrl, regionName):
         """Download, then parse FSID data."""
-
-        qgsDebug("Accessing FSID service …")
-
         fsidsJson = self.downloadFsids(apiBaseUrl, regionName)
-
-        qgsDebug("Parsing FSIDs …")
-
         return (fsidsJson and self.parseFsids(fsidsJson))
