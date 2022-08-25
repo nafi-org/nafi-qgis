@@ -33,7 +33,9 @@ class DownloadCurrentMapping(QgsProcessingAlgorithm):
         # Set up transfer parameters
         region = NTRRP_REGIONS[parameters['Region']]
         regionDataFolder = Path(parameters['WorkingFolder']) / region
-        downloadUrl = f"{getNtrrpDataUrl()}/bfnt_{region.lower()}_current_sr3577_tif.zip"
+
+        # Note: _tif suffix removed by Patrice (BNTQ-57)
+        downloadUrl = f"{getNtrrpDataUrl()}/bfnt_{region.lower()}_current_sr3577.zip"
         tempFile = getTempDownloadPath()
 
         qgsDebug(f"Downloading {downloadUrl} to {tempFile}")
