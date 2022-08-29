@@ -78,7 +78,7 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
         fsidRecord = self.fsidService.postNewMapping(
             getNtrrpApiUrl(), regionName, postParams)
         if fsidRecord is not None:
-            self.nextFsid = fsidRecord.id
+            self.nextFsid = fsidRecord.fsid
             feedback.pushInfo("FSID API POST successful")
             feedback.pushInfo(f"Next FSID: {self.nextFsid}")
 
