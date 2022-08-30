@@ -187,5 +187,7 @@ class NtrrpRegion(QObject):
         if self.currentMappingLayer is not None:
             params['CurrentMapping'] = self.currentMappingLayer.impl.id()
 
-        processing.execAlgorithmDialog(
+        results = processing.execAlgorithmDialog(
             'BurntAreas:FullBurntAreasProcess', params)
+
+        qgsDebug(str(results))
