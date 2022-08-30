@@ -11,9 +11,7 @@ from qgis.core import QgsProcessingParameterString
 from qgis.core import QgsProcessingParameterVectorLayer
 import processing
 
-
-from ..ntrrp_fsid_service import NtrrpFsidService
-from ..utils import getNtrrpApiUrl, NTRRP_REGIONS
+from ..utils import NTRRP_REGIONS
 
 
 class AttributeBurntAreas(QgsProcessingAlgorithm):
@@ -35,6 +33,8 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
             'StartDate', 'Mapping start date', type=QgsProcessingParameterDateTime.Date, defaultValue=None))
         self.addParameter(QgsProcessingParameterDateTime(
             'EndDate', 'Mapping end date', type=QgsProcessingParameterDateTime.Date, defaultValue=None))
+        self.addParameter(QgsProcessingParameterString(
+            'NextFsid', 'Fire Scar ID', multiLine=False, defaultValue=None))
 
         self.addParameter(QgsProcessingParameterFeatureSink('AttributedBurntAreas', 'Burnt areas attributed with FSID and other NAFI attributes',
                           type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, defaultValue=None))
@@ -48,42 +48,19 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
         # Month – do not change
         # Region – the areas mapped (ie a1, a2, a3, a4, Kat)
         # Upload date – enter the date you completed the mapping
-        # Curent – enter “yes” for the latest mapping for an area.
+        # Current – enter “yes” for the latest mapping for an area.
         # Comments – add any other additional information about a mapping period – ie note mapping problems due to cloud.
 
         # Derive region string from enum parameter
         regionName = NTRRP_REGIONS[parameters['Region']]
         comments = parameters['Comments']
-        author = parameters['Author']
         startDate = self.parameterAsDateTime(
             parameters, 'StartDate', context).toPyDateTime().strftime('%Y-%m-%d')
-        endDate = self.parameterAsDateTime(
-            parameters, 'EndDate', context).toPyDateTime().strftime('%Y-%m-%d')
-        uploadDate = date.today().strftime("%Y-%m-%d")
-
-        postParams = {
-            'author': author,
-            'start_date': startDate,
-            'end_date': endDate,
-            'region': regionName,
-            'upload_date': uploadDate,
-            'comment': comments
-        }
-
-        # Get the next available FSID
-        feedback.pushInfo(
-            "Retrieving next available FSID from NAFI endpoint …")
-        self.fsidService = NtrrpFsidService()
-
-        fsidRecord = self.fsidService.postNewMapping(
-            getNtrrpApiUrl(), regionName, postParams)
-        if fsidRecord is not None:
-            self.nextFsid = fsidRecord.fsid
-            feedback.pushInfo("FSID API POST successful")
-            feedback.pushInfo(f"Next FSID: {self.nextFsid}")
+        nextFsid = parameters['NextFsid']
 
         feedback.pushInfo(
             "Adding FSID, Mapping Period, Month, Region, Upload Date, Curent, and Comments attributes to your burnt areas …")
+        
         # add FSID
         alg_params = {
             'FIELD_LENGTH': 10,
@@ -91,7 +68,7 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
             'FIELD_PRECISION': 0,
             'FIELD_TYPE': 0,
             # hack to apply calculator from number input
-            'FORMULA': f'value = {self.nextFsid}',
+            'FORMULA': f'value = {nextFsid}',
             'GLOBAL': '',
             'INPUT': parameters['DissolvedBurntAreas'],
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
@@ -184,7 +161,6 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
             'qgis:advancedpythonfieldcalculator', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
 
         results['AttributedBurntAreas'] = outputs['AddComments']['OUTPUT']
-        results['NextFSID'] = self.nextFsid
         return results
 
     def name(self):

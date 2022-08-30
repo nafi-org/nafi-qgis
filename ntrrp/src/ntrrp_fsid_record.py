@@ -1,10 +1,18 @@
 # -*- coding: utf-8 -*-
+from .ntrrp_fsid_error import NtrrpFsidError
+
+
 class NtrrpFsidRecord:
     def __init__(self, fsidJson):
         """Constructor."""
 
         self.id = fsidJson.get("id", None)
         self.fsid = fsidJson.get("fsid", None)
+
+        if self.fsid is None:
+            raise NtrrpFsidError(
+                f"No valid fire scar ID found in the retrieved JSON data", fsidJson)
+
         self.startDate = fsidJson.get("start_date", None)
         self.endDate = fsidJson.get("end_date", None)
         self.month = fsidJson.get("month", None)

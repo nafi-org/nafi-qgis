@@ -48,16 +48,12 @@ class NtrrpFsidService(QObject):
                         # Note the response contains no "upload_date" for some reason
                         fsid = NtrrpFsidRecord(fsidJson)
                         return fsid
-                    else:
-                        raise NtrrpFsidError(f"Error parsing the retrieved NAFI FSID data!\n"
-                                             f"Check the QGIS NAFI Burnt Areas Mapping message log for details.",
-                                             f"NAFI FSID data retrieved: {html.escape(responseContent)}")
-
+                    
+                    raise Exception()
                 except:
                     raise NtrrpFsidError(f"Error parsing the retrieved NAFI FSID data!\n"
                                          f"Check the QGIS NAFI Burnt Areas Mapping message log for details.",
                                          f"NAFI FSID data retrieved: {html.escape(responseContent)}")
-                    return None
             elif statusCode == 400:
                 # One of Patrice's new style errors
                 raise NtrrpFsidError(responseContent)
@@ -65,6 +61,8 @@ class NtrrpFsidService(QObject):
                 raise NtrrpFsidError(f"Error connecting to NAFI services!\n"
                                      f"Check the QGIS NAFI Burnt Areas Mapping message log for details.",
                                      f"Unexpected HTTP status code {statusCode} returned from server with response content {responseContent}")
+        except NtrrpFsidError:
+            raise
         except:
             raise NtrrpFsidError("Unknown error posting new mapping record")
 

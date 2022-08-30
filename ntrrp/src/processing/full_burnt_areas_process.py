@@ -11,7 +11,7 @@ from qgis.core import QgsProcessingParameterString
 
 import processing
 
-from ..utils import NTRRP_REGIONS
+from ..utils import NTRRP_REGIONS, qgsDebug
 
 
 class FullBurntAreasProcess(QgsProcessingAlgorithm):
@@ -23,7 +23,6 @@ class FullBurntAreasProcess(QgsProcessingAlgorithm):
             'CurrentMapping', 'Current rasterised mapping for your region', defaultValue=None))
         self.addParameter(QgsProcessingParameterEnum('Region', 'Region', options=NTRRP_REGIONS,
                           allowMultiple=False, usesStaticStrings=False, defaultValue=0))
-
         self.addParameter(QgsProcessingParameterString(
             'Author', 'Mapping author', multiLine=False, defaultValue=None))
         self.addParameter(QgsProcessingParameterString(
@@ -32,8 +31,11 @@ class FullBurntAreasProcess(QgsProcessingAlgorithm):
             'StartDate', 'Mapping start date', type=QgsProcessingParameterDateTime.Date, defaultValue=None))
         self.addParameter(QgsProcessingParameterDateTime(
             'EndDate', 'Mapping end date', type=QgsProcessingParameterDateTime.Date, defaultValue=None))
+        self.addParameter(QgsProcessingParameterString(
+            'NextFsid', 'Fire Scar ID', multiLine=False, defaultValue=None))
         self.addParameter(QgsProcessingParameterFeatureSink('AttributedBurntAreas', 'Attributed Burnt Areas',
-                          type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, defaultValue=None))
+                          type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, defaultValue=None)),
+    
 
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
@@ -62,12 +64,13 @@ class FullBurntAreasProcess(QgsProcessingAlgorithm):
             'StartDate': parameters['StartDate'],
             'EndDate': parameters['EndDate'],
             'Author': parameters['Author'],
+            'NextFsid': parameters['NextFsid'],
             'AttributedBurntAreas': QgsProcessing.TEMPORARY_OUTPUT
         }
         outputs['AttributeBurntAreas'] = processing.run(
             'BurntAreas:AttributeBurntAreas', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
 
-        feedback.setCurrentStep(3)
+        feedback.setCurrentStep(2)
         if feedback.isCanceled():
             return {}
 
@@ -81,7 +84,7 @@ class FullBurntAreasProcess(QgsProcessingAlgorithm):
         outputs['RasteriseBurntAreas'] = processing.run(
             'BurntAreas:RasteriseBurntAreas', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
 
-        feedback.setCurrentStep(2)
+        feedback.setCurrentStep(3)
         if feedback.isCanceled():
             return {}
 
@@ -101,7 +104,7 @@ class FullBurntAreasProcess(QgsProcessingAlgorithm):
         return 'FullBurntAreasProcess'
 
     def displayName(self):
-        return 'Process and Upload Burnt Areas'
+        return 'Process and Upload Burnt Areas (Valid NAFI Fire Scar ID Required)'
 
     def group(self):
         return ''
