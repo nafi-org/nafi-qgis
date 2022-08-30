@@ -60,7 +60,7 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
 
         feedback.pushInfo(
             "Adding FSID, Mapping Period, Month, Region, Upload Date, Curent, and Comments attributes to your burnt areas …")
-        
+
         # add FSID
         alg_params = {
             'FIELD_LENGTH': 10,

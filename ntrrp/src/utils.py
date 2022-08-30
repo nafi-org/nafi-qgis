@@ -164,4 +164,3 @@ def capabilitiesError(errorString, capsXml):
     qgsDebug(logMessage, Qgis.Critical)
     logMessage = f"NAFI WMS capabilities XML: {html.escape(capsXml)}"
     qgsDebug(logMessage, Qgis.Critical)
-

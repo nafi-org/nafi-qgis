@@ -77,7 +77,7 @@ class ValidateFullBurntAreasProcess(QgsProcessingAlgorithm):
         try:
             fsidRecord = self.fsidService.postNewMapping(
                 getNtrrpApiUrl(), regionName, postParams)
-            
+
             nextFsid = fsidRecord.fsid
             feedback.pushInfo("FSID retrieval was successful")
             feedback.pushInfo(f"Next FSID: {nextFsid}")
@@ -94,7 +94,8 @@ class ValidateFullBurntAreasProcess(QgsProcessingAlgorithm):
             results['AttributedBurntAreas'] = parameters['AttributedBurntAreas']
 
             # Execute the full burnt areas process with the obtained FSID etc
-            results = processing.run('BurntAreas:FullBurntAreasProcess', results, context=context, feedback=feedback, is_child_algorithm=True)
+            results = processing.run('BurntAreas:FullBurntAreasProcess', results,
+                                     context=context, feedback=feedback, is_child_algorithm=True)
 
         except NtrrpFsidError as fsidError:
             fsidError.processingFeedbackError(feedback)

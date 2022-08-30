@@ -41,7 +41,8 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         self.treeView.setModel(self.proxyModel)
 
         # respond to layers being removed
-        QgsProject.instance().layerRemoved.connect(lambda: self.treeViewModel.refresh())
+        QgsProject.instance().layerRemoved.connect(
+            lambda: self.treeViewModel.refresh())
 
         # set up active layer handler
         QgsInterface.layerTreeView().currentLayerChanged.connect(self.activeLayerChanged)

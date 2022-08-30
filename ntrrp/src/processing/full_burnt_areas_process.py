@@ -35,7 +35,6 @@ class FullBurntAreasProcess(QgsProcessingAlgorithm):
             'NextFsid', 'Fire Scar ID', multiLine=False, defaultValue=None))
         self.addParameter(QgsProcessingParameterFeatureSink('AttributedBurntAreas', 'Attributed Burnt Areas',
                           type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, defaultValue=None)),
-    
 
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the

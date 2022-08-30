@@ -48,7 +48,7 @@ class NtrrpFsidService(QObject):
                         # Note the response contains no "upload_date" for some reason
                         fsid = NtrrpFsidRecord(fsidJson)
                         return fsid
-                    
+
                     raise Exception()
                 except:
                     raise NtrrpFsidError(f"Error parsing the retrieved NAFI FSID data!\n"

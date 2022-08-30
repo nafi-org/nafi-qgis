@@ -3,7 +3,6 @@ import dateutil
 import re
 
 
-
 def parseNtrrpLayerRegion(owsTitle):
     """Parse the NTRRP region from a WMS or WMTS layer title. The expected format is T1T2 Difference Image [Darwin_T20210628_dMIRBI_T20210623]."""
     match = re.match("^.*\[(.*)\].*$", owsTitle)

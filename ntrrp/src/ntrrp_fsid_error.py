@@ -2,6 +2,7 @@
 from .utils import guiError, qgsDebug
 from qgis.core import Qgis, QgsProcessingFeedback
 
+
 class NtrrpFsidError(Exception):
     """Throw an error after a failure of the FSID service."""
 
@@ -9,7 +10,7 @@ class NtrrpFsidError(Exception):
         super(NtrrpFsidError, self).__init__()
         self.headline = headline
         self.details = details
-        
+
     def guiError(self):
         """Display a GUI error message."""
         guiError(self.headline)
@@ -26,4 +27,3 @@ class NtrrpFsidError(Exception):
         qgsDebug(self.headline, Qgis.Critical)
         if self.details:
             qgsDebug(self.details, Qgis.Critical)
-

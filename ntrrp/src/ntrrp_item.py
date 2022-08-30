@@ -40,4 +40,3 @@ class NtrrpItem(QStandardItem):
         """Associate this WMS item with an active map layer."""
         if layer is not None and isinstance(layer, QgsMapLayer):
             self.setIcon(QIcon(":/plugins/ntrrp/images/fire.png"))
-
