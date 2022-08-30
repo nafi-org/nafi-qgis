@@ -27,3 +27,8 @@ class NtrrpTreeViewModel(QStandardItemModel):
         # append all NtrrpItems in the region
         for item in region.getNtrrpItems():
             self.appendRow(item)
+
+    def refresh(self):
+        """Refresh the tree view."""
+        if self.region:
+            self.setRegion(self.region)

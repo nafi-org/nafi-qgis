@@ -12,7 +12,7 @@ class NtrrpCapabilities:
         layersByRegion = {}
 
         for layer in owsLayers:
-            region = parseNtrrpLayerRegion(layer)
+            region = parseNtrrpLayerRegion(layer.title)
             if region is None:
                 continue
             if region in layersByRegion:

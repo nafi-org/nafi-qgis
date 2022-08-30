@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from qgis.PyQt import QtWidgets
 from qgis.PyQt.QtCore import QModelIndex, QSortFilterProxyModel, Qt, pyqtSignal
+from qgis.core import QgsProject
 from qgis.utils import iface as QgsInterface
 
 from .ntrrp_about_dialog import NtrrpAboutDialog
@@ -38,6 +39,9 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         self.proxyModel.setSourceModel(self.treeViewModel)
         self.proxyModel.setRecursiveFilteringEnabled(True)
         self.treeView.setModel(self.proxyModel)
+
+        # respond to layers being removed
+        QgsProject.instance().layerRemoved.connect(lambda: self.treeViewModel.refresh())
 
         # set up active layer handler
         QgsInterface.layerTreeView().currentLayerChanged.connect(self.activeLayerChanged)
@@ -242,7 +246,6 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         # new item?
         if len(items) > len(oldItems):
             newItems = list(set(items) - set(oldItems))
-            qgsDebug(f"New items: {str(newItems)}")
             newItem = newItems[0]
 
             index = self.workingLayerComboBox.findText(
@@ -278,6 +281,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         if modelNode is not None:
             if isinstance(modelNode, NtrrpItem):
                 self.region.addWmtsLayer(modelNode)
+                self.treeViewModel.refresh()
 
     def enableDisable(self):
         "Enable or disable UI elements based on current state."
