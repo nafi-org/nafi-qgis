@@ -95,7 +95,7 @@ class WmtsLayer(QObject, AbstractLayer):
 
     def getMapLayerName(self):
         """Get an appropriate map layer name for this layer."""
-        return parseNtrrpLayerDescription(self.owsLayer)
+        return parseNtrrpLayerDescription(self.owsLayer.title)
 
     # def getMapLayer(self, groupLayer=None):
     #     """Get the QGIS map layer corresponding to this layer, if any."""

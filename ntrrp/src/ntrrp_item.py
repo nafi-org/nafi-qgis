@@ -6,6 +6,7 @@ from qgis.core import QgsMapLayer
 
 from .layer.wmts_layer import WmtsLayer
 from .ows_utils import parseNtrrpLayerDescription, parseNtrrpLayerRegion
+from .utils import qgsDebug
 
 
 class NtrrpItem(QStandardItem):
@@ -14,11 +15,11 @@ class NtrrpItem(QStandardItem):
         """Constructor."""
         super(QStandardItem, self).__init__()
 
-        self.toggleOff()
+        self.setIcon(QIcon(":/plugins/ntrrp/images/globe.png"))
 
         # assemble some properties
-        self.region = parseNtrrpLayerRegion(owsLayer)
-        self.description = parseNtrrpLayerDescription(owsLayer)
+        self.region = parseNtrrpLayerRegion(owsLayer.title)
+        self.description = parseNtrrpLayerDescription(owsLayer.title)
 
         self.itemLayer = WmtsLayer(self.region, wmsUrl, owsLayer)
         self.setText(self.description)
@@ -32,13 +33,10 @@ class NtrrpItem(QStandardItem):
         """Check if a layer is in the map already and set its icon if it is."""
         layer = self.itemLayer.getMapLayer()
         if layer is not None and isinstance(layer, QgsMapLayer):
+            # qgsDebug(f"Restoring {self.description}: itemLayer.owsLayer.title = {self.itemLayer.owsLayer.title}, itemLayer.getMapLayerName() = {self.itemLayer.getMapLayerName()}")
             self.toggleOn(layer)
 
     def toggleOn(self, layer):
         """Associate this WMS item with an active map layer."""
         if layer is not None and isinstance(layer, QgsMapLayer):
             self.setIcon(QIcon(":/plugins/ntrrp/images/fire.png"))
-            self.itemLayer.layerRemoved.connect(lambda _: self.toggleOff())
-
-    def toggleOff(self):
-        self.setIcon(QIcon(":/plugins/ntrrp/images/globe.png"))

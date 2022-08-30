@@ -11,8 +11,8 @@ cp ntrrp/images/icon.png ntrrp/icon.png
 rm -rf ntrrp/images
 
 # zip up the NAFI plug-in directory only into a datestamped archive
-# zip -FSr "../ntrrp-$(date +'%Y%m%d').zip" ntrrp
-# cd ..
-# rm -rf deployment
+7z a -r "../ntrrp-$(date +'%Y%m%d').zip" ntrrp
+cd ..
+rm -rf deployment
 
 

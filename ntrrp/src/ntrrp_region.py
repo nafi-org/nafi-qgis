@@ -187,5 +187,10 @@ class NtrrpRegion(QObject):
         if self.currentMappingLayer is not None:
             params['CurrentMapping'] = self.currentMappingLayer.impl.id()
 
-        processing.execAlgorithmDialog(
-            'BurntAreas:FullBurntAreasProcess', params)
+        paramsWithFsid = processing.execAlgorithmDialog(
+            'BurntAreas:ValidateFullBurntAreasProcess', params)
+
+        if paramsWithFsid.get('FsidError', None) is not None:
+            fsidError = paramsWithFsid['FsidError']
+            fsidError.guiError()
+            fsidError.log()

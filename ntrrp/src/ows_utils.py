@@ -2,14 +2,10 @@
 import dateutil
 import re
 
-from owslib.map.wms111 import ContentMetadata
 
-
-def parseNtrrpLayerRegion(owsLayer):
+def parseNtrrpLayerRegion(owsTitle):
     """Parse the NTRRP region from a WMS or WMTS layer title. The expected format is T1T2 Difference Image [Darwin_T20210628_dMIRBI_T20210623]."""
-    assert isinstance(owsLayer, ContentMetadata)
-
-    match = re.match("^.*\[(.*)\].*$", owsLayer.title)
+    match = re.match("^.*\[(.*)\].*$", owsTitle)
     if match is not None:
         ntrrpMeta = match.group(1)
         ntrrpMetaElements = ntrrpMeta.split("_")
@@ -19,11 +15,9 @@ def parseNtrrpLayerRegion(owsLayer):
     return None
 
 
-def parseNtrrpLayerDescription(owsLayer):
+def parseNtrrpLayerDescription(owsTitle):
     """Parse the NTRRP description from a WMS or WMTS layer title. The expected format is T1T2 Difference Image [Darwin_T20210628_dMIRBI_T20210623]."""
-    assert isinstance(owsLayer, ContentMetadata)
-
-    match = re.match("^(.*)\[(.*)\].*$", owsLayer.title)
+    match = re.match("^(.*)\[(.*)\].*$", owsTitle)
     if match is not None:
         freeText = match.group(1) or ""
         metadata = match.group(2) or ""
@@ -40,4 +34,4 @@ def parseNtrrpLayerDescription(owsLayer):
             return freeText
 
     # nothing was found
-    return owsLayer.title
+    return owsTitle
