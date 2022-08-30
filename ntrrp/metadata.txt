@@ -17,7 +17,12 @@ experimental=False
 deprecated=False
 category=Web
 server=False
-changelog=0.11.2
+changelog=1.0.0
+          - bump version for release to Bushfires NT
+          - refactor processing to better detect and show user upcoming NAFI errors
+          - use custom exception for handling issues in NAFI FSID service
+          - updated to point to NAFI Production
+          0.11.2
           - remove '_tif' suffix from 'Download Current Mapping' URL targets following NAFI service changes
           0.11.1
           - update FSID Service calls in NtrrpFsidService to use POST not GET and retrieve the new FSID record from the API
