@@ -3,7 +3,9 @@
         "**/__pycache__": true
     },
     "python.analysis.extraPaths": [
-        "C:/PROGRA~1/QGIS 3.18/apps/Python37/lib/site-packages",
-        "C:/PROGRA~1/QGIS 3.18/apps/qgis/python"
-    ]
+        "C:\\Program Files\\QGIS 3.28.5\\apps\\Python39\\Lib\\site-packages",
+        "C:\\Program Files\\QGIS 3.28.5\\apps\\qgis-ltr\\python"
+    ],
+    "xml.validation.enabled": false,
+    "git.openRepositoryInParentFolders": "always"
 }
