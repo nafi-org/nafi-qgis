@@ -14,35 +14,35 @@ from ..utils import ensureDirectory, deriveWorkingDirectory, guiError, resolveSt
 
 class WorkingLayer(QObject, AbstractLayer):
 
-    def __init__(self, region, templateSourceLayer):
+    def __init__(self, region, templateSegmentationLayer):
         """Constructor."""
         super(QObject, self).__init__()
 
         self.region = region
         self.index = 1
-        self.templateSourceLayer = templateSourceLayer
+        self.templateSegmentationLayer = templateSegmentationLayer
 
-        # source layer is not initially set
-        self.sourceLayer = None
+        # segmentation layer is not initially set
+        self.segmentationLayer = None
         self.shapefilePath = self.getShapefilePath()
 
         self.createShapefile()
 
-    def setSourceLayer(self, sourceLayer):
-        """Set the source layer for this working layer."""
-        assert isinstance(sourceLayer, SegmentationLayer)
-        self.sourceLayer = sourceLayer
+    def setSegmentationLayer(self, segmentationLayer):
+        """Set the segmentation layer for this working layer."""
+        assert isinstance(segmentationLayer, SegmentationLayer)
+        self.segmentationLayer = segmentationLayer
 
     def createShapefile(self):
         """Create a shapefile for this layer."""
 
-        # templateSourceLayer sets initial attributes
-        if self.templateSourceLayer is not None:
-            sourceImpl = self.templateSourceLayer.impl
-            writer = QgsVectorFileWriter(self.shapefilePath, 'UTF-8', self.templateSourceLayer.impl.fields(
+        # templateSegmentationLayer sets initial attributes
+        if self.templateSegmentationLayer is not None:
+            sourceImpl = self.templateSegmentationLayer.impl
+            writer = QgsVectorFileWriter(self.shapefilePath, 'UTF-8', self.templateSegmentationLayer.impl.fields(
             ), QgsWkbTypes.Polygon, QgsCoordinateReferenceSystem('EPSG:3577'), 'ESRI Shapefile')
         else:
-            guiError("No template source layer!")
+            guiError("No template segmentation layer!")
 
     def getShapefilePath(self):
         """Get a path for a working layer shapefile."""
@@ -58,14 +58,14 @@ class WorkingLayer(QObject, AbstractLayer):
         QgsVectorFileWriter.writeAsVectorFormat(
             self.impl, self.shapefilePath, "utf-8", driverName="ESRI Shapefile")
 
-    def copySelectedFeaturesFromSourceLayer(self):
-        """Add the currently selected features in the source layer to this working layer."""
-        if self.sourceLayer is None or self.sourceLayer.impl is None:
-            guiError("Error occurred: inconsistent state in source layer.")
+    def copySelectedFeaturesFromSegmentationLayer(self):
+        """Add the currently selected features in the segmentation layer to this working layer."""
+        if self.segmentationLayer is None or self.segmentationLayer.impl is None:
+            guiError("Error occurred: inconsistent state in segmentation layer.")
         elif self.impl is None:
             guiError("Error occurred: inconsistent state in working layer.")
         else:
-            QgsInterface.setActiveLayer(self.sourceLayer.impl)
+            QgsInterface.setActiveLayer(self.segmentationLayer.impl)
             QgsInterface.actionCopyFeatures().trigger()
             QgsInterface.setActiveLayer(self.impl)
 
@@ -80,7 +80,7 @@ class WorkingLayer(QObject, AbstractLayer):
             self.impl.commitChanges(stopEditing=(not wasEditing))
 
             QgsInterface.mainWindow().findChild(QAction, 'mActionDeselectAll').trigger()
-            QgsInterface.setActiveLayer(self.sourceLayer.impl)
+            QgsInterface.setActiveLayer(self.segmentationLayer.impl)
 
             # repopulate the clipboard with no features to avoid re-pasting
             QgsInterface.actionCopyFeatures().trigger()

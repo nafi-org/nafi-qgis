@@ -15,18 +15,18 @@ TEST_SOURCE = Path(path.normpath(path.join(path.dirname(__file__), os.pardir, os
 
 class TestWorkingLayer(unittest.TestCase):
 
-    # a WorkingLayer is created from a template SourceLayer
-    def getSourceLayer(self):
+    # a WorkingLayer is created from a template SegmentationLayer
+    def getSegmentationLayer(self):
         return SegmentationLayer(TEST_SOURCE)
 
     def test_create(self):
-        workingLayer = WorkingLayer(self.getSourceLayer())
+        workingLayer = WorkingLayer(self.getSegmentationLayer())
         print(workingLayer.shapefilePath)
         self.assertTrue(Path(getWorkingDirectory()) in Path(
             workingLayer.shapefilePath).parents, "Working layer shapefile is not in working directory!")
 
     def test_save(self):
-        workingLayer = WorkingLayer(self.getSourceLayer())
+        workingLayer = WorkingLayer(self.getSegmentationLayer())
         workingLayer.save()
         self.assertTrue(Path(workingLayer.shapefilePath).exists(
         ), f"Working layer with shapefile {workingLayer.shapefilePath} not created on filesystem!")

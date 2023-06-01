@@ -155,43 +155,43 @@ class Ui_NtrrpDockWidgetBase(object):
         self.uploadButton.setIcon(icon7)
         self.uploadButton.setObjectName("uploadButton")
         self.gridLayout.addWidget(self.uploadButton, 2, 7, 1, 1)
-        self.activeSourceLayerLabel = QtWidgets.QLabel(self.dockWidgetContents)
+        self.activeSegmentationLayerLabel = QtWidgets.QLabel(self.dockWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.activeSourceLayerLabel.sizePolicy().hasHeightForWidth())
-        self.activeSourceLayerLabel.setSizePolicy(sizePolicy)
-        self.activeSourceLayerLabel.setMinimumSize(QtCore.QSize(100, 0))
-        self.activeSourceLayerLabel.setMaximumSize(QtCore.QSize(300, 16777215))
+            self.activeSegmentationLayerLabel.sizePolicy().hasHeightForWidth())
+        self.activeSegmentationLayerLabel.setSizePolicy(sizePolicy)
+        self.activeSegmentationLayerLabel.setMinimumSize(QtCore.QSize(100, 0))
+        self.activeSegmentationLayerLabel.setMaximumSize(QtCore.QSize(300, 16777215))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
         font.setWeight(75)
-        self.activeSourceLayerLabel.setFont(font)
-        self.activeSourceLayerLabel.setAlignment(
+        self.activeSegmentationLayerLabel.setFont(font)
+        self.activeSegmentationLayerLabel.setAlignment(
             QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
-        self.activeSourceLayerLabel.setObjectName("activeSourceLayerLabel")
-        self.gridLayout.addWidget(self.activeSourceLayerLabel, 3, 2, 1, 6)
-        self.sourceLayerLabel = QtWidgets.QLabel(self.dockWidgetContents)
+        self.activeSegmentationLayerLabel.setObjectName("activeSegmentationLayerLabel")
+        self.gridLayout.addWidget(self.activeSegmentationLayerLabel, 3, 2, 1, 6)
+        self.segmentationLayerLabel = QtWidgets.QLabel(self.dockWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.sourceLayerLabel.sizePolicy().hasHeightForWidth())
-        self.sourceLayerLabel.setSizePolicy(sizePolicy)
-        self.sourceLayerLabel.setMinimumSize(QtCore.QSize(100, 0))
-        self.sourceLayerLabel.setMaximumSize(QtCore.QSize(200, 16777215))
+            self.segmentationLayerLabel.sizePolicy().hasHeightForWidth())
+        self.segmentationLayerLabel.setSizePolicy(sizePolicy)
+        self.segmentationLayerLabel.setMinimumSize(QtCore.QSize(100, 0))
+        self.segmentationLayerLabel.setMaximumSize(QtCore.QSize(200, 16777215))
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
-        self.sourceLayerLabel.setFont(font)
-        self.sourceLayerLabel.setAlignment(
+        self.segmentationLayerLabel.setFont(font)
+        self.segmentationLayerLabel.setAlignment(
             QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
-        self.sourceLayerLabel.setObjectName("sourceLayerLabel")
-        self.gridLayout.addWidget(self.sourceLayerLabel, 3, 1, 1, 1)
+        self.segmentationLayerLabel.setObjectName("segmentationLayerLabel")
+        self.gridLayout.addWidget(self.segmentationLayerLabel, 3, 1, 1, 1)
         self.workingLayerComboBox = QtWidgets.QComboBox(
             self.dockWidgetContents)
         self.workingLayerComboBox.setObjectName("workingLayerComboBox")
@@ -243,11 +243,11 @@ class Ui_NtrrpDockWidgetBase(object):
             "NtrrpDockWidgetBase", "Approve Selected Burnt Areas"))
         self.uploadButton.setToolTip(_translate(
             "NtrrpDockWidgetBase", "Upload Burnt Areas"))
-        self.activeSourceLayerLabel.setText(
+        self.activeSegmentationLayerLabel.setText(
             _translate(
                 "NtrrpDockWidgetBase",
                 "<html><head/><body><p><span style=\" font-weight:600;\">Select segmentation layer …</span></p></body></html>"))
-        self.sourceLayerLabel.setText(
+        self.segmentationLayerLabel.setText(
             _translate(
                 "NtrrpDockWidgetBase",
                 "<html><head/><body><p><span style=\" font-weight:600;\">Segmentation layer</span></p></body></html>"))

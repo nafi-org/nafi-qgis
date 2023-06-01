@@ -12,9 +12,9 @@ TEST_SOURCE = Path(path.normpath(path.join(path.dirname(__file__), os.pardir, os
                    "ntrrp_data", "test", "test_source", "T1T3_darwin_T20210926_T20210916_seg_sa1_t100.shp")))
 
 
-class TestSourceLayer(unittest.TestCase):
+class TestSegmentationLayer(unittest.TestCase):
 
-    # a WorkingLayer is created from a template SourceLayer
+    # a WorkingLayer is created from a template SegmentationLayer
     def test_create(self):
-        sourceLayer = SegmentationLayer(TEST_SOURCE)
-        self.assertIsNotNone(sourceLayer.impl)
+        segmentationLayer = SegmentationLayer(TEST_SOURCE)
+        self.assertIsNotNone(segmentationLayer.impl)

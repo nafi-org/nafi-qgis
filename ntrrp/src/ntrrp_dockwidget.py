@@ -51,9 +51,9 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         self.regionComboBox.currentIndexChanged.connect(
             self.regionComboBoxChanged)
 
-        # set up source layer combobox
-        # self.sourceLayerComboBox.currentIndexChanged.connect(
-        #     self.sourceLayerComboBoxChanged)
+        # set up segmentation layer combobox
+        # self.segmentationLayerComboBox.currentIndexChanged.connect(
+        #     self.segmentationLayerComboBoxChanged)
 
         # set up working layer combobox
         self.workingLayerComboBox.currentIndexChanged.connect(
@@ -74,16 +74,16 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
 
         # set up create button
         self.createButton.clicked.connect(
-            lambda: self.region.createWorkingLayer(self.activeSourceLayer))
+            lambda: self.region.createWorkingLayer(self.activeSegmentationLayer))
 
         # set up approve button
         self.approveButton.clicked.connect(
-            lambda: self.activeWorkingLayer.copySelectedFeaturesFromSourceLayer())
+            lambda: self.activeWorkingLayer.copySelectedFeaturesFromSegmentationLayer())
 
         # set up upload button
         self.uploadButton.clicked.connect(lambda: self.runUpload())
 
-        self.activeSourceLayer = None
+        self.activeSegmentationLayer = None
         self.activeWorkingLayer = None
 
         # set up state management
@@ -140,19 +140,19 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         # …
 
         # clear some stuff
-        self.activeSourceLayer = None
+        self.activeSegmentationLayer = None
         self.activeWorkingLayer = None
 
         # set up signal handlers
-        region.sourceLayersChanged.connect(
-            lambda _: self.updateSourceLayerLabel(self.activeSourceLayer))
+        region.segmentationLayersChanged.connect(
+            lambda _: self.updateSegmentationLayerLabel(self.activeSegmentationLayer))
         region.workingLayersChanged.connect(
             lambda workingLayers: self.updateWorkingLayerComboBox(workingLayers))
         region.ntrrpItemsChanged.connect(
             lambda: self.refreshCurrentRegion(region))
 
         self.region = region
-        self.updateSourceLayerLabel(self.activeSourceLayer)
+        self.updateSegmentationLayerLabel(self.activeSegmentationLayer)
         self.updateWorkingLayerComboBox(region.workingLayers)
 
         # populate tree view
@@ -188,14 +188,14 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
 
     # handlers
     def activeLayerChanged(self):
-        """Update the active source layer based on clicks in the Layers Panel."""
+        """Update the active segmentation layer based on clicks in the Layers Panel."""
         activeLayer = QgsInterface.activeLayer()
         if activeLayer is not None:
-            matchingSourceLayer = self.region.getSourceLayerByMapLayer(
+            matchingSegmentationLayer = self.region.getSegmentationLayerByMapLayer(
                 activeLayer)
-            if matchingSourceLayer is not None:
-                self.activeSourceLayer = matchingSourceLayer
-                self.updateSourceLayerLabel(self.activeSourceLayer)
+            if matchingSegmentationLayer is not None:
+                self.activeSegmentationLayer = matchingSegmentationLayer
+                self.updateSegmentationLayerLabel(self.activeSegmentationLayer)
                 self.updateState.emit()
 
     def regionComboBoxChanged(self, regionIndex):
@@ -207,7 +207,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
             self.setRegion(region)
 
     def workingLayerComboBoxChanged(self, workingLayerIndex):
-        """Switch the active source layer."""
+        """Switch the active segmentation layer."""
         workingLayerDisplayName = self.workingLayerComboBox.itemText(
             workingLayerIndex)
         if len(workingLayerDisplayName) > 0 and workingLayerDisplayName != self.NO_SELECTION_TEXT:
@@ -218,14 +218,14 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
             self.activeWorkingLayer = None
         self.updateState.emit()
 
-    def updateSourceLayerLabel(self, sourceLayer):
-        """Update the source layer label."""
-        if sourceLayer is None:
-            self.activeSourceLayerLabel.setText(self.NO_SELECTION_TEXT)
-            self.activeSourceLayerLabel.setStyleSheet(None)
+    def updateSegmentationLayerLabel(self, segmentationLayer):
+        """Update the segmentation layer label."""
+        if segmentationLayer is None:
+            self.activeSegmentationLayerLabel.setText(self.NO_SELECTION_TEXT)
+            self.activeSegmentationLayerLabel.setStyleSheet(None)
         else:
-            self.activeSourceLayerLabel.setText(sourceLayer.getDisplayName())
-            self.activeSourceLayerLabel.setStyleSheet(("color: rgb(158,16,21); "
+            self.activeSegmentationLayerLabel.setText(segmentationLayer.getDisplayName())
+            self.activeSegmentationLayerLabel.setStyleSheet(("color: rgb(158,16,21); "
                                                        "border: 1px solid black;"))
 
     # TODO: factor this into a custom ComboBox widget
@@ -285,32 +285,32 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
 
     def enableDisable(self):
         "Enable or disable UI elements based on current state."
-        haveSourceLayers = bool(
-            self.region.sourceLayers and len(self.region.sourceLayers) > 0)
+        haveSegmentationLayers = bool(
+            self.region.segmentationLayers and len(self.region.segmentationLayers) > 0)
         haveWorkingLayers = bool(
             self.region.workingLayers and len(self.region.workingLayers) > 0)
 
-        if not haveSourceLayers:
-            self.activeSourceLayerLabel.setText(
+        if not haveSegmentationLayers:
+            self.activeSegmentationLayerLabel.setText(
                 "Download segmentation …")
 
         # need a selection
         self.workingLayerComboBox.setEnabled(haveWorkingLayers)
         if haveWorkingLayers:
             self.workingLayerComboBox.setItemText(0, self.NO_SELECTION_TEXT)
-        elif not haveWorkingLayers and haveSourceLayers:
+        elif not haveWorkingLayers and haveSegmentationLayers:
             self.workingLayerComboBox.setItemText(
                 0, "Create a working layer first …")
             self.workingLayerComboBox.setCurrentIndex(0)
 
-        # need to template working layers off source layers, so we can't enable create until there is one
-        haveSourceLayer = bool(self.activeSourceLayer)
-        self.createButton.setEnabled(haveSourceLayer)
+        # need to template working layers off segmentation layers, so we can't enable create until there is one
+        haveSegmentationLayer = bool(self.activeSegmentationLayer)
+        self.createButton.setEnabled(haveSegmentationLayer)
 
         # if we have both source and working, we can start approving
-        haveBoth = bool(self.activeSourceLayer and self.activeWorkingLayer)
+        haveBoth = bool(self.activeSegmentationLayer and self.activeWorkingLayer)
         if haveBoth:
-            self.activeWorkingLayer.setSourceLayer(self.activeSourceLayer)
+            self.activeWorkingLayer.setSegmentationLayer(self.activeSegmentationLayer)
         self.approveButton.setEnabled(haveBoth)
 
         # we can upload when we've got an active working layer (might need to check for features later)

@@ -20,7 +20,7 @@ class NtrrpRegion(QObject):
     currentMappingDownloadFinished = pyqtSignal()
 
     # emit this signal when the downloaded data layers are changed
-    sourceLayersChanged = pyqtSignal(list)
+    segmentationLayersChanged = pyqtSignal(list)
 
     # emit this signal when the remote WMTS layers are changed
     ntrrpItemsChanged = pyqtSignal()
@@ -35,7 +35,7 @@ class NtrrpRegion(QObject):
         self.name = region
         self.wmsUrl = wmsUrl
         self.owsLayers = owsLayers
-        self.sourceLayers = []
+        self.segmentationLayers = []
         self.workingLayers = []
         self.currentMappingLayer = None
         self.regionGroup = f"{self.name} Burnt Areas"
@@ -87,14 +87,14 @@ class NtrrpRegion(QObject):
         }
         dialog = processing.createAlgorithmDialog(
             'BurntAreas:DownloadSegmentationData', params)
-        dialog.algorithmFinished.connect(lambda _: self.addSourceLayers(
+        dialog.algorithmFinished.connect(lambda _: self.addSegmentationLayers(
             dialog.results()['SegmentationDataFolder']))
         for signal in [dialog.algorithmFinished, dialog.accepted, dialog.rejected, dialog.destroyed]:
             signal.connect(lambda: self.dataDownloadFinished.emit())
         dialog.show()
         dialog.runButton().click()
 
-        # self.addSourceLayers(Path('C:/Users/tom.lynch/Desktop/Working/Darwin'))
+        # self.addSegmentationLayers(Path('C:/Users/tom.lynch/Desktop/Working/Darwin'))
 
     # add things to the map
     def getSubGroupLayer(self):
@@ -107,14 +107,14 @@ class NtrrpRegion(QObject):
         return groupLayer
 
     def getWorkingLayerByName(self, workingLayerName):
-        """Retrieve a current source layer by its display name."""
+        """Retrieve a current segmentation layer by its display name."""
         matches = [layer for layer in self.workingLayers if layer.getMapLayerName(
         ) == workingLayerName]
         return next(iter(matches), None)
 
-    def createWorkingLayer(self, templateSourceLayer):
+    def createWorkingLayer(self, templateSegmentationLayer):
         """Create a new working layer for this region."""
-        workingLayer = WorkingLayer(self.name, templateSourceLayer)
+        workingLayer = WorkingLayer(self.name, templateSegmentationLayer)
         workingLayer.layerRemoved.connect(
             lambda layer: self.removeWorkingLayer(layer))
         self.workingLayers.append(workingLayer)
@@ -126,11 +126,11 @@ class NtrrpRegion(QObject):
         self.workingLayers.remove(layer)
         self.workingLayersChanged.emit(self.workingLayers)
 
-    def getSourceLayerByMapLayer(self, mapLayer):
-        """Retrieve a current source layer from its map layer."""
+    def getSegmentationLayerByMapLayer(self, mapLayer):
+        """Retrieve a current segmentation layer from its map layer."""
 
-        matches = [sourceLayer for sourceLayer in self.sourceLayers
-                   if sourceLayer.impl.id() == mapLayer.id()]
+        matches = [segmentationLayer for segmentationLayer in self.segmentationLayers
+                   if segmentationLayer.impl.id() == mapLayer.id()]
         return next(iter(matches), None)
 
     def addCurrentMappingLayer(self, unzipLocation):
@@ -142,29 +142,29 @@ class NtrrpRegion(QObject):
             self.name, Path(rasterFile))
         self.currentMappingLayer.addMapLayerIfNotPresent()
 
-    def addSourceLayers(self, unzipLocation):
+    def addSegmentationLayers(self, unzipLocation):
         """Add all shapefiles in a directory as data layers to the region group."""
         if unzipLocation is None:
             return
 
-        self.sourceLayers = [SegmentationLayer(path)
+        self.segmentationLayers = [SegmentationLayer(path)
                              for path in unzipLocation.rglob("*.shp")]
 
         # do not add the layers with no threshold information
-        self.sourceLayers = [
-            sourceLayer for sourceLayer in self.sourceLayers if sourceLayer.threshold is not None]
+        self.segmentationLayers = [
+            segmentationLayer for segmentationLayer in self.segmentationLayers if segmentationLayer.threshold is not None]
 
-        for sourceLayer in self.sourceLayers:
-            sourceLayer.layerRemoved.connect(
-                lambda layer: self.removeSourceLayer(layer))
-            sourceLayer.addMapLayerIfNotPresent()
+        for segmentationLayer in self.segmentationLayers:
+            segmentationLayer.layerRemoved.connect(
+                lambda layer: self.removeSegmentationLayer(layer))
+            segmentationLayer.addMapLayerIfNotPresent()
 
-        self.sourceLayersChanged.emit(self.sourceLayers)
+        self.segmentationLayersChanged.emit(self.segmentationLayers)
 
-    def removeSourceLayer(self, layer):
-        """Remove a source layer and inform subscribers."""
-        self.sourceLayers.remove(layer)
-        self.sourceLayersChanged.emit(self.sourceLayers)
+    def removeSegmentationLayer(self, layer):
+        """Remove a segmentation layer and inform subscribers."""
+        self.segmentationLayers.remove(layer)
+        self.segmentationLayersChanged.emit(self.segmentationLayers)
 
     def addWmtsLayer(self, item):
         """Add an NTRRP remote layer for this region to the map."""

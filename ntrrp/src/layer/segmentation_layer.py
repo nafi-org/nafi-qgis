@@ -60,7 +60,7 @@ class SegmentationLayer(QObject, AbstractLayer):
         #     return differenceGroupLayer
 
     def load(self):
-        """Load the source layer."""
+        """Load the segmentation layer."""
         self.impl = QgsVectorLayer(
             self.shapefilePath.as_posix(), self.getMapLayerName(), "ogr")
 
