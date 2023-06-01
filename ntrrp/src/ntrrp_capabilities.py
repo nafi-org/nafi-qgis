@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from .ntrrp_region import NtrrpRegion
+from .ntrrp_mapping import NtrrpMapping
 from .ows_utils import parseNtrrpLayerRegion
 
 
@@ -24,5 +24,5 @@ class NtrrpCapabilities:
         regions = sorted(layersByRegion.keys())
 
         # python3 dicts are sorted in insertion order
-        self.regions = {region: NtrrpRegion(
+        self.regions = {region: NtrrpMapping(
             region, self.wmsUrl, layersByRegion[region]) for region in regions}

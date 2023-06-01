@@ -6,7 +6,7 @@ import os.path as path
 
 from src.ntrrp_capabilities_reader import NtrrpCapabilitiesReader
 from src.ntrrp_capabilities import NtrrpCapabilities
-from src.ntrrp_region import NtrrpRegion
+from ntrrp_mapping import NtrrpMapping
 from src.utils import getNtrrpWmsUrl
 
 TEST_CAPS = path.normpath(path.join(path.dirname(
@@ -30,4 +30,4 @@ class TestCapabilities(unittest.TestCase):
             self.assertTrue(isinstance(firstName, str))
 
             firstRegion = caps.regions[firstName]
-            self.assertTrue(isinstance(firstRegion, NtrrpRegion))
+            self.assertTrue(isinstance(firstRegion, NtrrpMapping))

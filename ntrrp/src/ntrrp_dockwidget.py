@@ -8,7 +8,7 @@ from .ntrrp_about_dialog import NtrrpAboutDialog
 from .ntrrp_capabilities_reader import NtrrpCapabilitiesReader
 from .ntrrp_dockwidget_base import Ui_NtrrpDockWidgetBase
 from .ntrrp_item import NtrrpItem
-from .ntrrp_region import NtrrpRegion
+from .ntrrp_mapping import NtrrpMapping
 from .ntrrp_tree_view_model import NtrrpTreeViewModel
 from .utils import getNtrrpWmsUrl, guiInformation, qgsDebug
 
@@ -66,7 +66,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         self.refreshButton.clicked.connect(self.loadNtrrpWms)
 
         # set up download button
-        self.downloadButton.clicked.connect(lambda: self.downloadData())
+        self.downloadButton.clicked.connect(lambda: self.downloadSegmentationData())
 
         # set up download current mapping button
         self.currentMappingButton.clicked.connect(
@@ -132,7 +132,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         if region is None:
             return
 
-        assert (isinstance(region, NtrrpRegion))
+        assert (isinstance(region, NtrrpMapping))
         # disconnect signal handlers?
         # if self.region is not None:
         #    try:
@@ -174,11 +174,11 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         """Convert the currently active working layer to a raster, attribute it and upload to NAFI."""
         self.region.processAndUploadBurntAreas(self.activeWorkingLayer)
 
-    def downloadData(self):
+    def downloadSegmentationData(self):
         """Download the segmentation data."""
         # self.downloadButton.setEnabled(False)
         # self.region.dataDownloadFinished.connect(lambda: self.downloadButton.setEnabled(True))
-        self.region.downloadData()
+        self.region.downloadSegmentationData()
 
     def downloadCurrentMapping(self):
         """Download the current mapping data."""

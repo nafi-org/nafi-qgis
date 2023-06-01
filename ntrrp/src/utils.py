@@ -49,11 +49,15 @@ def resolvePluginPath(relative, base=None):
     return path.normpath(path.join(base, relative))
 
 
+def resolveProjectFile():
+    """Get the QGIS project file."""
+    return QgsProject.instance().fileName()
+
+
 def deriveWorkingDirectory():
     """Derive the working folder from the current QGS project file."""
-    project = QgsProject.instance()
-    projectFilePath = project.fileName()
-    if projectFilePath is None or projectFilePath == '':
+    projectFilePath = resolveProjectFile()
+    if not projectFilePath:
         guiError("Save your burnt areas mapping project before continuing.")
         return None
     return path.dirname(projectFilePath)

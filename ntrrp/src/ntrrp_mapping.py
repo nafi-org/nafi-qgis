@@ -12,7 +12,7 @@ from .ntrrp_item import NtrrpItem
 from .utils import deriveWorkingDirectory, qgsDebug, NTRRP_REGIONS
 
 
-class NtrrpRegion(QObject):
+class NtrrpMapping(QObject):
     # emit this signal when the data download finishes
     dataDownloadFinished = pyqtSignal()
 
@@ -35,6 +35,7 @@ class NtrrpRegion(QObject):
         self.name = region
         self.wmsUrl = wmsUrl
         self.owsLayers = owsLayers
+        self.mappingDate = None
         self.segmentationLayers = []
         self.workingLayers = []
         self.currentMappingLayer = None
@@ -74,7 +75,7 @@ class NtrrpRegion(QObject):
 
         return True
 
-    def downloadData(self):
+    def downloadSegmentationData(self):
         """Download segmentation features from NAFI and call back to add them to the map."""
         qgsDebug("Downloading NAFI segmentation features …")
 

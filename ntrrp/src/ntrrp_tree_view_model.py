@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from qgis.PyQt.QtGui import QStandardItemModel
 
-from .ntrrp_region import NtrrpRegion
+from .ntrrp_mapping import NtrrpMapping
 
 UNWANTED_LAYERS = ["NODATA_RASTER"]
 
@@ -17,7 +17,7 @@ class NtrrpTreeViewModel(QStandardItemModel):
 
     def setRegion(self, region):
         """Set the current region for the NTRRP layer model."""
-        assert isinstance(region, NtrrpRegion)
+        assert isinstance(region, NtrrpMapping)
 
         self.region = region
 
