@@ -42,7 +42,7 @@ class SegmentationLayer(QObject, AbstractLayer):
         groupLayer = self.getRegionLayer()
 
         differenceGroupLayer = groupLayer.findGroup(self.differenceGroup)
-        if differenceGroupLayer == None:
+        if differenceGroupLayer is None:
             groupLayer.insertGroup(0, self.differenceGroup)
             differenceGroupLayer = groupLayer.findGroup(self.differenceGroup)
 

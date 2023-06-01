@@ -22,8 +22,13 @@ class UploadBurntAreas(QgsProcessingAlgorithm):
     def initAlgorithm(self, config=None):
         processing.ProcessingConfig.setSettingValue(
             'IGNORE_INVALID_FEATURES', 1)
-        self.addParameter(QgsProcessingParameterVectorLayer('AttributedBurntAreas', 'Your approved and attributed burnt areas', types=[
-                          QgsProcessing.TypeVectorPolygon], defaultValue=None))
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                'AttributedBurntAreas',
+                'Your approved and attributed burnt areas',
+                types=[
+                    QgsProcessing.TypeVectorPolygon],
+                defaultValue=None))
         self.addParameter(QgsProcessingParameterEnum('Region', 'Region', options=NTRRP_REGIONS,
                           allowMultiple=False, usesStaticStrings=False, defaultValue=0))
         self.addParameter(QgsProcessingParameterRasterLayer(
@@ -117,8 +122,8 @@ class UploadBurntAreas(QgsProcessingAlgorithm):
             #   feedback.reportError("NAFI upload failed.", fatalError=True)
 
         except Exception as err:
-            raise RuntimeError(r"""Exception occurred spawning external NAFI upload script … 
-                                   check you can run scripts of the form 
+            raise RuntimeError(r"""Exception occurred spawning external NAFI upload script …
+                                   check you can run scripts of the form
                                    'python.exe upload.py -u https://test.firenorth.org.au/bfnt -f examples\bfnt_darwin_current_sr3577_tif.zip -cs 409600 -v'""")
 
         # we need to return something to processing engine or it records a failure

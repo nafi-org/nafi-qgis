@@ -93,7 +93,7 @@ class WorkingLayer(QObject, AbstractLayer):
         groupLayer = self.getRegionLayer()
         subGroupLayerName = "Approved Burnt Areas"
         subGroupLayer = groupLayer.findGroup(subGroupLayerName)
-        if subGroupLayer == None:
+        if subGroupLayer is None:
             groupLayer.insertGroup(0, subGroupLayerName)
             subGroupLayer = groupLayer.findGroup(subGroupLayerName)
         return subGroupLayer

@@ -101,7 +101,7 @@ class NtrrpRegion(QObject):
         """Get or create the right layer group for an NTRRP data layer."""
         root = QgsProject.instance().layerTreeRoot()
         groupLayer = root.findGroup(self.regionGroup)
-        if groupLayer == None:
+        if groupLayer is None:
             root.insertGroup(0, self.regionGroup)
             groupLayer = root.findGroup(self.regionGroup)
         return groupLayer
@@ -168,7 +168,7 @@ class NtrrpRegion(QObject):
 
     def addWmtsLayer(self, item):
         """Add an NTRRP remote layer for this region to the map."""
-        assert(isinstance(item, NtrrpItem))
+        assert (isinstance(item, NtrrpItem))
 
         item.itemLayer.addMapLayerIfNotPresent()
 

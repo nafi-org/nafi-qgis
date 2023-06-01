@@ -65,7 +65,7 @@ def getSetting(setting, default=None):
         with open(resolvePluginPath("ntrrp.json")) as settingsFile:
             settings = json.load(settingsFile)
             return settings.get(setting, default)
-    except:
+    except BaseException:
         qgsDebug("Error reading NTRRP settings file.")
         return default
 

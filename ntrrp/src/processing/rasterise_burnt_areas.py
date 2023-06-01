@@ -17,8 +17,13 @@ class RasteriseBurntAreas(QgsProcessingAlgorithm):
     currentMappingTif = None
 
     def initAlgorithm(self, config=None):
-        self.addParameter(QgsProcessingParameterVectorLayer('BurntAreas', 'Your burnt areas (should be attributed with an FSID)', types=[
-                          QgsProcessing.TypeVectorPolygon], defaultValue=None))
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                'BurntAreas',
+                'Your burnt areas (should be attributed with an FSID)',
+                types=[
+                    QgsProcessing.TypeVectorPolygon],
+                defaultValue=None))
         self.addParameter(QgsProcessingParameterRasterDestination(
             'RasterisedBurntAreas', 'Rasterised and merged burnt area map', createByDefault=True, defaultValue=None))
         self.addParameter(QgsProcessingParameterRasterLayer(

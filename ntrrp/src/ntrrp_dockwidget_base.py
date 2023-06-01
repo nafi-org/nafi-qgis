@@ -225,8 +225,10 @@ class Ui_NtrrpDockWidgetBase(object):
             "NtrrpDockWidgetBase", "NAFI Burnt Areas Mapping"))
         NtrrpDockWidgetBase.setWindowTitle(_translate(
             "NtrrpDockWidgetBase", "NAFI Burnt Areas Mapping"))
-        self.regionLabel.setText(_translate(
-            "NtrrpDockWidgetBase", "<html><head/><body><p><span style=\" font-weight:600;\">Current region</span></p></body></html>"))
+        self.regionLabel.setText(
+            _translate(
+                "NtrrpDockWidgetBase",
+                "<html><head/><body><p><span style=\" font-weight:600;\">Current region</span></p></body></html>"))
         self.aboutButton.setToolTip(_translate(
             "NtrrpDockWidgetBase", "About NAFI Burnt Areas Mapping …"))
         self.refreshButton.setToolTip(_translate(
@@ -241,9 +243,15 @@ class Ui_NtrrpDockWidgetBase(object):
             "NtrrpDockWidgetBase", "Approve Selected Burnt Areas"))
         self.uploadButton.setToolTip(_translate(
             "NtrrpDockWidgetBase", "Upload Burnt Areas"))
-        self.activeSourceLayerLabel.setText(_translate(
-            "NtrrpDockWidgetBase", "<html><head/><body><p><span style=\" font-weight:600;\">Select segmentation layer …</span></p></body></html>"))
-        self.sourceLayerLabel.setText(_translate(
-            "NtrrpDockWidgetBase", "<html><head/><body><p><span style=\" font-weight:600;\">Segmentation layer</span></p></body></html>"))
-        self.workingLayerLabel.setText(_translate(
-            "NtrrpDockWidgetBase", "<html><head/><body><p><span style=\" font-weight:600;\">Working layer</span></p></body></html>"))
+        self.activeSourceLayerLabel.setText(
+            _translate(
+                "NtrrpDockWidgetBase",
+                "<html><head/><body><p><span style=\" font-weight:600;\">Select segmentation layer …</span></p></body></html>"))
+        self.sourceLayerLabel.setText(
+            _translate(
+                "NtrrpDockWidgetBase",
+                "<html><head/><body><p><span style=\" font-weight:600;\">Segmentation layer</span></p></body></html>"))
+        self.workingLayerLabel.setText(
+            _translate(
+                "NtrrpDockWidgetBase",
+                "<html><head/><body><p><span style=\" font-weight:600;\">Working layer</span></p></body></html>"))

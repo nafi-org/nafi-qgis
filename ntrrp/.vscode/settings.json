@@ -2,10 +2,11 @@
     "files.exclude": {
         "**/__pycache__": true
     },
+    "git.openRepositoryInParentFolders": "always",
     "python.analysis.extraPaths": [
         "C:\\Program Files\\QGIS 3.28.5\\apps\\Python39\\Lib\\site-packages",
         "C:\\Program Files\\QGIS 3.28.5\\apps\\qgis-ltr\\python"
     ],
+    "python.formatting.provider": "autopep8",
     "xml.validation.enabled": false,
-    "git.openRepositoryInParentFolders": "always"
 }

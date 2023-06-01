@@ -112,8 +112,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
 
         # get the region names for the combo
         self.regionComboBox.clear()
-        regions = [region for region in self.ntrrpCapabilities.regions]
-        regions.sort()
+        regions = sorted(region for region in self.ntrrpCapabilities.regions)
 
         self.regionComboBox.addItems(regions)
 
@@ -133,7 +132,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         if region is None:
             return
 
-        assert(isinstance(region, NtrrpRegion))
+        assert (isinstance(region, NtrrpRegion))
         # disconnect signal handlers?
         # if self.region is not None:
         #    try:

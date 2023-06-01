@@ -21,8 +21,7 @@ class NtrrpCapabilities:
                 layersByRegion[region] = [layer]
 
         # sort "Darwin", "Katherine" for now
-        regions = list(layersByRegion.keys())
-        regions.sort()
+        regions = sorted(layersByRegion.keys())
 
         # python3 dicts are sorted in insertion order
         self.regions = {region: NtrrpRegion(

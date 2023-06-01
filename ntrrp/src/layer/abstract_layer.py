@@ -38,7 +38,7 @@ class AbstractLayer(ABC, metaclass=AbstractQObjectMeta):
         root = QgsProject.instance().layerTreeRoot()
         regionGroup = f"{self.region} Burnt Areas"
         groupLayer = root.findGroup(regionGroup)
-        if groupLayer == None:
+        if groupLayer is None:
             root.insertGroup(0, regionGroup)
             groupLayer = root.findGroup(regionGroup)
         return groupLayer

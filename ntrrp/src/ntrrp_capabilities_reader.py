@@ -78,7 +78,8 @@ class NtrrpCapabilitiesReader(QObject):
             # recursively gather content metadata for all layer elements, this is stolen
             # from OWSLib because it won't let us configure the parser the way we need to
             # to avoid unwanted network activity, entity resolutions etc
-            # see https://github.com/geopython/OWSLib/blob/8a94500c2137082dfc4e59acd15389312bcb63fb/owslib/map/wms111.py#L113
+            # see
+            # https://github.com/geopython/OWSLib/blob/8a94500c2137082dfc4e59acd15389312bcb63fb/owslib/map/wms111.py#L113
             def gatherLayers(parentElement, parentMetadata):
                 layers = []
                 for index, elem in enumerate(parentElement.findall('Layer')):

@@ -5,7 +5,7 @@ import re
 
 def parseNtrrpLayerRegion(owsTitle):
     """Parse the NTRRP region from a WMS or WMTS layer title. The expected format is T1T2 Difference Image [Darwin_T20210628_dMIRBI_T20210623]."""
-    match = re.match("^.*\[(.*)\].*$", owsTitle)
+    match = re.match("^.*\\[(.*)\\].*$", owsTitle)
     if match is not None:
         ntrrpMeta = match.group(1)
         ntrrpMetaElements = ntrrpMeta.split("_")
@@ -17,7 +17,7 @@ def parseNtrrpLayerRegion(owsTitle):
 
 def parseNtrrpLayerDescription(owsTitle):
     """Parse the NTRRP description from a WMS or WMTS layer title. The expected format is T1T2 Difference Image [Darwin_T20210628_dMIRBI_T20210623]."""
-    match = re.match("^(.*)\[(.*)\].*$", owsTitle)
+    match = re.match("^(.*)\\[(.*)\\].*$", owsTitle)
     if match is not None:
         freeText = match.group(1) or ""
         metadata = match.group(2) or ""

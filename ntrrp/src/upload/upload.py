@@ -67,7 +67,7 @@ class Client:
 
         file_size = os.path.getsize(file_path)
         headers = {"Filename": os.path.basename(file_path)}
-        #headers['Content-type'] = 'application/bianry'
+        # headers['Content-type'] = 'application/bianry'
 
         try:
             with open(file_path, 'rb') as file:
@@ -84,7 +84,7 @@ class Client:
 
                     end = min(file_size, start + self.max_byte_length)
                     headers['Content-Range'] = "bytes={}-{}/{}".format(
-                        start, end-1, file_size)
+                        start, end - 1, file_size)
 
                     file.seek(start)
                     data = file.read(self.max_byte_length)
@@ -101,7 +101,7 @@ class Client:
                                 print('[Content-Range] => %s' %
                                       headers['Content-Range'])
                                 print('{}. chunk sent to server for a total of {} kbytes so far....'.format(
-                                    sent_chunk_count + 1, end/1024))
+                                    sent_chunk_count + 1, end / 1024))
                             sent_chunk_count += 1
 
                     except requests.exceptions.RequestException:
