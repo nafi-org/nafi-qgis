@@ -5,10 +5,9 @@ from zipfile import ZipFile
 from qgis.core import QgsProcessingAlgorithm
 from qgis.core import QgsProcessingMultiStepFeedback
 from qgis.core import QgsProcessingParameterEnum
-from qgis.core import QgsProcessingParameterFile
 import processing
 
-from ..utils import ensureTempDirectories, getNtrrpDataUrl, getTempDownloadPath, qgsDebug, NTRRP_REGIONS
+from ..utils import ensureTempDirectories, getNtrrpDataUrl, getTempDirectory, getTempZipFilename, qgsDebug, NTRRP_REGIONS
 
 
 class DownloadSegmentationData(QgsProcessingAlgorithm):
@@ -16,15 +15,13 @@ class DownloadSegmentationData(QgsProcessingAlgorithm):
     def initAlgorithm(self, config=None):
         self.addParameter(QgsProcessingParameterEnum('Region', 'Region', options=NTRRP_REGIONS,
                           allowMultiple=False, usesStaticStrings=False, defaultValue=0))
-        self.addParameter(QgsProcessingParameterFile('WorkingFolder', 'Working Folder',
-                          behavior=QgsProcessingParameterFile.Folder, fileFilter='All files (*.*)', defaultValue=None))
 
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
         # overall progress through the model
         feedback = QgsProcessingMultiStepFeedback(1, model_feedback)
         results = {
-            'SegmentationDataFolder': None
+            'SegmentationDataDirectory': None
         }
 
         # Ensure all temp directories exist
@@ -32,9 +29,9 @@ class DownloadSegmentationData(QgsProcessingAlgorithm):
 
         # Set up transfer parameters
         region = NTRRP_REGIONS[parameters['Region']]
-        regionDataFolder = Path(parameters['WorkingFolder']) / region
         downloadUrl = f"{getNtrrpDataUrl()}/{region.lower()}/{region.lower()}.zip"
-        tempFile = getTempDownloadPath()
+        tempFile = getTempZipFilename()
+        unzipLocation = getTempDirectory()
 
         qgsDebug(f"Downloading {downloadUrl} to {tempFile}")
 
@@ -51,12 +48,12 @@ class DownloadSegmentationData(QgsProcessingAlgorithm):
             return results
         else:
             with ZipFile(Path(tempFile), 'r') as zf:
-                zf.extractall(regionDataFolder)
+                zf.extractall(unzipLocation)
                 zf.close()
                 Path(tempFile).unlink()
 
             results = {
-                'SegmentationDataFolder': regionDataFolder
+                'SegmentationDataDirectory': unzipLocation
             }
 
         return results

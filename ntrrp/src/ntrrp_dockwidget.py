@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from qgis.PyQt import QtWidgets
-from qgis.PyQt.QtCore import QModelIndex, QSortFilterProxyModel, Qt, pyqtSignal
+from qgis.PyQt.QtCore import QModelIndex, QSortFilterProxyModel, QSize, Qt, pyqtSignal
 from qgis.core import QgsProject
 from qgis.utils import iface as QgsInterface
 
@@ -47,9 +47,9 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         # set up active layer handler
         QgsInterface.layerTreeView().currentLayerChanged.connect(self.activeLayerChanged)
 
-        # set up region combobox
-        self.regionComboBox.currentIndexChanged.connect(
-            self.regionComboBoxChanged)
+        # set up mapping combobox
+        self.mappingComboBox.currentIndexChanged.connect(
+            self.mappingComboBoxChanged)
 
         # set up segmentation layer combobox
         # self.segmentationLayerComboBox.currentIndexChanged.connect(
@@ -74,7 +74,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
 
         # set up create button
         self.createButton.clicked.connect(
-            lambda: self.region.createWorkingLayer(self.activeSegmentationLayer))
+            lambda: self.selectedMapping.createWorkingLayer(self.activeSegmentationLayer))
 
         # set up approve button
         self.approveButton.clicked.connect(
@@ -107,32 +107,32 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
 
     def initModel(self, ntrrpCapabilities):
         """Initialise a QStandardItemModel from the NAFI WMS."""
-        # stash the parsed capabilities and set up the region combobox
+        # stash the parsed capabilities and set up the mapping combobox
         self.ntrrpCapabilities = ntrrpCapabilities
 
         # get the region names for the combo
-        self.regionComboBox.clear()
-        regions = sorted(region for region in self.ntrrpCapabilities.regions)
+        self.mappingComboBox.clear()
+        regionNames = sorted(region for region in self.ntrrpCapabilities.mappings)
 
-        self.regionComboBox.addItems(regions)
+        self.mappingComboBox.addItems(regionNames)
 
-        initRegionName = next(iter(self.ntrrpCapabilities.regions))
-        initRegion = self.ntrrpCapabilities.regions[initRegionName]
+        initMapping = next(iter(self.ntrrpCapabilities.mappings))
+        initMapping = self.ntrrpCapabilities.mappings[initMapping]
 
-        if initRegion is not None:
-            self.setRegion(initRegion)
+        if initMapping is not None:
+            self.setMapping(initMapping)
             self.enableDisable()
 
-    def isCurrentRegion(self, region):
-        """Check if a region is the current NTRRP region."""
-        return region and self.region and (region.name == self.region.name)
+    def isSelectedMapping(self, mapping):
+        """Check if a mapping is the currently selected mapping."""
+        return mapping and self.selectedMapping and (mapping.region == self.selectedMapping.region)
 
-    def setRegion(self, region):
-        """Set the current NTRRP region."""
-        if region is None:
+    def setMapping(self, mapping):
+        """Set the current mapping."""
+        if mapping is None:
             return
 
-        assert (isinstance(region, NtrrpMapping))
+        assert (isinstance(mapping, NtrrpMapping))
         # disconnect signal handlers?
         # if self.region is not None:
         #    try:
@@ -144,74 +144,70 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         self.activeWorkingLayer = None
 
         # set up signal handlers
-        region.segmentationLayersChanged.connect(
+        mapping.segmentationLayersChanged.connect(
             lambda _: self.updateSegmentationLayerLabel(self.activeSegmentationLayer))
-        region.workingLayersChanged.connect(
+        mapping.workingLayersChanged.connect(
             lambda workingLayers: self.updateWorkingLayerComboBox(workingLayers))
-        region.ntrrpItemsChanged.connect(
-            lambda: self.refreshCurrentRegion(region))
+        mapping.ntrrpItemsChanged.connect(
+            lambda: self.refreshCurrentMapping(mapping))
 
-        self.region = region
+        self.selectedMapping = mapping
         self.updateSegmentationLayerLabel(self.activeSegmentationLayer)
-        self.updateWorkingLayerComboBox(region.workingLayers)
+        self.updateWorkingLayerComboBox(mapping.workingLayers)
 
         # populate tree view
-        self.treeViewModel.setRegion(region)
+        self.treeViewModel.setMapping(mapping)
 
         # set default sort and expansion
         self.proxyModel.sort(0, Qt.AscendingOrder)
         self.expandTopLevel()
 
-    def refreshCurrentRegion(self, region):
-        """If a region is the current region, refresh the tree view."""
-        if self.isCurrentRegion(region):
-            self.treeViewModel.setRegion(region)
+    def refreshCurrentMapping(self, mapping):
+        """If a mapping is the current mapping, refresh its tree view."""
+        if self.isSelectedMapping(mapping):
+            self.treeViewModel.setMapping(mapping)
 
     def sizeHint(self):
-        return QtCore.QSize(150, 400)
+        return QSize(150, 400)
 
     def runUpload(self):
         """Convert the currently active working layer to a raster, attribute it and upload to NAFI."""
-        self.region.processAndUploadBurntAreas(self.activeWorkingLayer)
+        self.selectedMapping.processAndUploadBurntAreas(self.activeWorkingLayer)
 
     def downloadSegmentationData(self):
         """Download the segmentation data."""
-        # self.downloadButton.setEnabled(False)
-        # self.region.dataDownloadFinished.connect(lambda: self.downloadButton.setEnabled(True))
-        self.region.downloadSegmentationData()
+        self.selectedMapping.downloadSegmentationData()
 
     def downloadCurrentMapping(self):
         """Download the current mapping data."""
-        # self.currentMappingButton.setEnabled(False)
-        # self.region.currentMappingDownloadFinished.connect(lambda: self.currentMappingButton.setEnabled(True))
-        self.region.downloadCurrentMapping()
+        self.selectedMapping.downloadCurrentMapping()
 
     # handlers
     def activeLayerChanged(self):
         """Update the active segmentation layer based on clicks in the Layers Panel."""
         activeLayer = QgsInterface.activeLayer()
         if activeLayer is not None:
-            matchingSegmentationLayer = self.region.getSegmentationLayerByMapLayer(
+            matchingSegmentationLayer = self.selectedMapping.getSegmentationLayerByMapLayer(
                 activeLayer)
             if matchingSegmentationLayer is not None:
                 self.activeSegmentationLayer = matchingSegmentationLayer
                 self.updateSegmentationLayerLabel(self.activeSegmentationLayer)
                 self.updateState.emit()
 
-    def regionComboBoxChanged(self, regionIndex):
-        """Switch the active region."""
-        regionName = self.regionComboBox.itemText(regionIndex)
-        region = self.ntrrpCapabilities.regions.get(regionName, None)
+    def mappingComboBoxChanged(self, mappingIndex):
+        """Switch the active mapping."""
+        region = self.mappingComboBox.itemText(mappingIndex)
+        mapping = self.ntrrpCapabilities.mappings.get(region, None)
 
-        if region is not None:
-            self.setRegion(region)
+        if mapping is not None:
+            self.setMapping(mapping)
 
     def workingLayerComboBoxChanged(self, workingLayerIndex):
         """Switch the active segmentation layer."""
         workingLayerDisplayName = self.workingLayerComboBox.itemText(
             workingLayerIndex)
         if len(workingLayerDisplayName) > 0 and workingLayerDisplayName != self.NO_SELECTION_TEXT:
-            self.activeWorkingLayer = self.region.getWorkingLayerByName(
+            self.activeWorkingLayer = self.selectedMapping.getWorkingLayerByName(
                 workingLayerDisplayName)
             QgsInterface.setActiveLayer(self.activeWorkingLayer.impl)
         else:
@@ -280,15 +276,15 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         # if we've got a layer and not a layer group, add to map
         if modelNode is not None:
             if isinstance(modelNode, NtrrpItem):
-                self.region.addWmtsLayer(modelNode)
+                self.selectedMapping.addWmtsLayer(modelNode)
                 self.treeViewModel.refresh()
 
     def enableDisable(self):
         "Enable or disable UI elements based on current state."
         haveSegmentationLayers = bool(
-            self.region.segmentationLayers and len(self.region.segmentationLayers) > 0)
+            self.selectedMapping.segmentationLayers and len(self.selectedMapping.segmentationLayers) > 0)
         haveWorkingLayers = bool(
-            self.region.workingLayers and len(self.region.workingLayers) > 0)
+            self.selectedMapping.workingLayers and len(self.selectedMapping.workingLayers) > 0)
 
         if not haveSegmentationLayers:
             self.activeSegmentationLayerLabel.setText(

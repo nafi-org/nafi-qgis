@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
 from pathlib import Path
 
 from qgis.core import QgsProject, QgsRasterLayer
@@ -11,9 +12,17 @@ from .abstract_layer import AbstractLayer
 class CurrentMappingLayer(QObject, AbstractLayer):
     def __init__(self, region, rasterFile):
         """Constructor."""
-        super(QObject, self).__init__()
-        self.rasterFile = Path(rasterFile)
+        QObject.__init__(self)
+        AbstractLayer.__init__(self)
+        
         self.region = region
+        self.mappingDate = datetime.today()
+        self.rasterFile = Path(rasterFile)
+ 
+    @property
+    def mappingGroup(self):
+        """Return the layer group for this mapping."""
+        return f"{self.region} Current Mapping"
 
     def addMapLayer(self):
         """Create a QgsRasterLayer from the location of a TIF of current mapping imagery."""
@@ -29,7 +38,7 @@ class CurrentMappingLayer(QObject, AbstractLayer):
             self.layerAdded.emit(self)
             self.mapLayerId = self.impl.id()
 
-            subGroupLayer = self.getSubGroupLayer()
+            subGroupLayer = self.getSubGroupLayerItem()
             subGroupLayer.addLayer(self.impl)
 
             # don't show legend initially

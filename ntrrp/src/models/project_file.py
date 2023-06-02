@@ -29,18 +29,18 @@ class AbstractLayer(ABC, metaclass=AbstractQObjectMeta):
         """Get an appropriate map layer name for this layer."""
         pass
 
-    def getSubGroupLayer(self):
+    def getSubGroupLayerItem(self):
         """Get the right layer subgroup within a specified group layer for this layer."""
         return self.getRegionLayer()
 
     def getRegionLayer(self):
         """Get or create the right layer group for an NTRRP data layer."""
         root = QgsProject.instance().layerTreeRoot()
-        regionGroup = f"{self.region} Burnt Areas"
-        groupLayer = root.findGroup(regionGroup)
+        mappingGroup = f"{self.region} Burnt Areas"
+        groupLayer = root.findGroup(mappingGroup)
         if groupLayer is None:
-            root.insertGroup(0, regionGroup)
-            groupLayer = root.findGroup(regionGroup)
+            root.insertGroup(0, mappingGroup)
+            groupLayer = root.findGroup(mappingGroup)
         return groupLayer
 
     def getMapLayer(self):
@@ -49,7 +49,7 @@ class AbstractLayer(ABC, metaclass=AbstractQObjectMeta):
         if len(matches) == 0:
             return None
         elif len(matches) >= 1:
-            subGroupLayer = self.getSubGroupLayer()
+            subGroupLayer = self.getSubGroupLayerItem()
             matches = [layer for layer in matches if subGroupLayer.findLayer(
                 layer) is not None]
             if len(matches) >= 1:

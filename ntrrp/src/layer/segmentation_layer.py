@@ -7,39 +7,51 @@ from qgis.core import QgsLayerTreeGroup, QgsProject, QgsVectorLayer
 from .abstract_layer import AbstractLayer
 from ..utils import resolveStylePath
 
+def parseMetadataFromShapefilePath(shapefilePath):
+    """Parse metadata from a segmentation layer shapefile path."""
+    segments = shapefilePath.stem.split("_")
+    difference = segments[0]
+    region = segments[1].capitalize()
+    endDate = dateutil.parser.parse(segments[2])
+    startDate = dateutil.parser.parse(segments[3])
+    
+    # Patrice has started adding files with no threshold in the name
+    threshold = segments[5][1:] if len(segments) > 5 else None
+    differenceGroup = f"{difference} Differences ({endDate.strftime('%b %d')}–{startDate.strftime('%b %d')})"
+
+    return {
+        "difference": difference,
+        "region": region,
+        "endDate": endDate,
+        "startDate": startDate,
+        "threshold": threshold,
+        "differenceGroup": differenceGroup
+    }
 
 class SegmentationLayer(QObject, AbstractLayer):
 
-    def __init__(self, shapefilePath):
+    def __init__(self, region, mappingDate, shapefilePath):
         """Constructor."""
-        super(QObject, self).__init__()
+        QObject.__init__(self)
+        AbstractLayer.__init__(self)
 
+        self.region = region
+        self.mappingDate = mappingDate
+
+        metadata = parseMetadataFromShapefilePath(shapefilePath)
         self.shapefilePath = shapefilePath
+        
+        # Copy metadata to this object
+        self.difference = metadata["difference"]
+        self.endDate = metadata["endDate"]
+        self.startDate = metadata["startDate"]
+        self.threshold = metadata["threshold"]
+        self.differenceGroup = metadata["differenceGroup"]
 
-        # Layer name will be similar to: T1T3_darwin_T20210827_T20210817_seg_sa1_t300
-        segments = shapefilePath.stem.split("_")
-        self.difference = segments[0]
-        self.region = segments[1].capitalize()
-        self.endDate = dateutil.parser.parse(segments[2])
-        self.startDate = dateutil.parser.parse(segments[3])
-        # self.subArea = segments[5][2:]
-
-        # Patrice has started adding files with no threshold in the name
-        if len(segments) > 5:
-            self.threshold = segments[5][1:]
-        else:
-            self.threshold = None
-
-        # self.regionGroup = f"{self.region} Burnt Areas (Area {self.subArea})"
-        # if self.subArea is not None:
-        #    self.subAreaGroup = f"Subarea {self.subArea}"
-
-        self.differenceGroup = f"{self.difference} Differences ({self.endDate.strftime('%b %d')}–{self.startDate.strftime('%b %d')})"
-
-    def getSubGroupLayer(self):
+    def getSubGroupLayerItem(self):
         """Get or create the right dMIRBI difference layer group for an NTRRP data layer."""
 
-        groupLayer = self.getRegionLayer()
+        groupLayer = self.getMappingGroupLayerItem()
 
         differenceGroupLayer = groupLayer.findGroup(self.differenceGroup)
         if differenceGroupLayer is None:
@@ -79,7 +91,7 @@ class SegmentationLayer(QObject, AbstractLayer):
             self.loadStyle("higher_threshold")
 
         self.layerAdded.emit(self)
-        subGroupLayer = self.getSubGroupLayer()
+        subGroupLayer = self.getSubGroupLayerItem()
         subGroupLayer.addLayer(self.impl)
 
     def getMapLayerName(self):

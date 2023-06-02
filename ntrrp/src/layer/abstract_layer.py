@@ -19,6 +19,11 @@ class AbstractLayer(ABC, metaclass=AbstractQObjectMeta):
     layerAdded = pyqtSignal(object)
     layerRemoved = pyqtSignal(object)
 
+    @property
+    def mappingGroup(self):
+        """Return the layer group for this mapping."""
+        return f"{self.region} Burnt Areas ({self.mappingDate.strftime('%b %d')})"
+
     @abstractmethod
     def addMapLayer(self):
         """Add an NTRRP layer to the map."""
@@ -29,19 +34,18 @@ class AbstractLayer(ABC, metaclass=AbstractQObjectMeta):
         """Get an appropriate map layer name for this layer."""
         pass
 
-    def getSubGroupLayer(self):
-        """Get the right layer subgroup within a specified group layer for this layer."""
-        return self.getRegionLayer()
-
-    def getRegionLayer(self):
+    def getMappingGroupLayerItem(self):
         """Get or create the right layer group for an NTRRP data layer."""
         root = QgsProject.instance().layerTreeRoot()
-        regionGroup = f"{self.region} Burnt Areas"
-        groupLayer = root.findGroup(regionGroup)
+        groupLayer = root.findGroup(self.mappingGroup)
         if groupLayer is None:
-            root.insertGroup(0, regionGroup)
-            groupLayer = root.findGroup(regionGroup)
+            root.insertGroup(0, self.mappingGroup)
+            groupLayer = root.findGroup(self.mappingGroup)
         return groupLayer
+
+    def getSubGroupLayerItem(self):
+        """Get the right layer subgroup within a specified group layer for this layer."""
+        return self.getMappingGroupLayerItem()
 
     def getMapLayer(self):
         """Get the QGIS map layer corresponding to this layer, if any."""
@@ -49,7 +53,7 @@ class AbstractLayer(ABC, metaclass=AbstractQObjectMeta):
         if len(matches) == 0:
             return None
         elif len(matches) >= 1:
-            subGroupLayer = self.getSubGroupLayer()
+            subGroupLayer = self.getSubGroupLayerItem()
             matches = [layer for layer in matches if subGroupLayer.findLayer(
                 layer) is not None]
             if len(matches) >= 1:

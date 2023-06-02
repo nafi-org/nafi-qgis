@@ -63,7 +63,7 @@
           </widget>
         </item>
         <item row="0" column="2" colspan="6">
-          <widget class="QComboBox" name="regionComboBox"/>
+          <widget class="QComboBox" name="mappingComboBox"/>
         </item>
         <item row="1" column="0" colspan="8">
           <widget class="QTreeView" name="treeView"/>

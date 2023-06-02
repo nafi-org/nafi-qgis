@@ -15,7 +15,7 @@ class NtrrpTreeViewModel(QStandardItemModel):
         self.owsLayers = []
         self.region = ""
 
-    def setRegion(self, region):
+    def setMapping(self, region):
         """Set the current region for the NTRRP layer model."""
         assert isinstance(region, NtrrpMapping)
 
@@ -31,4 +31,4 @@ class NtrrpTreeViewModel(QStandardItemModel):
     def refresh(self):
         """Refresh the tree view."""
         if self.region:
-            self.setRegion(self.region)
+            self.setMapping(self.region)

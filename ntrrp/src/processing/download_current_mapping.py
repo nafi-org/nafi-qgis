@@ -8,7 +8,7 @@ from qgis.core import QgsProcessingParameterEnum
 from qgis.core import QgsProcessingParameterFile
 import processing
 
-from ..utils import ensureTempDirectories, getNtrrpDataUrl, getTempDownloadPath, qgsDebug, NTRRP_REGIONS
+from ..utils import ensureTempDirectories, getNtrrpDataUrl, getTempZipFilename, qgsDebug, NTRRP_REGIONS
 
 
 class DownloadCurrentMapping(QgsProcessingAlgorithm):
@@ -16,7 +16,7 @@ class DownloadCurrentMapping(QgsProcessingAlgorithm):
     def initAlgorithm(self, config=None):
         self.addParameter(QgsProcessingParameterEnum('Region', 'Region', options=NTRRP_REGIONS,
                           allowMultiple=False, usesStaticStrings=False, defaultValue=0))
-        self.addParameter(QgsProcessingParameterFile('WorkingFolder', 'Working Folder',
+        self.addParameter(QgsProcessingParameterFile('WorkingDirectory', 'Working Directory',
                           behavior=QgsProcessingParameterFile.Folder, fileFilter='All files (*.*)', defaultValue=None))
 
     def processAlgorithm(self, parameters, context, model_feedback):
@@ -24,7 +24,7 @@ class DownloadCurrentMapping(QgsProcessingAlgorithm):
         # overall progress through the model
         feedback = QgsProcessingMultiStepFeedback(1, model_feedback)
         results = {
-            'CurrentMappingFolder': None
+            'CurrentMappingDirectory': None
         }
 
         # Ensure all temp directories exist
@@ -32,11 +32,11 @@ class DownloadCurrentMapping(QgsProcessingAlgorithm):
 
         # Set up transfer parameters
         region = NTRRP_REGIONS[parameters['Region']]
-        regionDataFolder = Path(parameters['WorkingFolder']) / region
+        regionDataDirectory = Path(parameters['WorkingDirectory']) / region
 
         # Note: _tif suffix removed by Patrice (BNTQ-57)
         downloadUrl = f"{getNtrrpDataUrl()}/bfnt_{region.lower()}_current_sr3577.zip"
-        tempFile = getTempDownloadPath()
+        tempFile = getTempZipFilename()
 
         qgsDebug(f"Downloading {downloadUrl} to {tempFile}")
 
@@ -53,12 +53,12 @@ class DownloadCurrentMapping(QgsProcessingAlgorithm):
             return results
         else:
             with ZipFile(Path(tempFile), 'r') as zf:
-                zf.extractall(regionDataFolder)
+                zf.extractall(regionDataDirectory)
                 zf.close()
                 Path(tempFile).unlink()
 
             results = {
-                'CurrentMappingFolder': regionDataFolder
+                'CurrentMappingDirectory': regionDataDirectory
             }
 
         return results

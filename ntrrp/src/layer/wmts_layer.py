@@ -8,15 +8,18 @@ from ..utils import getNtrrpWmtsUrl, guiError, setDefaultProjectCrs
 
 
 class WmtsLayer(QObject, AbstractLayer):
-    def __init__(self, region, wmsUrl, owsLayer):
+    def __init__(self, region, mappingDate, wmsUrl, owsLayer):
         """Constructor."""
-        super(QObject, self).__init__()
+        QObject.__init__(self)
+        AbstractLayer.__init__(self)
         self.region = region
+        self.mappingDate = mappingDate
+        
         self.wmsUrl = wmsUrl
         self.owsLayer = owsLayer
         self.mapLayerId = None
         self.impl = None
-
+        
     def addMapLayer(self):
         """Create a QgsRasterLayer from WMTS given an OWS ContentMetadata object."""
         # only create a WMTS layer from a child
@@ -44,7 +47,7 @@ class WmtsLayer(QObject, AbstractLayer):
                 self.layerAdded.emit(self)
                 self.mapLayerId = self.impl.id()
 
-                subGroupLayer = self.getSubGroupLayer()
+                subGroupLayer = self.getSubGroupLayerItem()
                 subGroupLayer.addLayer(self.impl)
 
                 # don't show legend initially
@@ -82,7 +85,7 @@ class WmtsLayer(QObject, AbstractLayer):
     #             self.layerAdded.emit(wmsLayer)
     #             self.mapLayerId = wmsLayer.id()
 
-    #             subGroupLayer = self.getSubGroupLayer(groupLayer)
+    #             subGroupLayer = self.getSubGroupLayerItem(groupLayer)
     #             subGroupLayer.addLayer(wmsLayer)
 
     #             # don't show legend initially

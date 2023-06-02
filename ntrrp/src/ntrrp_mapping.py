@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 from pathlib import Path
+from shutil import copytree
+
 from qgis.PyQt.QtCore import QObject, pyqtSignal
 from qgis.core import QgsProject
 
 import processing
 
 from .layer.current_mapping_layer import CurrentMappingLayer
-from .layer.segmentation_layer import SegmentationLayer
+from .layer.segmentation_layer import SegmentationLayer, parseMetadataFromShapefilePath
 from .layer.working_layer import WorkingLayer
 from .ntrrp_item import NtrrpItem
-from .utils import deriveWorkingDirectory, qgsDebug, NTRRP_REGIONS
+from .utils import deriveMappingDirectory, deriveWorkingDirectory, qgsDebug, NTRRP_REGIONS
 
 
 class NtrrpMapping(QObject):
@@ -32,19 +34,22 @@ class NtrrpMapping(QObject):
         """Constructor."""
         super(QObject, self).__init__()
 
-        self.name = region
+        self.region = region
         self.wmsUrl = wmsUrl
         self.owsLayers = owsLayers
-        self.mappingDate = None
         self.segmentationLayers = []
         self.workingLayers = []
         self.currentMappingLayer = None
-        self.regionGroup = f"{self.name} Burnt Areas"
+        self.mappingDate = None
 
-    # arrange data
+    @property
+    def mappingDirectory(self):
+        """Return the mapping folder for this region."""
+        return deriveMappingDirectory(self.mappingDate, self.region) if self.mappingDate is not None else None
+
     def getNtrrpItems(self):
         """Return a set of NtrrpItem objects corresponding to this region's layers."""
-        items = [NtrrpItem(self.wmsUrl, owsLayer)
+        items = [NtrrpItem(self.mappingDate, self.wmsUrl, owsLayer)
                  for owsLayer in self.owsLayers]
         for item in items:
             item.itemLayer.layerAdded.connect(
@@ -61,13 +66,13 @@ class NtrrpMapping(QObject):
             return None
 
         params = {
-            'Region': NTRRP_REGIONS.index(self.name),
-            'WorkingFolder': deriveWorkingDirectory()
+            'Region': NTRRP_REGIONS.index(self.region),
+            'WorkingDirectory': deriveWorkingDirectory()
         }
         dialog = processing.createAlgorithmDialog(
             'BurntAreas:DownloadCurrentMapping', params)
         dialog.algorithmFinished.connect(lambda _: self.addCurrentMappingLayer(
-            dialog.results()['CurrentMappingFolder']))
+            dialog.results()['CurrentMappingDirectory']))
         for signal in [dialog.algorithmFinished, dialog.accepted, dialog.rejected, dialog.destroyed]:
             signal.connect(lambda: self.currentMappingDownloadFinished.emit())
         dialog.show()
@@ -83,13 +88,12 @@ class NtrrpMapping(QObject):
             return None
 
         params = {
-            'Region': NTRRP_REGIONS.index(self.name),
-            'WorkingFolder': deriveWorkingDirectory()
+            'Region': NTRRP_REGIONS.index(self.region)
         }
         dialog = processing.createAlgorithmDialog(
             'BurntAreas:DownloadSegmentationData', params)
         dialog.algorithmFinished.connect(lambda _: self.addSegmentationLayers(
-            dialog.results()['SegmentationDataFolder']))
+            dialog.results()['SegmentationDataDirectory']))
         for signal in [dialog.algorithmFinished, dialog.accepted, dialog.rejected, dialog.destroyed]:
             signal.connect(lambda: self.dataDownloadFinished.emit())
         dialog.show()
@@ -97,14 +101,13 @@ class NtrrpMapping(QObject):
 
         # self.addSegmentationLayers(Path('C:/Users/tom.lynch/Desktop/Working/Darwin'))
 
-    # add things to the map
-    def getSubGroupLayer(self):
+    def getSubGroupLayerItem(self):
         """Get or create the right layer group for an NTRRP data layer."""
         root = QgsProject.instance().layerTreeRoot()
-        groupLayer = root.findGroup(self.regionGroup)
+        groupLayer = root.findGroup(self.mappingGroup)
         if groupLayer is None:
-            root.insertGroup(0, self.regionGroup)
-            groupLayer = root.findGroup(self.regionGroup)
+            root.insertGroup(0, self.mappingGroup)
+            groupLayer = root.findGroup(self.mappingGroup)
         return groupLayer
 
     def getWorkingLayerByName(self, workingLayerName):
@@ -115,7 +118,7 @@ class NtrrpMapping(QObject):
 
     def createWorkingLayer(self, templateSegmentationLayer):
         """Create a new working layer for this region."""
-        workingLayer = WorkingLayer(self.name, templateSegmentationLayer)
+        workingLayer = WorkingLayer(self.region, self.mappingDate, templateSegmentationLayer)
         workingLayer.layerRemoved.connect(
             lambda layer: self.removeWorkingLayer(layer))
         self.workingLayers.append(workingLayer)
@@ -138,9 +141,9 @@ class NtrrpMapping(QObject):
         """Add the current mapping layer to the map."""
         if unzipLocation is None:
             return
-        rasterFile = next(unzipLocation.rglob("*.tif"))
+        rasterFile = next(Path(unzipLocation).rglob("*.tif"))
         self.currentMappingLayer = CurrentMappingLayer(
-            self.name, Path(rasterFile))
+            self.region, Path(rasterFile))
         self.currentMappingLayer.addMapLayerIfNotPresent()
 
     def addSegmentationLayers(self, unzipLocation):
@@ -148,12 +151,19 @@ class NtrrpMapping(QObject):
         if unzipLocation is None:
             return
 
-        self.segmentationLayers = [SegmentationLayer(path)
-                             for path in unzipLocation.rglob("*.shp")]
+        # Determine the mapping date from what's been downloaded
+        self.mappingDate = max([parseMetadataFromShapefilePath(path)["endDate"]
+                                for path in Path(unzipLocation).rglob("*.shp")])
+
+        # Copy the tree from the original unzip location to the correct mapping folder (may overwrite stuff)
+        copytree(unzipLocation, self.mappingDirectory, dirs_exist_ok=True)
+
+        self.segmentationLayers = [SegmentationLayer(self.region, self.mappingDate, path) for path in self.mappingDirectory.rglob("*.shp")]
 
         # do not add the layers with no threshold information
         self.segmentationLayers = [
-            segmentationLayer for segmentationLayer in self.segmentationLayers if segmentationLayer.threshold is not None]
+            segmentationLayer for segmentationLayer in self.segmentationLayers
+            if segmentationLayer.threshold is not None]
 
         for segmentationLayer in self.segmentationLayers:
             segmentationLayer.layerRemoved.connect(
@@ -178,7 +188,7 @@ class NtrrpMapping(QObject):
         """Upload the curated working layer to NAFI."""
 
         params = {
-            'Region': NTRRP_REGIONS.index(self.name),
+            'Region': NTRRP_REGIONS.index(self.region),
         }
 
         if activeWorkingLayer is not None:

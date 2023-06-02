@@ -24,5 +24,6 @@ class NtrrpCapabilities:
         regions = sorted(layersByRegion.keys())
 
         # python3 dicts are sorted in insertion order
-        self.regions = {region: NtrrpMapping(
-            region, self.wmsUrl, layersByRegion[region]) for region in regions}
+        self.mappings = {
+            region: NtrrpMapping(region, self.wmsUrl, layersByRegion[region]) for region in regions
+        }

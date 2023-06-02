@@ -63,6 +63,12 @@ def deriveWorkingDirectory():
     return path.dirname(projectFilePath)
 
 
+def deriveMappingDirectory(mappingDate, region):
+    """Derive the mapping folder from the date and region."""
+    workingDirectory = deriveWorkingDirectory()
+    return None if workingDirectory is None else Path(workingDirectory) / mappingDate.strftime('%Y%m%d') / region
+
+
 def getSetting(setting, default=None):
     """Retrieve an NTRRP setting."""
     try:
@@ -126,12 +132,16 @@ def getRandomFilename():
     return ''.join(random.choice(string.ascii_lowercase) for i in range(8))
 
 
-def getTempDownloadPath():
+def getTempDirectory():
     """Get a temporary download path."""
-    unzipLocation = path.normpath(
+    return path.normpath(
         path.join(getDownloadDirectory(), getRandomFilename()))
-    dataFile = f"{unzipLocation}.zip"
-    return dataFile
+
+def getTempZipFilename():
+    """Get a temporary download ZIP path."""
+    tempDir = getTempDirectory()
+    zipFile = f"{tempDir}.zip"
+    return zipFile
 
 
 def resolveStylePath(styleName):

@@ -4,7 +4,7 @@ from pathlib import Path
 
 from qgis.PyQt.QtCore import QObject
 from qgis.PyQt.QtWidgets import QAction
-from qgis.core import QgsCoordinateReferenceSystem, QgsFields, QgsProject, QgsVectorFileWriter, QgsVectorLayer, QgsWkbTypes
+from qgis.core import QgsCoordinateReferenceSystem, QgsProject, QgsVectorFileWriter, QgsVectorLayer, QgsWkbTypes
 from qgis.utils import iface as QgsInterface
 
 from .abstract_layer import AbstractLayer
@@ -14,11 +14,14 @@ from ..utils import ensureDirectory, deriveWorkingDirectory, guiError, resolveSt
 
 class WorkingLayer(QObject, AbstractLayer):
 
-    def __init__(self, region, templateSegmentationLayer):
+    def __init__(self, region, mappingDate, templateSegmentationLayer):
         """Constructor."""
-        super(QObject, self).__init__()
+        QObject.__init__(self)
+        AbstractLayer.__init__(self)
 
         self.region = region
+        self.mappingDate = mappingDate
+
         self.index = 1
         self.templateSegmentationLayer = templateSegmentationLayer
 
@@ -27,7 +30,7 @@ class WorkingLayer(QObject, AbstractLayer):
         self.shapefilePath = self.getShapefilePath()
 
         self.createShapefile()
-
+ 
     def setSegmentationLayer(self, segmentationLayer):
         """Set the segmentation layer for this working layer."""
         assert isinstance(segmentationLayer, SegmentationLayer)
@@ -88,9 +91,9 @@ class WorkingLayer(QObject, AbstractLayer):
         # Save after adding
         self.save()
 
-    def getSubGroupLayer(self):
+    def getSubGroupLayerItem(self):
         """Get or create the right dMIRBI difference layer group for an NTRRP data layer."""
-        groupLayer = self.getRegionLayer()
+        groupLayer = self.getMappingGroupLayerItem()
         subGroupLayerName = "Approved Burnt Areas"
         subGroupLayer = groupLayer.findGroup(subGroupLayerName)
         if subGroupLayer is None:
@@ -107,7 +110,7 @@ class WorkingLayer(QObject, AbstractLayer):
         self.impl.willBeDeleted.connect(lambda: self.layerRemoved.emit(self))
         self.loadStyle("approved")
         self.layerAdded.emit(self)
-        subGroupLayer = self.getSubGroupLayer()
+        subGroupLayer = self.getSubGroupLayerItem()
         displayLayer = subGroupLayer.addLayer(self.impl)
         displayLayer.setName(self.getMapLayerName())
 

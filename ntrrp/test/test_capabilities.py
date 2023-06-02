@@ -24,10 +24,10 @@ class TestCapabilities(unittest.TestCase):
             self.assertTrue(isinstance(caps, NtrrpCapabilities))
 
             # Two regions: Darwin, Katherine
-            self.assertEqual(len(caps.regions), 2)
+            self.assertEqual(len(caps.mappings), 2)
 
-            firstName = next(iter(caps.regions))
+            firstName = next(iter(caps.mappings))
             self.assertTrue(isinstance(firstName, str))
 
-            firstRegion = caps.regions[firstName]
+            firstRegion = caps.mappings[firstName]
             self.assertTrue(isinstance(firstRegion, NtrrpMapping))

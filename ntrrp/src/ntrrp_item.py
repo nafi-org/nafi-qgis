@@ -6,12 +6,11 @@ from qgis.core import QgsMapLayer
 
 from .layer.wmts_layer import WmtsLayer
 from .ows_utils import parseNtrrpLayerDescription, parseNtrrpLayerRegion
-from .utils import qgsDebug
 
 
 class NtrrpItem(QStandardItem):
 
-    def __init__(self, wmsUrl, owsLayer):
+    def __init__(self, mappingDate, wmsUrl, owsLayer):
         """Constructor."""
         super(QStandardItem, self).__init__()
 
@@ -19,9 +18,10 @@ class NtrrpItem(QStandardItem):
 
         # assemble some properties
         self.region = parseNtrrpLayerRegion(owsLayer.title)
+        self.mappingDate = mappingDate
         self.description = parseNtrrpLayerDescription(owsLayer.title)
 
-        self.itemLayer = WmtsLayer(self.region, wmsUrl, owsLayer)
+        self.itemLayer = WmtsLayer(self.region, self.mappingDate, wmsUrl, owsLayer)
         self.setText(self.description)
 
         self.setFlags(Qt.ItemIsEnabled)
