@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
-from abc import ABC, ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 
-from qgis.PyQt.QtCore import pyqtSignal, QObject
+from qgis.PyQt.QtCore import pyqtSignal
 from qgis.core import QgsProject
 
-
-class AbstractQObjectMeta(ABCMeta, type(QObject)):
-    """Metaclass to manage the requirement that things with signals be QObjects."""
-    pass
+from ..core.abstract_qobject_meta import AbstractQObjectMeta
 
 
 class AbstractLayer(ABC, metaclass=AbstractQObjectMeta):
