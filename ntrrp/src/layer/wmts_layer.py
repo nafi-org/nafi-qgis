@@ -14,12 +14,12 @@ class WmtsLayer(QObject, AbstractLayer):
         AbstractLayer.__init__(self)
         self.region = region
         self.mappingDate = mappingDate
-        
+
         self.wmsUrl = wmsUrl
         self.owsLayer = owsLayer
         self.mapLayerId = None
         self.impl = None
-        
+
     def addMapLayer(self):
         """Create a QgsRasterLayer from WMTS given an OWS ContentMetadata object."""
         # only create a WMTS layer from a child

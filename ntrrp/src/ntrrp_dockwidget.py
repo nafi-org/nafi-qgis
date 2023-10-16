@@ -222,7 +222,7 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         else:
             self.activeSegmentationLayerLabel.setText(segmentationLayer.getDisplayName())
             self.activeSegmentationLayerLabel.setStyleSheet(("color: rgb(158,16,21); "
-                                                       "border: 1px solid black;"))
+                                                             "border: 1px solid black;"))
 
     # TODO: factor this into a custom ComboBox widget
 

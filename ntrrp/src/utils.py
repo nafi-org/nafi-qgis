@@ -137,6 +137,7 @@ def getTempDirectory():
     return path.normpath(
         path.join(getDownloadDirectory(), getRandomFilename()))
 
+
 def getTempZipFilename():
     """Get a temporary download ZIP path."""
     tempDir = getTempDirectory()

@@ -30,7 +30,7 @@ class WorkingLayer(QObject, AbstractLayer):
         self.shapefilePath = self.getShapefilePath()
 
         self.createShapefile()
- 
+
     def setSegmentationLayer(self, segmentationLayer):
         """Set the segmentation layer for this working layer."""
         assert isinstance(segmentationLayer, SegmentationLayer)

@@ -21,8 +21,13 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
     def initAlgorithm(self, config=None):
         processing.ProcessingConfig.setSettingValue(
             'IGNORE_INVALID_FEATURES', 1)
-        self.addParameter(QgsProcessingParameterVectorLayer('DissolvedBurntAreas', 'Your burnt areas (should already be dissolved)', types=[
-                          QgsProcessing.TypeVectorPolygon], defaultValue=None))
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                'DissolvedBurntAreas',
+                'Your burnt areas (should already be dissolved)',
+                types=[
+                    QgsProcessing.TypeVectorPolygon],
+                defaultValue=None))
         self.addParameter(QgsProcessingParameterEnum('Region', 'Region', options=NTRRP_REGIONS,
                           allowMultiple=False, usesStaticStrings=False, defaultValue=0))
         self.addParameter(QgsProcessingParameterString(
@@ -36,8 +41,13 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
         self.addParameter(QgsProcessingParameterString(
             'NextFsid', 'Fire Scar ID', multiLine=False, defaultValue=None))
 
-        self.addParameter(QgsProcessingParameterFeatureSink('AttributedBurntAreas', 'Burnt areas attributed with FSID and other NAFI attributes',
-                          type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, defaultValue=None))
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                'AttributedBurntAreas',
+                'Burnt areas attributed with FSID and other NAFI attributes',
+                type=QgsProcessing.TypeVectorAnyGeometry,
+                createByDefault=True,
+                defaultValue=None))
 
     def processAlgorithm(self, parameters, context, model_feedback):
         feedback = QgsProcessingMultiStepFeedback(1, model_feedback)
@@ -49,7 +59,8 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
         # Region – the areas mapped (ie a1, a2, a3, a4, Kat)
         # Upload date – enter the date you completed the mapping
         # Current – enter “yes” for the latest mapping for an area.
-        # Comments – add any other additional information about a mapping period – ie note mapping problems due to cloud.
+        # Comments – add any other additional information about a mapping period –
+        # ie note mapping problems due to cloud.
 
         # Derive region string from enum parameter
         regionName = NTRRP_REGIONS[parameters['Region']]
@@ -74,7 +85,11 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
         }
         outputs['AddFSID'] = processing.run(
-            'qgis:advancedpythonfieldcalculator', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+            'qgis:advancedpythonfieldcalculator',
+            alg_params,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=True)
 
         # add Mapping Period
         alg_params = {
@@ -88,7 +103,11 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
         }
         outputs['AddMappingPeriod'] = processing.run(
-            'qgis:advancedpythonfieldcalculator', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+            'qgis:advancedpythonfieldcalculator',
+            alg_params,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=True)
 
         # add Month
         alg_params = {
@@ -102,7 +121,11 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
         }
         outputs['AddMonth'] = processing.run(
-            'qgis:advancedpythonfieldcalculator', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+            'qgis:advancedpythonfieldcalculator',
+            alg_params,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=True)
 
         # add Region
         alg_params = {
@@ -116,7 +139,11 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
         }
         outputs['AddRegion'] = processing.run(
-            'qgis:advancedpythonfieldcalculator', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+            'qgis:advancedpythonfieldcalculator',
+            alg_params,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=True)
 
         # add Upload Date
         alg_params = {
@@ -130,7 +157,11 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
         }
         outputs['AddUploadDate'] = processing.run(
-            'qgis:advancedpythonfieldcalculator', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+            'qgis:advancedpythonfieldcalculator',
+            alg_params,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=True)
 
         # add Current
         alg_params = {
@@ -144,7 +175,11 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
         }
         outputs['AddCurrent'] = processing.run(
-            'qgis:advancedpythonfieldcalculator', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+            'qgis:advancedpythonfieldcalculator',
+            alg_params,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=True)
 
         # add Comments
         alg_params = {
@@ -158,7 +193,11 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
             'OUTPUT': parameters['AttributedBurntAreas'],
         }
         outputs['AddComments'] = processing.run(
-            'qgis:advancedpythonfieldcalculator', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+            'qgis:advancedpythonfieldcalculator',
+            alg_params,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=True)
 
         results['AttributedBurntAreas'] = outputs['AddComments']['OUTPUT']
         return results

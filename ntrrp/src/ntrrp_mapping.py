@@ -158,7 +158,8 @@ class NtrrpMapping(QObject):
         # Copy the tree from the original unzip location to the correct mapping folder (may overwrite stuff)
         copytree(unzipLocation, self.mappingDirectory, dirs_exist_ok=True)
 
-        self.segmentationLayers = [SegmentationLayer(self.region, self.mappingDate, path) for path in self.mappingDirectory.rglob("*.shp")]
+        self.segmentationLayers = [SegmentationLayer(self.region, self.mappingDate, path)
+                                   for path in self.mappingDirectory.rglob("*.shp")]
 
         # do not add the layers with no threshold information
         self.segmentationLayers = [

@@ -48,7 +48,8 @@ class ValidateFullBurntAreasProcess(QgsProcessingAlgorithm):
         # Region – the areas mapped (ie a1, a2, a3, a4, Kat)
         # Upload date – enter the date you completed the mapping
         # Curent – enter “yes” for the latest mapping for an area.
-        # Comments – add any other additional information about a mapping period – ie note mapping problems due to cloud.
+        # Comments – add any other additional information about a mapping period –
+        # ie note mapping problems due to cloud.
 
         # Derive region string from enum parameter
         regionName = NTRRP_REGIONS[parameters['Region']]

@@ -14,11 +14,11 @@ class CurrentMappingLayer(QObject, AbstractLayer):
         """Constructor."""
         QObject.__init__(self)
         AbstractLayer.__init__(self)
-        
+
         self.region = region
         self.mappingDate = datetime.today()
         self.rasterFile = Path(rasterFile)
- 
+
     @property
     def mappingGroup(self):
         """Return the layer group for this mapping."""

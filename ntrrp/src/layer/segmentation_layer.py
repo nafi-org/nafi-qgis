@@ -7,6 +7,7 @@ from qgis.core import QgsLayerTreeGroup, QgsProject, QgsVectorLayer
 from .abstract_layer import AbstractLayer
 from ..utils import resolveStylePath
 
+
 def parseMetadataFromShapefilePath(shapefilePath):
     """Parse metadata from a segmentation layer shapefile path."""
     segments = shapefilePath.stem.split("_")
@@ -14,7 +15,7 @@ def parseMetadataFromShapefilePath(shapefilePath):
     region = segments[1].capitalize()
     endDate = dateutil.parser.parse(segments[2])
     startDate = dateutil.parser.parse(segments[3])
-    
+
     # Patrice has started adding files with no threshold in the name
     threshold = segments[5][1:] if len(segments) > 5 else None
     differenceGroup = f"{difference} Differences ({endDate.strftime('%b %d')}–{startDate.strftime('%b %d')})"
@@ -28,6 +29,7 @@ def parseMetadataFromShapefilePath(shapefilePath):
         "differenceGroup": differenceGroup
     }
 
+
 class SegmentationLayer(QObject, AbstractLayer):
 
     def __init__(self, region, mappingDate, shapefilePath):
@@ -40,7 +42,7 @@ class SegmentationLayer(QObject, AbstractLayer):
 
         metadata = parseMetadataFromShapefilePath(shapefilePath)
         self.shapefilePath = shapefilePath
-        
+
         # Copy metadata to this object
         self.difference = metadata["difference"]
         self.endDate = metadata["endDate"]
