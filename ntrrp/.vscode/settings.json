@@ -4,8 +4,14 @@
     },
     "git.openRepositoryInParentFolders": "always",
     "python.analysis.extraPaths": [
-        "C:\\Program Files\\QGIS 3.28.5\\apps\\Python39\\Lib\\site-packages",
-        "C:\\Program Files\\QGIS 3.28.5\\apps\\qgis-ltr\\python"
+        "C:\\Program Files\\QGIS 3.22.14\\apps\\Python39\\Lib\\site-packages",
+        "C:\\Program Files\\QGIS 3.22.14\\apps\\qgis-ltr\\python",
+        "C:\\Program Files\\QGIS 3.28.11\\apps\\Python39\\Lib\\site-packages",
+        "C:\\Program Files\\QGIS 3.28.11\\apps\\qgis-ltr\\python",
+        "/Applications/QGIS.app/Contents/Resources/python",
+        "/Applications/QGIS.app/Contents/Resources/python/site-packages",
+        "/Applications/QGIS-LTR.app/Contents/Resources/python",
+        "/Applications/QGIS-LTR.app/Contents/Resources/python/site-packages"
     ],
     "python.formatting.provider": "autopep8",
     "xml.validation.enabled": false,
