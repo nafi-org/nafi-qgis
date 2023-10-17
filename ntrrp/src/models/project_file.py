@@ -36,11 +36,11 @@ class AbstractLayer(ABC, metaclass=AbstractQObjectMeta):
     def getRegionLayer(self):
         """Get or create the right layer group for an NTRRP data layer."""
         root = QgsProject.instance().layerTreeRoot()
-        mappingGroup = f"{self.region} Burnt Areas"
-        groupLayer = root.findGroup(mappingGroup)
+        layerGroup = f"{self.region} Burnt Areas"
+        groupLayer = root.findGroup(layerGroup)
         if groupLayer is None:
-            root.insertGroup(0, mappingGroup)
-            groupLayer = root.findGroup(mappingGroup)
+            root.insertGroup(0, layerGroup)
+            groupLayer = root.findGroup(layerGroup)
         return groupLayer
 
     def getMapLayer(self):

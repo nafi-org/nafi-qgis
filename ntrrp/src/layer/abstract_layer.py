@@ -16,10 +16,12 @@ class AbstractLayer(ABC, metaclass=AbstractQObjectMeta):
     layerAdded = pyqtSignal(object)
     layerRemoved = pyqtSignal(object)
 
-    @property
-    def mappingGroup(self):
+    def layerGroup(self):
         """Return the layer group for this mapping."""
-        return f"{self.region} Burnt Areas ({self.mappingDate.strftime('%b %d')})"
+        if self.mappingDate:
+            return f"{self.region} Burnt Areas ({self.mappingDate.strftime('%b %d')})"
+        else:
+            return f"{self.region} Burnt Areas"
 
     @abstractmethod
     def addMapLayer(self):
@@ -31,18 +33,18 @@ class AbstractLayer(ABC, metaclass=AbstractQObjectMeta):
         """Get an appropriate map layer name for this layer."""
         pass
 
-    def getMappingGroupLayerItem(self):
+    def getLayerGroupLayerItem(self):
         """Get or create the right layer group for an NTRRP data layer."""
         root = QgsProject.instance().layerTreeRoot()
-        groupLayer = root.findGroup(self.mappingGroup)
+        groupLayer = root.findGroup(self.layerGroup())
         if groupLayer is None:
-            root.insertGroup(0, self.mappingGroup)
-            groupLayer = root.findGroup(self.mappingGroup)
+            root.insertGroup(0, self.layerGroup())
+            groupLayer = root.findGroup(self.layerGroup())
         return groupLayer
 
     def getSubGroupLayerItem(self):
         """Get the right layer subgroup within a specified group layer for this layer."""
-        return self.getMappingGroupLayerItem()
+        return self.getLayerGroupLayerItem()
 
     def getMapLayer(self):
         """Get the QGIS map layer corresponding to this layer, if any."""

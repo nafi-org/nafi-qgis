@@ -20,7 +20,7 @@ class CurrentMappingLayer(QObject, AbstractLayer):
         self.rasterFile = Path(rasterFile)
 
     @property
-    def mappingGroup(self):
+    def layerGroup(self):
         """Return the layer group for this mapping."""
         return f"{self.region} Current Mapping"
 

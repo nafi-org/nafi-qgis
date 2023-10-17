@@ -93,7 +93,7 @@ class WorkingLayer(QObject, AbstractLayer):
 
     def getSubGroupLayerItem(self):
         """Get or create the right dMIRBI difference layer group for an NTRRP data layer."""
-        groupLayer = self.getMappingGroupLayerItem()
+        groupLayer = self.getLayerGroupLayerItem()
         subGroupLayerName = "Approved Burnt Areas"
         subGroupLayer = groupLayer.findGroup(subGroupLayerName)
         if subGroupLayer is None:

@@ -53,7 +53,7 @@ class SegmentationLayer(QObject, AbstractLayer):
     def getSubGroupLayerItem(self):
         """Get or create the right dMIRBI difference layer group for an NTRRP data layer."""
 
-        groupLayer = self.getMappingGroupLayerItem()
+        groupLayer = self.getLayerGroupLayerItem()
 
         differenceGroupLayer = groupLayer.findGroup(self.differenceGroup)
         if differenceGroupLayer is None:

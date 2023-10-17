@@ -104,10 +104,10 @@ class NtrrpMapping(QObject):
     def getSubGroupLayerItem(self):
         """Get or create the right layer group for an NTRRP data layer."""
         root = QgsProject.instance().layerTreeRoot()
-        groupLayer = root.findGroup(self.mappingGroup)
+        groupLayer = root.findGroup(self.layerGroup())
         if groupLayer is None:
-            root.insertGroup(0, self.mappingGroup)
-            groupLayer = root.findGroup(self.mappingGroup)
+            root.insertGroup(0, self.layerGroup())
+            groupLayer = root.findGroup(self.layerGroup())
         return groupLayer
 
     def getWorkingLayerByName(self, workingLayerName):
