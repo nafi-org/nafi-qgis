@@ -6,6 +6,7 @@ import os.path as path
 import random
 import string
 from pathlib import Path
+from tempfile import gettempdir
 
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsMessageLog, QgsProject
@@ -102,17 +103,17 @@ def getNtrrpApiUrl():
 
 def getDownloadDirectory():
     """Get the directory location to store NAFI burnt areas data."""
-    return path.normpath(path.join(os.environ["TMP"], "ntrrp", "downloads"))
+    return path.normpath(path.join(gettempdir(), "ntrrp", "downloads"))
 
 
 def getWorkingDirectory():
     """Get the directory location to output and save NAFI burnt areas working data."""
-    return path.normpath(path.join(os.environ["TMP"], "ntrrp", "working"))
+    return path.normpath(path.join(gettempdir(), "ntrrp", "working"))
 
 
 def getUploadDirectory():
     """Get a random upload directory."""
-    return path.normpath(path.join(os.environ["TMP"], "ntrrp", "uploads"))
+    return path.normpath(path.join(gettempdir(), "ntrrp", "uploads"))
 
 
 def ensureDirectory(dir):
