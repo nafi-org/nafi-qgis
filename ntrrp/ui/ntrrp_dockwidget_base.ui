@@ -97,7 +97,7 @@
               </sizepolicy>
             </property>
             <property name="toolTip">
-              <string>Refresh Region Layers</string>
+              <string>Refresh Layers</string>
             </property>
             <property name="text">
               <string/>

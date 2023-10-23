@@ -10,11 +10,12 @@ import processing
 from .layer.current_mapping_layer import CurrentMappingLayer
 from .layer.segmentation_layer import SegmentationLayer, parseMetadataFromShapefilePath
 from .layer.working_layer import WorkingLayer
+from .models.mapping import Mapping
 from .ntrrp_item import NtrrpItem
-from .utils import deriveMappingDirectory, deriveWorkingDirectory, qgsDebug, NTRRP_REGIONS
+from .utils import deriveWorkingDirectory, qgsDebug, NTRRP_REGIONS
 
 
-class NtrrpMapping(QObject):
+class NtrrpMapping(Mapping, QObject):
     # emit this signal when the data download finishes
     dataDownloadFinished = pyqtSignal()
 
@@ -30,22 +31,10 @@ class NtrrpMapping(QObject):
     # emit this signal when working layers are changed
     workingLayersChanged = pyqtSignal(list)
 
-    def __init__(self, region, wmsUrl, owsLayers):
+    def __init__(self, region, mappingDate, wmsUrl, owsLayers):
         """Constructor."""
-        super(QObject, self).__init__()
-
-        self.region = region
-        self.wmsUrl = wmsUrl
-        self.owsLayers = owsLayers
-        self.segmentationLayers = []
-        self.workingLayers = []
-        self.currentMappingLayer = None
-        self.mappingDate = None
-
-    @property
-    def mappingDirectory(self):
-        """Return the mapping folder for this region."""
-        return deriveMappingDirectory(self.mappingDate, self.region) if self.mappingDate is not None else None
+        QObject.__init__(self)
+        Mapping.__init__(self, region, mappingDate, wmsUrl, owsLayers)
 
     def getNtrrpItems(self):
         """Return a set of NtrrpItem objects corresponding to this region's layers."""
@@ -132,7 +121,6 @@ class NtrrpMapping(QObject):
 
     def getSegmentationLayerByMapLayer(self, mapLayer):
         """Retrieve a current segmentation layer from its map layer."""
-
         matches = [segmentationLayer for segmentationLayer in self.segmentationLayers
                    if segmentationLayer.impl.id() == mapLayer.id()]
         return next(iter(matches), None)
@@ -143,7 +131,7 @@ class NtrrpMapping(QObject):
             return
         rasterFile = next(Path(unzipLocation).rglob("*.tif"))
         self.currentMappingLayer = CurrentMappingLayer(
-            self.region, Path(rasterFile))
+            self.region, self.mappingDate, Path(rasterFile))
         self.currentMappingLayer.addMapLayerIfNotPresent()
 
     def addSegmentationLayers(self, unzipLocation):
@@ -156,10 +144,10 @@ class NtrrpMapping(QObject):
                                 for path in Path(unzipLocation).rglob("*.shp")])
 
         # Copy the tree from the original unzip location to the correct mapping folder (may overwrite stuff)
-        copytree(unzipLocation, self.mappingDirectory, dirs_exist_ok=True)
+        copytree(unzipLocation, self.directory, dirs_exist_ok=True)
 
         self.segmentationLayers = [SegmentationLayer(self.region, self.mappingDate, path)
-                                   for path in self.mappingDirectory.rglob("*.shp")]
+                                   for path in self.directory.rglob("*.shp")]
 
         # do not add the layers with no threshold information
         self.segmentationLayers = [

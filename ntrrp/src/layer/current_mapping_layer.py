@@ -10,12 +10,13 @@ from .abstract_layer import AbstractLayer
 
 
 class CurrentMappingLayer(QObject, AbstractLayer):
-    def __init__(self, region, rasterFile):
+    def __init__(self, region, mappingDate, rasterFile):
         """Constructor."""
         QObject.__init__(self)
         AbstractLayer.__init__(self)
 
         self.region = region
+        self.mappingDate = mappingDate
         self.mappingDate = datetime.today()
         self.rasterFile = Path(rasterFile)
 

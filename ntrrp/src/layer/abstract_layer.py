@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from qgis.PyQt.QtCore import pyqtSignal
 from qgis.core import QgsProject
 
-from ..core.abstract_qobject_meta import AbstractQObjectMeta
+from ..models.abstract_qobject_meta import AbstractQObjectMeta
 
 
 class AbstractLayer(ABC, metaclass=AbstractQObjectMeta):
@@ -18,10 +18,7 @@ class AbstractLayer(ABC, metaclass=AbstractQObjectMeta):
 
     def layerGroup(self):
         """Return the layer group for this mapping."""
-        if self.mappingDate:
-            return f"{self.region} Burnt Areas ({self.mappingDate.strftime('%b %d')})"
-        else:
-            return f"{self.region} Burnt Areas"
+        return f"{self.region} Burnt Areas Mapping ({self.mappingDate.strftime('%b %d')})"
 
     @abstractmethod
     def addMapLayer(self):

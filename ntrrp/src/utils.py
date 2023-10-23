@@ -63,13 +63,6 @@ def deriveWorkingDirectory():
         return None
     return path.dirname(projectFilePath)
 
-
-def deriveMappingDirectory(mappingDate, region):
-    """Derive the mapping folder from the date and region."""
-    workingDirectory = deriveWorkingDirectory()
-    return None if workingDirectory is None else Path(workingDirectory) / mappingDate.strftime('%Y%m%d') / region
-
-
 def getSetting(setting, default=None):
     """Retrieve an NTRRP setting."""
     try:

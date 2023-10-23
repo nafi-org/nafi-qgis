@@ -23,6 +23,8 @@ class NtrrpDockWidget(QtWidgets.QDockWidget, Ui_NtrrpDockWidgetBase):
         """Constructor."""
         super(NtrrpDockWidget, self).__init__(parent)
 
+        self.selectedMapping = None
+
         self.setupUi(self)
 
         # set up QTreeView
