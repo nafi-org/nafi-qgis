@@ -21,6 +21,15 @@ def test_CurrentMappingLayer() -> None:
     # QgsProject.instance().removeMapLayer(currentMapping)
 
 
+def test_SegmentationLayer() -> None:
+    mapping = Mapping('Darwin', datetime.today())
+    segmentation = SegmentationLayer(
+        mapping, '/Users/tom/Documents/Development/trm/nafi/data/Scratch/20231016/Darwin/darwin/T1T2/T1T2_darwin_T20231016_T20231011_seg_t150.shp')    
+    segmentation.addMapLayer()
+    # QgsProject.instance().removeMapLayer(segmentation)
+
+
 def test_all() -> None:
     test_Mapping()
     test_CurrentMappingLayer()
+    test_SegmentationLayer()

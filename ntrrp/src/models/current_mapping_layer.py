@@ -15,11 +15,10 @@ class CurrentMappingLayer(QgsRasterLayer, Layer):
     """Layer type for the current NAFI Hires mapping image."""
 
     def __init__(self, mapping: Mapping, rasterFile: Union[str, PathLike]):
-        rasterPath = Path(rasterFile)        
-        QgsRasterLayer.__init__(self, rasterPath.as_posix(), f"{mapping.region} Current Mapping", "gdal")
+        self.rasterPath = Path(rasterFile)        
+        QgsRasterLayer.__init__(self, self.rasterPath.as_posix(), f"{mapping.region} Current Mapping", "gdal")
         
         self._mapping = mapping
-        self._rasterPath = rasterPath
         
     # Item interface
     @property
@@ -48,8 +47,8 @@ class CurrentMappingLayer(QgsRasterLayer, Layer):
             project = QgsProject.instance()
             project.addMapLayer(self, False)
             self.willBeDeleted.connect(
-                lambda: self.layerRemoved.emit(self))
-            self.layerAdded.emit(self)
+                lambda: self.layerRemoved.emit(self.id()))
+            self.layerAdded.emit(self.id())
             self.subGroupLayerItem.addLayer(self)
 
             # don't show legend initially
@@ -59,8 +58,4 @@ class CurrentMappingLayer(QgsRasterLayer, Layer):
             error = (f"An error occurred adding the layer {self.layerItemName} to the map.\n"
                      f"Check your QGIS WMS message log for details.")
             guiError(error)
-
-    @property
-    def rasterPath(self) -> Path:
-        return self._rasterPath
 

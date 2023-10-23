@@ -12,9 +12,9 @@ from .mapping import Mapping
 class Layer(Item):
     """Abstract type for a NAFI Hires Layer within a Mapping."""
 
-    # emit this signal if the map layer is removed
-    layerAdded = pyqtSignal(QgsMapLayer)
-    layerRemoved = pyqtSignal(QgsMapLayer)
+    # Emit these signals with layer ID
+    layerAdded = pyqtSignal(str)
+    layerRemoved = pyqtSignal(str)
 
     @property
     def groupName(self) -> str:
