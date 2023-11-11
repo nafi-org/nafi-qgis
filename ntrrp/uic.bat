@@ -14,11 +14,6 @@ path %OSGEO4W_ROOT%\apps\qgis-ltr\bin;%OSGEO4W_ROOT%\apps\grass\grass78\lib;%OSG
 
 cd /d %~dp0
 
-rem @ECHO ON
-::Ui Compilation
-call pyuic5 ui\ntrrp_dockwidget_base.ui -o src\ntrrp_dockwidget_base.py
-call pyuic5 ui\ntrrp_about_dialog_base.ui -o src\ntrrp_about_dialog_base.py
-
 ::Resources
 call pyrcc5 resources.qrc -o resources_rc.py
 

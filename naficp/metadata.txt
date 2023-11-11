@@ -2,7 +2,7 @@
 name=Easy Copy and Paste
 qgisMinimumVersion=3.18.1
 description=Easily copy and paste features between QGIS layers
-version=1.0
+version=1.0.1
 author=Trailmarker
 email=tom@trailmarker.io
 about=This plug-in copies currently selected features in the map view to a target layer with a single click or Hotkey and commits them to the edit on that layer. 
@@ -18,10 +18,12 @@ icon=icon.png
 experimental=False
 deprecated=False
 category=Vector
-changelog=1.0
-          - Bump plugin version for first release
+changelog=1.0.1
+          - correct mypy errors and format all code
+          1.0
+          - bump plugin version for first release
           0.4
-          - Remove NAFI branding
+          - remove NAFI branding
           0.3
-          - Fix issue de-registering plugin action in Vector menu
+          - fix issue de-registering plugin action in Vector menu
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os.path
 
 from qgis.PyQt.QtCore import QCoreApplication, QSettings, Qt, QTranslator
@@ -8,6 +7,7 @@ from qgis.utils import iface as QgsInterface
 
 # Initialize Qt resources from file resources.py
 from .resources_rc import *
+
 # Import the code for the DockWidget
 from .src.naficp_dockwidget import NafiCpDockWidget
 from .src.utils import getConfiguredHotKey, guiWarning, NAFICP_NAME
@@ -31,11 +31,10 @@ class NafiCp:
         self.plugin_dir = os.path.dirname(__file__)
 
         # initialize locale
-        locale = QSettings().value('locale/userLocale')[0:2]
+        locale = QSettings().value("locale/userLocale")[0:2]
         locale_path = os.path.join(
-            self.plugin_dir,
-            'i18n',
-            'NafiCp_{}.qm'.format(locale))
+            self.plugin_dir, "i18n", "NafiCp_{}.qm".format(locale)
+        )
 
         if os.path.exists(locale_path):
             self.translator = QTranslator()
@@ -44,10 +43,10 @@ class NafiCp:
 
         # Declare instance attributes
         self.actions = []
-        self.menu = self.tr(u'&' + NAFICP_NAME)
+        self.menu = self.tr("&" + NAFICP_NAME)
         # TODO: We are going to let the user set this up in a future iteration
-        self.toolbar = self.iface.addToolBar(u'NafiCp')
-        self.toolbar.setObjectName(u'NafiCp')
+        self.toolbar = self.iface.addToolBar("NafiCp")
+        self.toolbar.setObjectName("NafiCp")
 
         # print "** INITIALIZING NafiCp"
 
@@ -68,19 +67,20 @@ class NafiCp:
         :rtype: QString
         """
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate('NafiCp', message)
+        return QCoreApplication.translate("NafiCp", message)
 
     def add_action(
-            self,
-            icon_path,
-            text,
-            callback,
-            enabled_flag=True,
-            add_to_menu=True,
-            add_to_toolbar=True,
-            status_tip=None,
-            whats_this=None,
-            parent=None):
+        self,
+        icon_path,
+        text,
+        callback,
+        enabled_flag=True,
+        add_to_menu=True,
+        add_to_toolbar=True,
+        status_tip=None,
+        whats_this=None,
+        parent=None,
+    ):
         """Add a toolbar icon to the toolbar.
 
         :param icon_path: Path to the icon for this action. Can be a resource
@@ -135,9 +135,7 @@ class NafiCp:
             self.toolbar.addAction(action)
 
         if add_to_menu:
-            self.iface.addPluginToMenu(
-                self.menu,
-                action)
+            self.iface.addPluginToMenu(self.menu, action)
 
         self.actions.append(action)
 
@@ -146,21 +144,21 @@ class NafiCp:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_path = ':/plugins/naficp/images/icon.png'
+        icon_path = ":/plugins/naficp/images/icon.png"
         self.add_action(
             icon_path,
             text=self.tr(NAFICP_NAME),
             add_to_toolbar=True,
             callback=self.run,
-            parent=self.iface.mainWindow())
+            parent=self.iface.mainWindow(),
+        )
 
         self.hotkey = getConfiguredHotKey()
 
         self.pasteAction = QAction("Paste Features", QgsInterface.mainWindow())
         QgsInterface.registerMainWindowAction(self.pasteAction, self.hotkey)
         # won't work without calling this method?
-        QgsInterface.addPluginToVectorMenu(
-            NAFICP_NAME, self.pasteAction)
+        QgsInterface.addPluginToVectorMenu(NAFICP_NAME, self.pasteAction)
 
     # --------------------------------------------------------------------------
 
@@ -184,16 +182,16 @@ class NafiCp:
         """Removes the plugin menu item and icon from QGIS GUI."""
 
         # Remove 'Paste Features' action
-        nafiCpMenu = next(a for a in QgsInterface.vectorMenu().actions() if NAFICP_NAME in a.text())
+        nafiCpMenu = next(
+            a for a in QgsInterface.vectorMenu().actions() if NAFICP_NAME in a.text()
+        )
         QgsInterface.vectorMenu().removeAction(nafiCpMenu)
 
         if not QgsInterface.unregisterMainWindowAction(self.pasteAction):
             guiWarning("Error unregistering 'Paste Features' action.")
 
         for action in self.actions:
-            self.iface.removePluginMenu(
-                self.tr(NAFICP_NAME),
-                action)
+            self.iface.removePluginMenu(self.tr(NAFICP_NAME), action)
             self.iface.removeToolBarIcon(action)
         # remove the toolbar
         del self.toolbar

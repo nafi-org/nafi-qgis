@@ -17,7 +17,11 @@ experimental=False
 deprecated=False
 category=Web
 server=False
-changelog=1.1.0
+changelog=1.2.0
+          - major UI update
+          - removed user handling of 'working layers'
+          - reload mapping activity from filesystem
+          1.1.0
           - change to a mapping-centric model
           1.0.0
           - bump version for release to Bushfires NT

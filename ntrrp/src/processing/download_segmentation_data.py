@@ -1,34 +1,63 @@
-# -*- coding: utf-8 -*-
+from typing import Any
+
 from pathlib import Path
+from shutil import copytree
 from zipfile import ZipFile
 
-from qgis.core import QgsProcessingAlgorithm
-from qgis.core import QgsProcessingMultiStepFeedback
-from qgis.core import QgsProcessingParameterEnum
+from qgis.core import (
+    QgsProcessingAlgorithm,
+    QgsProcessingParameterFolderDestination,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingParameterEnum,
+)
 import processing
 
-from ..utils import ensureTempDirectories, getNtrrpDataUrl, getTempDirectory, getTempZipFilename, qgsDebug, NTRRP_REGIONS
+from ntrrp.src.utils import (
+    ensureDirectory,
+    ensureTempDirectories,
+    getNtrrpDataUrl,
+    getTempDirectory,
+    getTempZipFilename,
+    qgsDebug,
+    NTRRP_REGIONS,
+)
 
 
 class DownloadSegmentationData(QgsProcessingAlgorithm):
-
     def initAlgorithm(self, config=None):
-        self.addParameter(QgsProcessingParameterEnum('Region', 'Region', options=NTRRP_REGIONS,
-                          allowMultiple=False, usesStaticStrings=False, defaultValue=0))
+        self.addParameter(
+            QgsProcessingParameterEnum(
+                "Region",
+                "Region",
+                options=NTRRP_REGIONS,
+                allowMultiple=False,
+                usesStaticStrings=False,
+                defaultValue=0,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterFolderDestination(
+                "SegmentationDataDirectory",
+                "Segmentation data download directory",
+                defaultValue=None,
+            )
+        )
 
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
         # overall progress through the model
         feedback = QgsProcessingMultiStepFeedback(1, model_feedback)
-        results = {
-            'SegmentationDataDirectory': None
-        }
+        results: dict[str, Any] = {"SegmentationDataDirectory": None}
+
+        # Ensure segmentation data directory exists
+        segmentationDirectory = Path(parameters["SegmentationDataDirectory"])
+        ensureDirectory(segmentationDirectory)
 
         # Ensure all temp directories exist
         ensureTempDirectories()
 
         # Set up transfer parameters
-        region = NTRRP_REGIONS[parameters['Region']]
+        region = NTRRP_REGIONS[parameters["Region"]]
         downloadUrl = f"{getNtrrpDataUrl()}/{region.lower()}/{region.lower()}.zip"
         tempFile = getTempZipFilename()
         unzipLocation = getTempDirectory()
@@ -36,39 +65,43 @@ class DownloadSegmentationData(QgsProcessingAlgorithm):
         qgsDebug(f"Downloading {downloadUrl} to {tempFile}")
 
         # Download ZIP to temp location
-        alg_params = {
-            'OUTPUT': tempFile,
-            'URL': downloadUrl
-        }
-        processing.run('native:filedownloader', alg_params,
-                       context=context, feedback=feedback, is_child_algorithm=True)
+        alg_params = {"OUTPUT": tempFile, "URL": downloadUrl}
+        processing.run(
+            "native:filedownloader",
+            alg_params,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=True,
+        )
 
         # Unzip ZIP to region data folder
         if not Path(tempFile).exists():
             return results
         else:
-            with ZipFile(Path(tempFile), 'r') as zf:
+            with ZipFile(Path(tempFile), "r") as zf:
                 zf.extractall(unzipLocation)
                 zf.close()
                 Path(tempFile).unlink()
 
-            results = {
-                'SegmentationDataDirectory': unzipLocation
-            }
+                # Copy the tree from the original unzip location to the segmentation data
+                # directory (may overwrite stuff)
+                copytree(unzipLocation, segmentationDirectory, dirs_exist_ok=True)
+
+            results = {"SegmentationDataDirectory": segmentationDirectory}
 
         return results
 
     def name(self):
-        return 'DownloadSegmentationData'
+        return "DownloadSegmentationData"
 
     def displayName(self):
-        return 'Download NAFI Segmentation Data'
+        return "Download NAFI Segmentation Data"
 
     def group(self):
-        return ''
+        return ""
 
     def groupId(self):
-        return ''
+        return ""
 
     def createInstance(self):
         return DownloadSegmentationData()

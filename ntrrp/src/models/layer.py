@@ -1,12 +1,9 @@
-# -*- coding: utf-8 -*-
 from abc import abstractmethod
-
 from qgis.PyQt.QtCore import pyqtSignal
 
-from qgis.core import QgsProject, QgsLayerTreeGroup, QgsMapLayer
+from qgis.core import QgsProject, QgsLayerTreeLayer
 
 from .item import Item
-from .mapping import Mapping
 
 
 class Layer(Item):
@@ -16,43 +13,42 @@ class Layer(Item):
     layerAdded = pyqtSignal(str)
     layerRemoved = pyqtSignal(str)
 
-    @property
-    def groupName(self) -> str:
-        """Return the QGIS layer group name for this Layer."""
-        return self.mapping and self.mapping.layerItemName
+    def __init__(self):
+        super().__init__()
 
-    @property
-    def groupLayerItem(self) -> QgsLayerTreeGroup:
-        """Return the QGIS layer group layer item for this Layer."""
-        groupName = self.groupName
-        if not groupName:
-            return None
-        
-        root = QgsProject.instance().layerTreeRoot()
-        groupLayer = root.findGroup(groupName)
-        if groupLayer is None:
-            root.insertGroup(0, groupName)
-            groupLayer = root.findGroup(groupName)
-        return groupLayer
-
-    @property
-    def subGroupLayerItem(self) -> QgsLayerTreeGroup:
-        """Return the QGIS layer subgroup item for this Layer."""
-        return self.groupLayerItem
-
-    @property
     @abstractmethod
-    def mapping(self) -> Mapping:
-        """Return the Mapping for this Layer."""
+    def id(self) -> str:
+        """Stub method to return the QGIS layer ID."""
         pass
 
-    @mapping.setter
-    @abstractmethod
-    def mapping(self, mapping: Mapping) -> None:
-        """Set the Mapping for this Layer."""
-        pass
+    @property
+    def layerName(self) -> str:
+        return self.itemName
 
-    @abstractmethod
+    @property
+    def layer(self) -> QgsLayerTreeLayer:
+        """Return the QGIS layer item (in the Layers panel) for this Item."""
+        return self.item
+
     def addMapLayer(self) -> None:
-        """Constract and add this Layer to the QGIS map and the Layers panel."""
-        pass
+        """Add this layer to the map and layers panel, removing any existing layer with the same name."""
+
+        project = QgsProject.instance()
+        project.addMapLayer(self, False)  # type: ignore
+
+        existingItem = next(
+            (
+                layer
+                for layer in self.subGroup.findLayers()
+                if layer.name() == self.layerName
+            ),
+            None,
+        )
+        if existingItem is not None:
+            self.subGroup.removeLayer(existingItem.layer())
+        self.subGroup.addLayer(self)  # type: ignore
+        self.layerAdded.emit(self.id())
+
+        # don't show legend initially
+        self.item.setExpanded(True)
+        self.item.setExpanded(False)

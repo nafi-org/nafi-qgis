@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from .attribute_burnt_areas import AttributeBurntAreas
 from .dissolve_burnt_areas import DissolveBurntAreas
 from .download_current_mapping import DownloadCurrentMapping

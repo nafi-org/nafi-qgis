@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from qgis.PyQt.QtCore import pyqtSignal, QObject, QUrl
 from qgis.PyQt.QtNetwork import QNetworkReply, QNetworkRequest, QSslSocket
 
@@ -6,13 +5,12 @@ from qgis.core import QgsBlockingNetworkRequest
 
 from .utils import connectionError, guiError, qgsDebug
 
-class NafiCapabilitiesReader(QObject):
 
+class NafiCapabilitiesReader(QObject):
     # emit this signal with the downloaded capabilities XML
     capabilitiesDownloaded = pyqtSignal(str)
 
     def __init__(self):
-        """Constructor."""
         super(QObject, self).__init__()
 
     def downloadCapabilities(self, wmsUrl):
@@ -29,7 +27,7 @@ class NafiCapabilitiesReader(QObject):
         # use a blocking request here
         blockingRequest = QgsBlockingNetworkRequest()
         result = blockingRequest.get(request)
-        if result == QgsBlockingNetworkRequest.NoError:
+        if result == QgsBlockingNetworkRequest.NoError:  # type: ignore
             reply = blockingRequest.reply()
             if reply.error() == QNetworkReply.NoError:
                 xml = bytes(reply.content()).decode()
@@ -38,4 +36,3 @@ class NafiCapabilitiesReader(QObject):
                 connectionError(reply.errorString())
         else:
             connectionError(blockingRequest.errorMessage())
-

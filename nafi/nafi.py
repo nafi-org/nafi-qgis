@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 /***************************************************************************
  Nafi
@@ -24,12 +23,14 @@
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
+
 # Initialize Qt resources from file resources.py
 from .resources_rc import *
 
 # Import the code for the DockWidget
 from .src.nafi_dockwidget import NafiDockWidget
 import os.path
+
 
 class Nafi:
     """QGIS Plugin Implementation."""
@@ -49,18 +50,15 @@ class Nafi:
         self.plugin_dir = os.path.dirname(__file__)
 
         # initialize locale
-        locale = QSettings().value('locale/userLocale')
+        locale = QSettings().value("locale/userLocale")
 
         # NAF-236 "QVariant object is not subscriptable" QGIS issue
         if not locale:
-            locale = 'en'
+            locale = "en"
         else:
             locale = locale[0:2]
 
-        locale_path = os.path.join(
-            self.plugin_dir,
-            'i18n',
-            'Nafi_{}.qm'.format(locale))
+        locale_path = os.path.join(self.plugin_dir, "i18n", "Nafi_{}.qm".format(locale))
 
         if os.path.exists(locale_path):
             self.translator = QTranslator()
@@ -69,16 +67,16 @@ class Nafi:
 
         # Declare instance attributes
         self.actions = []
-        self.menu = self.tr(u'&NAFI Fire Maps')
+        self.menu = self.tr("&NAFI Fire Maps")
         # TODO: We are going to let the user set this up in a future iteration
-        self.toolbar = self.iface.addToolBar(u'NAFI Fire Maps')
-        self.toolbar.setObjectName(u'NAFI Fire Maps')
+        self.toolbar = self.iface.addToolBar("NAFI Fire Maps")
+        self.toolbar.setObjectName("NAFI Fire Maps")
 
         self.pluginIsActive = False
         self.dockwidget = None
 
-
     # noinspection PyMethodMayBeStatic
+
     def tr(self, message):
         """Get the translation for a string using Qt translation API.
 
@@ -91,8 +89,7 @@ class Nafi:
         :rtype: QString
         """
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate('Nafi', message)
-
+        return QCoreApplication.translate("Nafi", message)
 
     def add_action(
         self,
@@ -104,7 +101,8 @@ class Nafi:
         add_to_toolbar=True,
         status_tip=None,
         whats_this=None,
-        parent=None):
+        parent=None,
+    ):
         """Add a toolbar icon to the toolbar.
 
         :param icon_path: Path to the icon for this action. Can be a resource
@@ -159,26 +157,24 @@ class Nafi:
             self.toolbar.addAction(action)
 
         if add_to_menu:
-            self.iface.addPluginToMenu(
-                self.menu,
-                action)
+            self.iface.addPluginToMenu(self.menu, action)
 
         self.actions.append(action)
 
         return action
 
-
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_path = ':/plugins/nafi/images/icon.png'
+        icon_path = ":/plugins/nafi/images/icon.png"
         self.add_action(
             icon_path,
-            text=self.tr(u'NAFI Fire Maps'),
+            text=self.tr("NAFI Fire Maps"),
             callback=self.run,
-            parent=self.iface.mainWindow())
+            parent=self.iface.mainWindow(),
+        )
 
-    #--------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
 
     def onClosePlugin(self):
         """Cleanup necessary items here when plugin dockwidget is closed"""
@@ -193,21 +189,18 @@ class Nafi:
 
         self.pluginIsActive = False
 
-
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
 
-        #print "** UNLOAD Nafi"
+        # print "** UNLOAD Nafi"
 
         for action in self.actions:
-            self.iface.removePluginMenu(
-                self.tr(u'&NAFI Fire Maps'),
-                action)
+            self.iface.removePluginMenu(self.tr("&NAFI Fire Maps"), action)
             self.iface.removeToolBarIcon(action)
         # remove the toolbar
         del self.toolbar
 
-    #--------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
 
     def run(self):
         """Run method that loads and starts the plugin"""
@@ -215,7 +208,7 @@ class Nafi:
         if not self.pluginIsActive:
             self.pluginIsActive = True
 
-            #print "** STARTING Nafi"
+            # print "** STARTING Nafi"
 
             # dockwidget may not exist if:
             #    first run of plugin

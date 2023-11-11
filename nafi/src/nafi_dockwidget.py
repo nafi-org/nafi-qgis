@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 /***************************************************************************
  NafiDockWidget
@@ -27,8 +26,15 @@ import webbrowser
 from urllib import parse
 
 from qgis.PyQt import QtGui, QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSignal, QRegExp, QSortFilterProxyModel, Qt, QModelIndex
-from qgis.PyQt.QtGui import QFont, QIcon, QPixmap, QStandardItem, QStandardItemModel 
+from qgis.PyQt.QtCore import (
+    pyqtSignal,
+    QRegExp,
+    QSize,
+    QSortFilterProxyModel,
+    Qt,
+    QModelIndex,
+)
+from qgis.PyQt.QtGui import QFont, QIcon, QPixmap, QStandardItem, QStandardItemModel
 from qgis.PyQt.QtWidgets import QApplication
 
 from qgis.core import Qgis, QgsRasterLayer, QgsProject
@@ -44,21 +50,21 @@ from .nafi_tree_view_model import NafiTreeViewModel
 from .utils import getNafiDataUrl, getNafiUrl, qgsDebug
 from .wms_item import WmsItem
 
+
 class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
     closingPlugin = pyqtSignal()
 
     def __init__(self, parent=None):
-        """Constructor."""
         super(NafiDockWidget, self).__init__(parent)
-        
+
         self.setupUi(self)
 
-        # set up QTreeView        
+        # set up QTreeView
         self.treeView.setHeaderHidden(True)
         self.treeView.setSortingEnabled(True)
         self.treeView.setFocusPolicy(Qt.NoFocus)
         self.treeView.pressed.connect(self.treeViewPressed)
-        
+
         # set up search signal
         self.lineEdit.textChanged.connect(self.searchTextChanged)
         self.searchText = ""
@@ -75,7 +81,7 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
         # set up base model
         self.treeViewModel = NafiTreeViewModel(getNafiUrl())
 
-        # set up proxy model for filtering        
+        # set up proxy model for filtering
         self.proxyModel = QSortFilterProxyModel(self.treeView)
         self.proxyModel.setSourceModel(self.treeViewModel)
         self.proxyModel.setRecursiveFilteringEnabled(True)
@@ -102,11 +108,13 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
         googStr = GoogleXyzItem("m")
         # ibraWms = IbraWmsItem()
         ozTopoWmts = OzTopoWmtsItem()
-        self.treeViewModel.loadWms(self.wmsUrl, wmsXml, additionalItems=[googSat, googHyb, googStr, ozTopoWmts])
+        self.treeViewModel.loadWms(
+            self.wmsUrl, wmsXml, additionalItems=[googSat, googHyb, googStr, ozTopoWmts]
+        )
 
         # set default sort and expansion
         self.proxyModel.sort(0, Qt.AscendingOrder)
-        self.expandTopLevel()        
+        self.expandTopLevel()
 
     def expandTopLevel(self):
         # expand the top level items
@@ -119,10 +127,12 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
 
         realIndex = self.proxyModel.mapToSource(index)
         modelNode = self.treeViewModel.itemFromIndex(realIndex)
-       
+
         # if we've got a layer and not a layer group, add to map
         if modelNode is not None:
-            if isinstance(modelNode, (GoogleXyzItem, IbraWmsItem, OzTopoWmtsItem, WmsItem)):
+            if isinstance(
+                modelNode, (GoogleXyzItem, IbraWmsItem, OzTopoWmtsItem, WmsItem)
+            ):
                 modelNode.addLayer()
 
     def searchTextChanged(self, text):
@@ -133,7 +143,7 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
             self.proxyModel.setFilterRegExp(regex)
             self.treeView.expandAll()
 
-        # update last search text state 
+        # update last search text state
         self.searchText = text
 
     def clearSearch(self):
@@ -142,13 +152,13 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
         self.treeView.collapseAll()
 
     def sizeHint(self):
-        return QtCore.QSize(150, 400)
+        return QSize(150, 400)
 
     def showAboutDialog(self):
         """Show an About … dialog."""
         aboutDialog = NafiAboutDialog()
         aboutDialog.exec_()
-    
+
     def closeEvent(self, event):
         """Handle plug-in close."""
         self.closingPlugin.emit()

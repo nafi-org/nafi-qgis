@@ -1,61 +1,58 @@
-# -*- coding: utf-8 -*-
-from typing import Union
-
-from os import PathLike
 from pathlib import Path
 
-from qgis.core import QgsLayerTreeLayer, QgsProject, QgsRasterLayer
+from qgis.core import QgsLayerTreeGroup, QgsLayerTreeLayer, QgsProject, QgsRasterLayer
 
-from ..utils import guiError
+from ntrrp.src.utils import guiError
+
+from .item import Item
 from .layer import Layer
-from .mapping import Mapping
 
 
 class CurrentMappingLayer(QgsRasterLayer, Layer):
     """Layer type for the current NAFI Hires mapping image."""
 
-    def __init__(self, mapping: Mapping, rasterFile: Union[str, PathLike]):
-        self.rasterPath = Path(rasterFile)        
-        QgsRasterLayer.__init__(self, self.rasterPath.as_posix(), f"{mapping.region} Current Mapping", "gdal")
-        
-        self._mapping = mapping
-        
+    def __init__(self, mapping: Item, rasterPath: Path):
+        self.rasterPath = Path(rasterPath)
+        QgsRasterLayer.__init__(
+            self,
+            self.rasterPath.as_posix(),
+            f"{mapping.regionName} Current Mapping",
+            "gdal",
+        )
+
+        self.mapping = mapping
+
     # Item interface
     @property
     def directory(self) -> Path:
         return self.mapping.directory
 
     @property
-    def layerItemName(self) -> str:
-        return f"{self.mapping.region} Current Mapping"
+    def regionName(self) -> str:
+        return self.mapping.regionName
 
     @property
-    def layerItem(self) -> QgsLayerTreeLayer:
+    def itemName(self) -> str:
+        return f"{self.mapping.regionName} Current Mapping"
+
+    @property
+    def item(self) -> QgsLayerTreeLayer:
         return QgsProject.instance().layerTreeRoot().findLayer(self.id())
 
-    # Layer interface
     @property
-    def mapping(self) -> Mapping:
-        return self._mapping
+    def groupName(self) -> str:
+        return self.mapping.itemName
 
-    @mapping.setter
-    def mapping(self, mapping: Mapping) -> None:
-        self._mapping = mapping
+    @property
+    def group(self) -> QgsLayerTreeGroup:
+        return self.mapping.item
 
     def addMapLayer(self) -> None:
         if self.isValid():
-            project = QgsProject.instance()
-            project.addMapLayer(self, False)
-            self.willBeDeleted.connect(
-                lambda: self.layerRemoved.emit(self.id()))
-            self.layerAdded.emit(self.id())
-            self.subGroupLayerItem.addLayer(self)
-
-            # don't show legend initially
-            self.layerItem.setExpanded(True)
-            self.layerItem.setExpanded(False)
+            Layer.addMapLayer(self)
         else:
-            error = (f"An error occurred adding the layer {self.layerItemName} to the map.\n"
-                     f"Check your QGIS WMS message log for details.")
+            error = (
+                f"An error occurred adding the layer {self.itemName} to the map.\n"
+                f"Check your QGIS logs for details."
+            )
             guiError(error)
-

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Form implementation generated from reading ui file 'ui\nafi_dockwidget_base.ui'
 #
 # Created by: PyQt5 UI code generator 5.11.3
@@ -7,6 +5,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_NafiDockWidgetBase(object):
     def setupUi(self, NafiDockWidgetBase):
@@ -17,7 +16,11 @@ class Ui_NafiDockWidgetBase(object):
         font.setWeight(75)
         NafiDockWidgetBase.setFont(font)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/plugins/nafi/images/icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(
+            QtGui.QPixmap(":/plugins/nafi/images/icon.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         NafiDockWidgetBase.setWindowIcon(icon)
         self.dockWidgetContents = QtWidgets.QWidget()
         self.dockWidgetContents.setObjectName("dockWidgetContents")
@@ -31,7 +34,9 @@ class Ui_NafiDockWidgetBase(object):
         self.lineEdit.setObjectName("lineEdit")
         self.gridLayout.addWidget(self.lineEdit, 0, 1, 1, 2)
         self.searchLabel = QtWidgets.QLabel(self.dockWidgetContents)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.searchLabel.sizePolicy().hasHeightForWidth())
@@ -42,45 +47,67 @@ class Ui_NafiDockWidgetBase(object):
         font.setBold(True)
         font.setWeight(75)
         self.searchLabel.setFont(font)
-        self.searchLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.searchLabel.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter
+        )
         self.searchLabel.setObjectName("searchLabel")
         self.gridLayout.addWidget(self.searchLabel, 0, 0, 1, 1)
         self.treeView = QtWidgets.QTreeView(self.dockWidgetContents)
         self.treeView.setObjectName("treeView")
         self.gridLayout.addWidget(self.treeView, 1, 0, 1, 4)
         self.clearSearchButton = QtWidgets.QPushButton(self.dockWidgetContents)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.clearSearchButton.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.clearSearchButton.sizePolicy().hasHeightForWidth()
+        )
         self.clearSearchButton.setSizePolicy(sizePolicy)
         self.clearSearchButton.setText("")
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/plugins/nafi/images/backspace.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(
+            QtGui.QPixmap(":/plugins/nafi/images/backspace.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.clearSearchButton.setIcon(icon1)
         self.clearSearchButton.setObjectName("clearSearchButton")
         self.gridLayout.addWidget(self.clearSearchButton, 0, 3, 1, 1)
         self.aboutButton = QtWidgets.QPushButton(self.dockWidgetContents)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.aboutButton.sizePolicy().hasHeightForWidth())
         self.aboutButton.setSizePolicy(sizePolicy)
         self.aboutButton.setText("")
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/plugins/nafi/images/info.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(
+            QtGui.QPixmap(":/plugins/nafi/images/info.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.aboutButton.setIcon(icon2)
         self.aboutButton.setObjectName("aboutButton")
         self.gridLayout.addWidget(self.aboutButton, 2, 3, 1, 1)
         self.dataButton = QtWidgets.QPushButton(self.dockWidgetContents)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.dataButton.sizePolicy().hasHeightForWidth())
         self.dataButton.setSizePolicy(sizePolicy)
         self.dataButton.setText("")
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/plugins/nafi/images/greenglobe.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon3.addPixmap(
+            QtGui.QPixmap(":/plugins/nafi/images/greenglobe.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.dataButton.setIcon(icon3)
         self.dataButton.setObjectName("dataButton")
         self.gridLayout.addWidget(self.dataButton, 2, 0, 1, 1)
@@ -91,11 +118,25 @@ class Ui_NafiDockWidgetBase(object):
 
     def retranslateUi(self, NafiDockWidgetBase):
         _translate = QtCore.QCoreApplication.translate
-        NafiDockWidgetBase.setToolTip(_translate("NafiDockWidgetBase", "NAFI Fire Maps"))
-        NafiDockWidgetBase.setWindowTitle(_translate("NafiDockWidgetBase", "NAFI Fire Maps"))
-        self.lineEdit.setPlaceholderText(_translate("NafiDockWidgetBase", "start typing layer title …"))
-        self.searchLabel.setText(_translate("NafiDockWidgetBase", "<html><head/><body><p>Search layers</p></body></html>"))
-        self.clearSearchButton.setToolTip(_translate("NafiDockWidgetBase", "Clear Search"))
+        NafiDockWidgetBase.setToolTip(
+            _translate("NafiDockWidgetBase", "NAFI Fire Maps")
+        )
+        NafiDockWidgetBase.setWindowTitle(
+            _translate("NafiDockWidgetBase", "NAFI Fire Maps")
+        )
+        self.lineEdit.setPlaceholderText(
+            _translate("NafiDockWidgetBase", "start typing layer title …")
+        )
+        self.searchLabel.setText(
+            _translate(
+                "NafiDockWidgetBase",
+                "<html><head/><body><p>Search layers</p></body></html>",
+            )
+        )
+        self.clearSearchButton.setToolTip(
+            _translate("NafiDockWidgetBase", "Clear Search")
+        )
         self.aboutButton.setToolTip(_translate("NafiDockWidgetBase", "About NAFI …"))
-        self.dataButton.setToolTip(_translate("NafiDockWidgetBase", "Download NAFI data …"))
-
+        self.dataButton.setToolTip(
+            _translate("NafiDockWidgetBase", "Download NAFI data …")
+        )

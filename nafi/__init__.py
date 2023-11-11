@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 /***************************************************************************
  Nafi
@@ -33,4 +32,5 @@ def classFactory(iface):  # pylint: disable=invalid-name
     """
     #
     from .nafi import Nafi
+
     return Nafi(iface)

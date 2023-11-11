@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 /***************************************************************************
  NTRRP
@@ -33,4 +32,5 @@ def classFactory(iface):  # pylint: disable=invalid-name
     """
     #
     from .ntrrp import Ntrrp
+
     return Ntrrp(iface)

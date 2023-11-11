@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import html
 import json
 import os
@@ -11,7 +10,7 @@ from tempfile import gettempdir
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsMessageLog, QgsProject
 
-NTRRP_REGIONS = ['Darwin', 'Katherine']
+NTRRP_REGIONS = ["Darwin", "Katherine"]
 
 NTRRP_WMS_URL = "https://test.firenorth.org.au/mapserver/bfnt/gwc/service/wms"
 NTRRP_WMTS_URL = "https://test.firenorth.org.au/mapserver/bfnt/gwc/service/wmts"
@@ -22,8 +21,7 @@ NTRRP_API_URL = "https://test.firenorth.org.au/bfnt/api"
 
 def qgsDebug(message, level=Qgis.Info):
     """Print a debug message."""
-    QgsMessageLog.logMessage(
-        message, tag="NAFI Burnt Areas Mapping", level=level)
+    QgsMessageLog.logMessage(message, tag="NAFI Burnt Areas Mapping", level=level)
 
 
 def guiInformation(message):
@@ -63,6 +61,7 @@ def deriveWorkingDirectory():
         return None
     return path.dirname(projectFilePath)
 
+
 def getSetting(setting, default=None):
     """Retrieve an NTRRP setting."""
     try:
@@ -74,7 +73,7 @@ def getSetting(setting, default=None):
         return default
 
 
-def getNtrrpWmsUrl():
+def getRemoteWorkspaceUrl():
     return getSetting("NTRRP_WMS_URL", NTRRP_WMS_URL)
 
 
@@ -123,13 +122,12 @@ def ensureTempDirectories():
 
 def getRandomFilename():
     """Get a random 8-character filename."""
-    return ''.join(random.choice(string.ascii_lowercase) for i in range(8))
+    return "".join(random.choice(string.ascii_lowercase) for i in range(8))
 
 
 def getTempDirectory():
     """Get a temporary download path."""
-    return path.normpath(
-        path.join(getDownloadDirectory(), getRandomFilename()))
+    return path.normpath(path.join(getDownloadDirectory(), getRandomFilename()))
 
 
 def getTempZipFilename():
@@ -141,16 +139,18 @@ def getTempZipFilename():
 
 def resolveStylePath(styleName):
     """Load a style file packaged with the plug-in."""
-    relative = f"styles\\{styleName}.qml"
-    return resolvePluginPath(relative)
+    styleDir = resolvePluginPath("styles")
+    return path.join(styleDir, f"{styleName}.qml")
 
 
 def setDefaultProjectCrs(project):
     """Set the Project CRS to the default value of GDA94 geographic."""
     ausAlbers = QgsCoordinateReferenceSystem("EPSG:3577")
-    warning = (f"A default coordinate system of "
-               f"{ausAlbers.userFriendlyIdentifier()} has been applied to interact with "
-               f"NAFI map services.")
+    warning = (
+        f"A default coordinate system of "
+        f"{ausAlbers.userFriendlyIdentifier()} has been applied to interact with "
+        f"NAFI map services."
+    )
 
     guiWarning(warning)
     project.setCrs(ausAlbers)
@@ -158,16 +158,20 @@ def setDefaultProjectCrs(project):
 
 def connectionError(logMessage):
     """Raise a connection error."""
-    error = (f"Error connecting to NAFI services!\n"
-             f"Check the QGIS NAFI Burnt Areas Mapping message log for details.")
+    error = (
+        f"Error connecting to NAFI services!\n"
+        f"Check the QGIS NAFI Burnt Areas Mapping message log for details."
+    )
     # guiError(error)
     qgsDebug(logMessage, Qgis.Critical)
 
 
 def capabilitiesError(errorString, capsXml):
     """Raise an error parsing the WMS capabilities file."""
-    error = (f"Error parsing the retrieved NAFI WMS capabilities!\n"
-             f"Check the QGIS NAFI Burnt Areas Mapping message log for details.")
+    error = (
+        f"Error parsing the retrieved NAFI WMS capabilities!\n"
+        f"Check the QGIS NAFI Burnt Areas Mapping message log for details."
+    )
     # guiError(error)
     logMessage = f"NAFI WMS capabilities XML parse failure: {errorString}"
     qgsDebug(logMessage, Qgis.Critical)

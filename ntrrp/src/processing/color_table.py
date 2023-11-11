@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from pathlib import Path
 from osgeo import gdal
 
@@ -9,7 +8,9 @@ def getColorTable(gdalDatasetPath):
 
     dataset = gdal.Open(gdalDatasetPath.as_posix(), 1)
 
-    assert dataset.RasterCount == 1, "Input raster for colour table must have 1 component"
+    assert (
+        dataset.RasterCount == 1
+    ), "Input raster for colour table must have 1 component"
 
     band = dataset.GetRasterBand(1)
     table = band.GetColorTable()
@@ -26,7 +27,9 @@ def addColorTable(gdalDatasetPath):
 
     dataset = gdal.Open(gdalDatasetPath.as_posix(), 1)
 
-    assert dataset.RasterCount == 1, "Input raster for colour table must have 1 component"
+    assert (
+        dataset.RasterCount == 1
+    ), "Input raster for colour table must have 1 component"
 
     band = dataset.GetRasterBand(1)
 
@@ -302,5 +305,5 @@ FIRESCAR_COLOR_TABLE = [
     (50, 0, 50, 255),
     (50, 0, 50, 255),
     (50, 0, 50, 255),
-    (50, 0, 50, 0)
+    (50, 0, 50, 0),
 ]

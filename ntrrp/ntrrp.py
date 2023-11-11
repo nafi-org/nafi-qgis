@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 /***************************************************************************
  Ntrrp
@@ -32,8 +31,8 @@ from qgis.core import QgsApplication
 from .resources_rc import *
 
 # import the code for the DockWidget and provided algorithms
-from .src.ntrrp_dockwidget import NtrrpDockWidget
-from .src.ntrrp_provider import NtrrpProvider
+from ntrrp.src.ui import DockWidget
+from ntrrp.src.provider import Provider
 
 
 class Ntrrp:
@@ -54,18 +53,17 @@ class Ntrrp:
         self.plugin_dir = os.path.dirname(__file__)
 
         # initialize locale
-        locale = QSettings().value('locale/userLocale')
+        locale = QSettings().value("locale/userLocale")
 
         # NAF-236 "QVariant object is not subscriptable" QGIS issue
         if not locale:
-            locale = 'en'
+            locale = "en"
         else:
             locale = locale[0:2]
 
         locale_path = os.path.join(
-            self.plugin_dir,
-            'i18n',
-            'Ntrrp_{}.qm'.format(locale))
+            self.plugin_dir, "i18n", "Ntrrp_{}.qm".format(locale)
+        )
 
         if os.path.exists(locale_path):
             self.translator = QTranslator()
@@ -77,9 +75,9 @@ class Ntrrp:
 
         # set up user interface items
         self.actions = []
-        self.menu = self.tr(u'&NAFI Burnt Areas Mapping')
-        self.toolbar = self.iface.addToolBar(u'NAFI Burnt Areas Mapping')
-        self.toolbar.setObjectName(u'NAFI Burnt Areas Mapping')
+        self.menu = self.tr("&NAFI Burnt Areas Mapping")
+        self.toolbar = self.iface.addToolBar("NAFI Burnt Areas Mapping")
+        self.toolbar.setObjectName("NAFI Burnt Areas Mapping")
 
         self.pluginIsActive = False
         self.dockwidget = None
@@ -89,24 +87,25 @@ class Ntrrp:
     def tr(self, message):
         """Get the translation for a string using Qt translation API."""
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate('Ntrrp', message)
+        return QCoreApplication.translate("Ntrrp", message)
 
     def initProcessing(self):
         """Init Processing provider for QGIS >= 3.8."""
-        self.provider = NtrrpProvider()
+        self.provider = Provider()
         QgsApplication.processingRegistry().addProvider(self.provider)
 
     def addAction(
-            self,
-            icon_path,
-            text,
-            callback,
-            enabled_flag=True,
-            add_to_menu=True,
-            add_to_toolbar=True,
-            status_tip=None,
-            whats_this=None,
-            parent=None):
+        self,
+        icon_path,
+        text,
+        callback,
+        enabled_flag=True,
+        add_to_menu=True,
+        add_to_toolbar=True,
+        status_tip=None,
+        whats_this=None,
+        parent=None,
+    ):
         """Add a toolbar icon to the toolbar.
 
         :param icon_path: Path to the icon for this action. Can be a resource
@@ -161,9 +160,7 @@ class Ntrrp:
             self.toolbar.addAction(action)
 
         if add_to_menu:
-            self.iface.addPluginToMenu(
-                self.menu,
-                action)
+            self.iface.addPluginToMenu(self.menu, action)
 
         self.actions.append(action)
 
@@ -173,12 +170,13 @@ class Ntrrp:
         """Create the the objects inside the QGIS GUI."""
         self.initProcessing()
 
-        icon_path = ':/plugins/ntrrp/images/icon.png'
+        icon_path = ":/plugins/ntrrp/images/icon.png"
         self.addAction(
             icon_path,
-            text=self.tr(u'NAFI Burnt Areas Mapping'),
+            text=self.tr("NAFI Burnt Areas Mapping"),
             callback=self.run,
-            parent=self.iface.mainWindow())
+            parent=self.iface.mainWindow(),
+        )
 
     def onClosePlugin(self):
         """Cleanup necessary items here when plugin dockwidget is closed"""
@@ -200,9 +198,7 @@ class Ntrrp:
         QgsApplication.processingRegistry().removeProvider(self.provider)
 
         for action in self.actions:
-            self.iface.removePluginMenu(
-                self.tr(u'&NAFI Burnt Areas Mapping'),
-                action)
+            self.iface.removePluginMenu(self.tr("&NAFI Burnt Areas Mapping"), action)
             self.iface.removeToolBarIcon(action)
 
         # remove the toolbar
@@ -220,7 +216,7 @@ class Ntrrp:
             #    removed on close (see self.onClosePlugin method)
             if self.dockwidget is None:
                 # Create the dockwidget (after translation) and keep reference
-                self.dockwidget = NtrrpDockWidget()
+                self.dockwidget = DockWidget()
 
             # connect to provide cleanup on closing of dockwidget
             self.dockwidget.closingPlugin.connect(self.onClosePlugin)

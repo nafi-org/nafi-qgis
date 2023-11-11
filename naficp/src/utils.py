@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import json
 import os
 import os.path as path
@@ -13,8 +12,7 @@ NAFICP_CONFIG_FILENAME = "naficp.json"
 
 def qgsDebug(message, level=Qgis.Info):
     """Print a debug message."""
-    QgsMessageLog.logMessage(
-        message, tag=NAFICP_NAME, level=level)
+    QgsMessageLog.logMessage(message, tag=NAFICP_NAME, level=level)
 
 
 def guiInformation(message):
@@ -50,6 +48,7 @@ def getSetting(setting, default=None):
     except:
         qgsDebug(f"Error reading {NAFICP_NAME} settings file.")
         return default
+
 
 def getConfiguredHotKey():
     """Get the configured hot key."""
