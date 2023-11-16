@@ -12,7 +12,7 @@ from ntrrp.src.models import (
     Region,
     WorkspaceMetadata,
 )
-from ntrrp.src.services import WorkspaceMetadataService
+from ntrrp.src.services import MappingService, WorkspaceMetadataService
 from ntrrp.src.utils import deriveWorkingDirectory, getRemoteWorkspaceUrl
 
 from .workspace_layer_item import WorkspaceLayerItem
@@ -127,6 +127,10 @@ class DockWidget(QDockWidget, FORM_CLASS):
             return
 
         self.project = Project(projectDirectory, workspaceMetadata)
+
+        mappingService = MappingService()
+        for mapping in self.project.mappings:
+            mappingService.addMappingLayers(mapping)
 
         self.regionComboBox.clear()
         self.regionComboBox.addItems(self.project.regionNames)
