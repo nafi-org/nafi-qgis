@@ -1,7 +1,7 @@
 from typing import Any
 
 from pathlib import Path
-from nafi.src.utils import guiError
+from ntrrp.src.utils import guiError
 
 from qgis.PyQt.QtCore import QObject, pyqtSignal
 from qgis.PyQt.QtWidgets import QAction
