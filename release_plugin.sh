@@ -28,11 +28,10 @@ cd deployment
 
 # remove any bare image files—these are encoded in resources_rc anyway
 cp ${plugin_name}/images/icon.png ${plugin_name}/icon.png
-rm -rf ${plugin_name}/images
+# rm -rf ${plugin_name}/images
 
 
 # zip up the ${plugin_name} directory only into a datestamped archive
-zipCmd="7z"
 if [ ${osName} == "Mac" ]; then
     zip -rq "../${plugin_name}-$(date +'%Y%m%d').zip" ${plugin_name}
 else
