@@ -3,6 +3,7 @@ import html
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.core import Qgis, QgsMessageLog, QgsCoordinateReferenceSystem
 
+# TODO apply tiled=true to WMS URLs
 IBRA_URL = "http://www.environment.gov.au/mapping/services/ogc_services/IBRA7_Subregions/MapServer/WMSServer"
 NAFI_DATA_URL = "https://firenorth.org.au/nafi3/views/data/Download.html"
 NAFI_URL = "https://www.firenorth.org.au/public"

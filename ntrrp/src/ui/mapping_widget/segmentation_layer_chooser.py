@@ -25,7 +25,7 @@ class SegmentationLayerChooser(QWidget, FORM_CLASS):
         self.setupUi(self)
 
         self._mapping: Mapping = None
-        self.layerService = LayerService()
+        self._layerService = LayerService()
 
         self.segmentationLayerComboBox.setAllowEmptyLayer(False)
 
@@ -35,14 +35,8 @@ class SegmentationLayerChooser(QWidget, FORM_CLASS):
         )
 
         # Set up active layer handler
-        self.layerService.activeMapLayerChanged.connect(self.activeMapLayerChanged)
-        self.layerService.layersChanged.connect(self.updateExceptedLayersList)
-
-    @property
-    def segmentationLayerIds(self) -> list[str]:
-        if self._mapping is None:
-            return []
-        return [layer.id() for layer in self._mapping.segmentationLayers]
+        self._layerService.activeMapLayerChanged.connect(self.activeMapLayerChanged)
+        self._layerService.layersChanged.connect(self.updateComboBox)
 
     @property
     def mapping(self) -> Mapping:
@@ -51,29 +45,28 @@ class SegmentationLayerChooser(QWidget, FORM_CLASS):
     @mapping.setter
     def mapping(self, mapping: Mapping) -> None:
         self._mapping = mapping
+        self.updateComboBox()
 
+    def _segmentationLayerIds(self) -> list[str]:
+        return [l.id() for l in self._mapping.segmentationLayers]
+
+    def updateComboBox(self) -> None:
         if self._mapping is None:
             self.segmentationLayerComboBox.setDisabled(True)
             return
 
-        self.segmentationLayerComboBox.setEnabled(True)
-        self.updateExceptedLayersList()
-
-    @property
-    def exceptedLayers(self) -> list[QgsMapLayer]:
-        return self.layerService.layersBy(
-            lambda layer: layer.id() not in self.segmentationLayerIds
+        exceptedLayers: list[QgsMapLayer] = self._layerService.layersBy(
+            lambda l: l.id() not in self._segmentationLayerIds()
         )
+        self.segmentationLayerComboBox.setExceptedLayerList(exceptedLayers)
+        self.segmentationLayerComboBox.setEnabled(True)
 
-    def updateExceptedLayersList(self, _: list[QgsMapLayer] = None) -> None:
-        self.segmentationLayerComboBox.setExceptedLayerList(self.exceptedLayers)
-
-    def activeMapLayerChanged(self, layer: Optional[QgsMapLayer]) -> None:
-        if layer is None:
+    def activeMapLayerChanged(self, activeLayer: Optional[QgsMapLayer]) -> None:
+        if activeLayer is None or self._mapping is None:
             return
 
-        if layer.id() in self.segmentationLayerIds:
-            self.segmentationLayerComboBox.setLayer(layer)
+        if activeLayer.id() in self._segmentationLayerIds():
+            self.segmentationLayerComboBox.setLayer(activeLayer)
 
     def segmentationLayerComboBoxChanged(
         self, layer: Optional[SegmentationLayer]
@@ -81,7 +74,7 @@ class SegmentationLayerChooser(QWidget, FORM_CLASS):
         if layer is None:
             return
 
-        if layer.id() in self.segmentationLayerIds:
+        if layer.id() in self._segmentationLayerIds:
             self.mapping.currentSegmentationLayer = layer
         else:
             self.segmentationLayerComboBox.setLayer(None)

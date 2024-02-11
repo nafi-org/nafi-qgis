@@ -37,7 +37,7 @@ class DownloadSegmentationData(QgsProcessingAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterFolderDestination(
-                "SegmentationDataDirectory",
+                "SegmentationDirectory",
                 "Segmentation data download directory",
                 defaultValue=None,
             )
@@ -47,10 +47,10 @@ class DownloadSegmentationData(QgsProcessingAlgorithm):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
         # overall progress through the model
         feedback = QgsProcessingMultiStepFeedback(1, model_feedback)
-        results: dict[str, Any] = {"SegmentationDataDirectory": None}
+        results: dict[str, Any] = {"SegmentationDirectory": None}
 
         # Ensure segmentation data directory exists
-        segmentationDirectory = Path(parameters["SegmentationDataDirectory"])
+        segmentationDirectory = Path(parameters["SegmentationDirectory"])
         ensureDirectory(segmentationDirectory)
 
         # Ensure all temp directories exist
@@ -87,7 +87,7 @@ class DownloadSegmentationData(QgsProcessingAlgorithm):
                 # directory (may overwrite stuff)
                 copytree(unzipLocation, segmentationDirectory, dirs_exist_ok=True)
 
-            results = {"SegmentationDataDirectory": segmentationDirectory}
+            results = {"SegmentationDirectory": segmentationDirectory}
 
         return results
 

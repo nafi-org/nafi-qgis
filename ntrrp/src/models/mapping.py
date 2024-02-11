@@ -3,7 +3,7 @@ import re
 from datetime import datetime
 from pathlib import Path
 
-from qgis.core import QgsMapLayer
+from qgis.core import QgsMapLayer, QgsProject
 
 from .current_mapping_layer import CurrentMappingLayer
 from .item import Item
@@ -26,10 +26,10 @@ class Mapping(Item):
         self.mappingDate: datetime = datetime(
             int(match.group(1)), int(match.group(2)), int(match.group(3))
         )
-        self.segmentationLayers: list[SegmentationLayer] = []
-        self.workingLayer: WorkingLayer = None
-        self.currentSegmentationLayer: SegmentationLayer = None
-        self.currentMappingLayer: CurrentMappingLayer = None
+        self._segmentationLayerIds: list[str] = []
+        self._workingLayerId: WorkingLayer = None
+        self._currentSegmentationLayerId: SegmentationLayer = None
+        self._currentMappingLayerId: CurrentMappingLayer = None
 
     @property
     def directory(self) -> Path:
@@ -83,4 +83,58 @@ class Mapping(Item):
                 if segmentationLayer.id() == mapLayer.id()
             ),
             None,
+        )
+
+    @classmethod
+    def _lookup(self, id: str) -> QgsMapLayer:
+        """Look up a layer by its ID."""
+        return None if id is None else QgsProject.instance().mapLayer(id)
+
+    @classmethod
+    def _lookupMany(self, ids: list[str]) -> list[QgsMapLayer]:
+        """Look up many layers by their IDs."""
+        return [self._lookup(id) for id in ids if self._lookup(id) is not None]
+
+    @property
+    def segmentationLayers(self) -> list[SegmentationLayer]:
+        """Return a list of segmentation layers."""
+        return self._lookupMany(self._segmentationLayerIds)
+
+    @segmentationLayers.setter
+    def segmentationLayers(self, segmentationLayers: list[SegmentationLayer]) -> None:
+        """Set the segmentation layers."""
+        self._segmentationLayerIds = [l.id() for l in segmentationLayers if l]
+
+    @property
+    def workingLayer(self) -> WorkingLayer:
+        """Return the working layer."""
+        return self._lookup(self._workingLayerId)
+
+    @workingLayer.setter
+    def workingLayer(self, workingLayer: WorkingLayer) -> None:
+        """Set the working layer."""
+        self._workingLayerId = workingLayer.id() if workingLayer else None
+
+    @property
+    def currentSegmentationLayer(self) -> SegmentationLayer:
+        """Return the current segmentation layer."""
+        return self._lookup(self._currentSegmentationLayerId)
+
+    @currentSegmentationLayer.setter
+    def currentSegmentationLayer(self, currentSegmentationLayer: SegmentationLayer):
+        """Set the current segmentation layer."""
+        self._currentSegmentationLayerId = (
+            currentSegmentationLayer.id() if currentSegmentationLayer else None
+        )
+
+    @property
+    def currentMappingLayer(self) -> CurrentMappingLayer:
+        """Return the current mapping layer."""
+        return self._lookup(self._currentMappingLayerId)
+
+    @currentMappingLayer.setter
+    def currentMappingLayer(self, currentMappingLayer: CurrentMappingLayer):
+        """Set the current mapping layer."""
+        self._currentMappingLayerId = (
+            currentMappingLayer.id() if currentMappingLayer else None
         )

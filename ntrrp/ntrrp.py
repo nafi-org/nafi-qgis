@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 import os.path
 
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt

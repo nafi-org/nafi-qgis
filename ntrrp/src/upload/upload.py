@@ -13,7 +13,6 @@ from zipfile import BadZipFile
 
 
 class InitializationException(Exception):
-
     """
     Exception raised when there is a error during a script initialization.
 
@@ -33,7 +32,6 @@ class InitializationException(Exception):
 
 
 class ProcessingException(Exception):
-
     """
     Exception raised when there is a metric processing error.
 

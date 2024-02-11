@@ -5,5 +5,5 @@
   "NTRRP_DATA_URL": "https://firenorth.org.au/hires/bfnt/downloads",
   "NTRRP_UPLOAD_URL": "https://firenorth.org.au/hires/bfnt/upload.php",
   "NTRRP_API_URL": "https://firenorth.org.au/hires/bfnt/api/",
-  "NTRRP_DO_FULL_SEGMENTATION_DOWNLOAD": true
+  "NTRRP_DO_FULL_SEGMENTATION_DOWNLOAD": false
 }

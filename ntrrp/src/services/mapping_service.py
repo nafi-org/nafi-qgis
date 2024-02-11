@@ -21,6 +21,7 @@ from ntrrp.src.utils import (
     doFullSegmentationDownload,
     deriveWorkingDirectory,
     ensureDirectory,
+    getDownloadDirectory,
     qgsDebug,
 )
 
@@ -69,13 +70,16 @@ class MappingService(QObject):
             if deriveWorkingDirectory() is None:
                 return None
 
-            params = {"Region": NTRRP_REGIONS.index(self.region)}
+            params = {
+                "Region": NTRRP_REGIONS.index(mapping.region.regionName),
+                "SegmentationDirectory": mapping.segmentationDirectory.as_posix(),
+            }
             dialog = processing.createAlgorithmDialog(
                 "BurntAreas:DownloadSegmentationData", params
             )
             dialog.algorithmFinished.connect(
                 lambda _: self.addSegmentationLayers(
-                    mapping, dialog.results()["SegmentationDataDirectory"]
+                    mapping, dialog.results()["SegmentationDirectory"]
                 )
             )
             for signal in [
