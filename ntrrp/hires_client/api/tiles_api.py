@@ -84,7 +84,7 @@ class TilesApi(object):
             },
             api_client=api_client,
         )
-        self.get_tile_path_v1_tiles_path_head_endpoint = _Endpoint(
+        self.head_tile_path_v1_tiles_path_head_endpoint = _Endpoint(
             settings={
                 "response_type": (
                     bool,
@@ -99,7 +99,7 @@ class TilesApi(object):
                 ),
                 "auth": [],
                 "endpoint_path": "/v1/tiles/{path}",
-                "operation_id": "get_tile_path_v1_tiles_path_head",
+                "operation_id": "head_tile_path_v1_tiles_path_head",
                 "http_method": "HEAD",
                 "servers": None,
             },
@@ -194,13 +194,13 @@ class TilesApi(object):
             **kwargs
         )
 
-    def get_tile_path_v1_tiles_path_head(self, path, **kwargs):
-        """Get Tile Path  # noqa: E501
+    def head_tile_path_v1_tiles_path_head(self, path, **kwargs):
+        """Head Tile Path  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
 
-        >>> thread = api.get_tile_path_v1_tiles_path_head(path, async_req=True)
+        >>> thread = api.head_tile_path_v1_tiles_path_head(path, async_req=True)
         >>> result = thread.get()
 
         Args:
@@ -249,6 +249,6 @@ class TilesApi(object):
         kwargs["_content_type"] = kwargs.get("_content_type")
         kwargs["_host_index"] = kwargs.get("_host_index")
         kwargs["path"] = path
-        return self.get_tile_path_v1_tiles_path_head_endpoint.call_with_http_info(
+        return self.head_tile_path_v1_tiles_path_head_endpoint.call_with_http_info(
             **kwargs
         )

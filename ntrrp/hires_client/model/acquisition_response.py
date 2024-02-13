@@ -127,14 +127,7 @@ class AcquisitionResponse(ModelNormal):
     @classmethod
     @convert_js_args_to_python_args
     def _from_openapi_data(
-        cls,
-        uuid,
-        date,
-        sentinel2_tiles,
-        natural_colour_dataset,
-        mirbi_dataset,
-        *args,
-        **kwargs,
+        cls, uuid, date, sentinel2_tiles, *args, **kwargs
     ):  # noqa: E501
         """AcquisitionResponse - a model defined in OpenAPI
 
@@ -142,8 +135,6 @@ class AcquisitionResponse(ModelNormal):
             uuid (str):
             date (datetime):
             sentinel2_tiles ([Sentinel2TileResponse]):
-            natural_colour_dataset (NaturalColourDatasetResponse):
-            mirbi_dataset (MirbiDatasetResponse):
 
         Keyword Args:
             _check_type (bool): if True, values for parameters in openapi_types
@@ -176,6 +167,8 @@ class AcquisitionResponse(ModelNormal):
                                 Animal class but this time we won't travel
                                 through its discriminator because we passed in
                                 _visited_composed_classes = (Animal,)
+            natural_colour_dataset (NaturalColourDatasetResponse): [optional]  # noqa: E501
+            mirbi_dataset (MirbiDatasetResponse): [optional]  # noqa: E501
         """
 
         _check_type = kwargs.pop("_check_type", True)
@@ -207,8 +200,6 @@ class AcquisitionResponse(ModelNormal):
         self.uuid = uuid
         self.date = date
         self.sentinel2_tiles = sentinel2_tiles
-        self.natural_colour_dataset = natural_colour_dataset
-        self.mirbi_dataset = mirbi_dataset
         for var_name, var_value in kwargs.items():
             if (
                 var_name not in self.attribute_map
@@ -233,24 +224,13 @@ class AcquisitionResponse(ModelNormal):
     )
 
     @convert_js_args_to_python_args
-    def __init__(
-        self,
-        uuid,
-        date,
-        sentinel2_tiles,
-        natural_colour_dataset,
-        mirbi_dataset,
-        *args,
-        **kwargs,
-    ):  # noqa: E501
+    def __init__(self, uuid, date, sentinel2_tiles, *args, **kwargs):  # noqa: E501
         """AcquisitionResponse - a model defined in OpenAPI
 
         Args:
             uuid (str):
             date (datetime):
             sentinel2_tiles ([Sentinel2TileResponse]):
-            natural_colour_dataset (NaturalColourDatasetResponse):
-            mirbi_dataset (MirbiDatasetResponse):
 
         Keyword Args:
             _check_type (bool): if True, values for parameters in openapi_types
@@ -283,6 +263,8 @@ class AcquisitionResponse(ModelNormal):
                                 Animal class but this time we won't travel
                                 through its discriminator because we passed in
                                 _visited_composed_classes = (Animal,)
+            natural_colour_dataset (NaturalColourDatasetResponse): [optional]  # noqa: E501
+            mirbi_dataset (MirbiDatasetResponse): [optional]  # noqa: E501
         """
 
         _check_type = kwargs.pop("_check_type", True)
@@ -312,8 +294,6 @@ class AcquisitionResponse(ModelNormal):
         self.uuid = uuid
         self.date = date
         self.sentinel2_tiles = sentinel2_tiles
-        self.natural_colour_dataset = natural_colour_dataset
-        self.mirbi_dataset = mirbi_dataset
         for var_name, var_value in kwargs.items():
             if (
                 var_name not in self.attribute_map
