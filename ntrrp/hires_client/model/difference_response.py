@@ -30,13 +30,11 @@ from ntrrp.hires_client.exceptions import ApiAttributeError
 
 def lazy_import():
     from ntrrp.hires_client.model.acquisition_response import AcquisitionResponse
-    from ntrrp.hires_client.model.dmirbi_dataset_response import DmirbiDatasetResponse
     from ntrrp.hires_client.model.segmentation_dataset_response import (
         SegmentationDatasetResponse,
     )
 
     globals()["AcquisitionResponse"] = AcquisitionResponse
-    globals()["DmirbiDatasetResponse"] = DmirbiDatasetResponse
     globals()["SegmentationDatasetResponse"] = SegmentationDatasetResponse
 
 
@@ -108,8 +106,28 @@ class DifferenceResponse(ModelNormal):
             "difference_code": (int,),  # noqa: E501
             "segmentation_datasets": ([SegmentationDatasetResponse],),  # noqa: E501
             "acquisition": (AcquisitionResponse,),  # noqa: E501
-            "difference_acquisition": (AcquisitionResponse,),  # noqa: E501
-            "dmirbi_dataset": (DmirbiDatasetResponse,),  # noqa: E501
+            "difference_acquisition": (
+                bool,
+                date,
+                datetime,
+                dict,
+                float,
+                int,
+                list,
+                str,
+                none_type,
+            ),  # noqa: E501
+            "dmirbi_dataset": (
+                bool,
+                date,
+                datetime,
+                dict,
+                float,
+                int,
+                list,
+                str,
+                none_type,
+            ),  # noqa: E501
         }
 
     @cached_property
@@ -143,6 +161,8 @@ class DifferenceResponse(ModelNormal):
         difference_code,
         segmentation_datasets,
         acquisition,
+        difference_acquisition,
+        dmirbi_dataset,
         *args,
         **kwargs,
     ):  # noqa: E501
@@ -156,6 +176,8 @@ class DifferenceResponse(ModelNormal):
             difference_code (int):
             segmentation_datasets ([SegmentationDatasetResponse]):
             acquisition (AcquisitionResponse):
+            difference_acquisition (bool, date, datetime, dict, float, int, list, str, none_type):
+            dmirbi_dataset (bool, date, datetime, dict, float, int, list, str, none_type):
 
         Keyword Args:
             _check_type (bool): if True, values for parameters in openapi_types
@@ -188,8 +210,6 @@ class DifferenceResponse(ModelNormal):
                                 Animal class but this time we won't travel
                                 through its discriminator because we passed in
                                 _visited_composed_classes = (Animal,)
-            difference_acquisition (AcquisitionResponse): [optional]  # noqa: E501
-            dmirbi_dataset (DmirbiDatasetResponse): [optional]  # noqa: E501
         """
 
         _check_type = kwargs.pop("_check_type", True)
@@ -225,6 +245,8 @@ class DifferenceResponse(ModelNormal):
         self.difference_code = difference_code
         self.segmentation_datasets = segmentation_datasets
         self.acquisition = acquisition
+        self.difference_acquisition = difference_acquisition
+        self.dmirbi_dataset = dmirbi_dataset
         for var_name, var_value in kwargs.items():
             if (
                 var_name not in self.attribute_map
@@ -258,6 +280,8 @@ class DifferenceResponse(ModelNormal):
         difference_code,
         segmentation_datasets,
         acquisition,
+        difference_acquisition,
+        dmirbi_dataset,
         *args,
         **kwargs,
     ):  # noqa: E501
@@ -271,6 +295,8 @@ class DifferenceResponse(ModelNormal):
             difference_code (int):
             segmentation_datasets ([SegmentationDatasetResponse]):
             acquisition (AcquisitionResponse):
+            difference_acquisition (bool, date, datetime, dict, float, int, list, str, none_type):
+            dmirbi_dataset (bool, date, datetime, dict, float, int, list, str, none_type):
 
         Keyword Args:
             _check_type (bool): if True, values for parameters in openapi_types
@@ -303,8 +329,6 @@ class DifferenceResponse(ModelNormal):
                                 Animal class but this time we won't travel
                                 through its discriminator because we passed in
                                 _visited_composed_classes = (Animal,)
-            difference_acquisition (AcquisitionResponse): [optional]  # noqa: E501
-            dmirbi_dataset (DmirbiDatasetResponse): [optional]  # noqa: E501
         """
 
         _check_type = kwargs.pop("_check_type", True)
@@ -338,6 +362,8 @@ class DifferenceResponse(ModelNormal):
         self.difference_code = difference_code
         self.segmentation_datasets = segmentation_datasets
         self.acquisition = acquisition
+        self.difference_acquisition = difference_acquisition
+        self.dmirbi_dataset = dmirbi_dataset
         for var_name, var_value in kwargs.items():
             if (
                 var_name not in self.attribute_map

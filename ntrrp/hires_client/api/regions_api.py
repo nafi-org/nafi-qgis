@@ -68,7 +68,17 @@ class RegionsApi(object):
         )
         self.get_region_by_name_v1_regions_region_name_get_endpoint = _Endpoint(
             settings={
-                "response_type": (RegionResponse,),
+                "response_type": (
+                    bool,
+                    date,
+                    datetime,
+                    dict,
+                    float,
+                    int,
+                    list,
+                    str,
+                    none_type,
+                ),
                 "auth": [],
                 "endpoint_path": "/v1/regions/{region_name}",
                 "operation_id": "get_region_by_name_v1_regions_region_name_get",
@@ -204,7 +214,7 @@ class RegionsApi(object):
             async_req (bool): execute request asynchronously
 
         Returns:
-            RegionResponse
+            bool, date, datetime, dict, float, int, list, str, none_type
                 If the method is called asynchronously, returns the request
                 thread.
         """

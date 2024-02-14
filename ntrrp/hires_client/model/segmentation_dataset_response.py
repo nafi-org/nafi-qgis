@@ -92,6 +92,33 @@ class SegmentationDatasetResponse(ModelNormal):
             "difference_date": (datetime,),  # noqa: E501
             "code": (int,),  # noqa: E501
             "difference_code": (int,),  # noqa: E501
+            "ingested": (bool,),  # noqa: E501
+            "published": (bool,),  # noqa: E501
+            "subarea": (int,),  # noqa: E501
+            "threshold": (int,),  # noqa: E501
+            "url": (
+                bool,
+                date,
+                datetime,
+                dict,
+                float,
+                int,
+                list,
+                str,
+                none_type,
+            ),  # noqa: E501
+            "boundary": (
+                bool,
+                date,
+                datetime,
+                dict,
+                float,
+                int,
+                list,
+                str,
+                none_type,
+            ),  # noqa: E501
+            "name": (str,),  # noqa: E501
         }
 
     @cached_property
@@ -104,16 +131,39 @@ class SegmentationDatasetResponse(ModelNormal):
         "difference_date": "difference_date",  # noqa: E501
         "code": "code",  # noqa: E501
         "difference_code": "difference_code",  # noqa: E501
+        "ingested": "ingested",  # noqa: E501
+        "published": "published",  # noqa: E501
+        "subarea": "subarea",  # noqa: E501
+        "threshold": "threshold",  # noqa: E501
+        "url": "url",  # noqa: E501
+        "boundary": "boundary",  # noqa: E501
+        "name": "name",  # noqa: E501
     }
 
-    read_only_vars = {}
+    read_only_vars = {
+        "name",  # noqa: E501
+    }
 
     _composed_schemas = {}
 
     @classmethod
     @convert_js_args_to_python_args
     def _from_openapi_data(
-        cls, uuid, date, difference_date, code, difference_code, *args, **kwargs
+        cls,
+        uuid,
+        date,
+        difference_date,
+        code,
+        difference_code,
+        ingested,
+        published,
+        subarea,
+        threshold,
+        url,
+        boundary,
+        name,
+        *args,
+        **kwargs,
     ):  # noqa: E501
         """SegmentationDatasetResponse - a model defined in OpenAPI
 
@@ -123,6 +173,13 @@ class SegmentationDatasetResponse(ModelNormal):
             difference_date (datetime):
             code (int):
             difference_code (int):
+            ingested (bool):
+            published (bool):
+            subarea (int):
+            threshold (int):
+            url (bool, date, datetime, dict, float, int, list, str, none_type):
+            boundary (bool, date, datetime, dict, float, int, list, str, none_type):
+            name (str):
 
         Keyword Args:
             _check_type (bool): if True, values for parameters in openapi_types
@@ -188,6 +245,13 @@ class SegmentationDatasetResponse(ModelNormal):
         self.difference_date = difference_date
         self.code = code
         self.difference_code = difference_code
+        self.ingested = ingested
+        self.published = published
+        self.subarea = subarea
+        self.threshold = threshold
+        self.url = url
+        self.boundary = boundary
+        self.name = name
         for var_name, var_value in kwargs.items():
             if (
                 var_name not in self.attribute_map
@@ -213,7 +277,20 @@ class SegmentationDatasetResponse(ModelNormal):
 
     @convert_js_args_to_python_args
     def __init__(
-        self, uuid, date, difference_date, code, difference_code, *args, **kwargs
+        self,
+        uuid,
+        date,
+        difference_date,
+        code,
+        difference_code,
+        ingested,
+        published,
+        subarea,
+        threshold,
+        url,
+        boundary,
+        *args,
+        **kwargs,
     ):  # noqa: E501
         """SegmentationDatasetResponse - a model defined in OpenAPI
 
@@ -223,7 +300,12 @@ class SegmentationDatasetResponse(ModelNormal):
             difference_date (datetime):
             code (int):
             difference_code (int):
-
+            ingested (bool):
+            published (bool):
+            subarea (int):
+            threshold (int):
+            url (bool, date, datetime, dict, float, int, list, str, none_type):
+            boundary (bool, date, datetime, dict, float, int, list, str, none_type):
         Keyword Args:
             _check_type (bool): if True, values for parameters in openapi_types
                                 will be type checked and a TypeError will be
@@ -286,6 +368,12 @@ class SegmentationDatasetResponse(ModelNormal):
         self.difference_date = difference_date
         self.code = code
         self.difference_code = difference_code
+        self.ingested = ingested
+        self.published = published
+        self.subarea = subarea
+        self.threshold = threshold
+        self.url = url
+        self.boundary = boundary
         for var_name, var_value in kwargs.items():
             if (
                 var_name not in self.attribute_map
