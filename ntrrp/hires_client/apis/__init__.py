@@ -1,3 +1,4 @@
+
 # flake8: noqa
 
 # Import all APIs into this package.
@@ -17,6 +18,6 @@ from ntrrp.hires_client.api.acquisitions_api import AcquisitionsApi
 from ntrrp.hires_client.api.health_api import HealthApi
 from ntrrp.hires_client.api.mappings_api import MappingsApi
 from ntrrp.hires_client.api.regions_api import RegionsApi
+from ntrrp.hires_client.api.segmentation_api import SegmentationApi
 from ntrrp.hires_client.api.tasks_api import TasksApi
-from ntrrp.hires_client.api.tiles_api import TilesApi
 from ntrrp.hires_client.api.users_api import UsersApi

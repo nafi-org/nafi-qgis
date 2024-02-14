@@ -1,21 +1,21 @@
 {
-    "files.exclude": {
-        "**/__pycache__": true
-    },
-    "git.openRepositoryInParentFolders": "always",
-    "python.analysis.extraPaths": [
-        "C:\\Program Files\\QGIS 3.22.14\\apps\\Python39\\Lib\\site-packages",
-        "C:\\Program Files\\QGIS 3.22.14\\apps\\qgis-ltr\\python",
-        "C:\\Program Files\\QGIS 3.28.11\\apps\\Python39\\Lib\\site-packages",
-        "C:\\Program Files\\QGIS 3.28.11\\apps\\qgis-ltr\\python",
-        "/Applications/QGIS.app/Contents/Resources/python",
-        "/Applications/QGIS.app/Contents/Resources/python/site-packages",
-        "/Applications/QGIS-LTR.app/Contents/Resources/python",
-        "/Applications/QGIS-LTR.app/Contents/Resources/python/site-packages"
-    ],
-    "xml.validation.enabled": false,
-    "formatFiles.excludePattern": "**/resources_rc.py",
-    "mypy-type-checker.ignorePatterns": [
-        "nafi/**/*.py"
-    ],
+  "files.exclude": {
+    "**/__pycache__": true
+  },
+  "git.openRepositoryInParentFolders": "always",
+  "python.analysis.extraPaths": [
+    "C:\\Program Files\\QGIS 3.22.14\\apps\\Python39\\Lib\\site-packages",
+    "C:\\Program Files\\QGIS 3.22.14\\apps\\qgis-ltr\\python",
+    "C:\\Program Files\\QGIS 3.28.11\\apps\\Python39\\Lib\\site-packages",
+    "C:\\Program Files\\QGIS 3.28.11\\apps\\qgis-ltr\\python",
+    "/Applications/QGIS.app/Contents/Resources/python",
+    "/Applications/QGIS.app/Contents/Resources/python/site-packages",
+    "/Applications/QGIS-LTR.app/Contents/Resources/python",
+    "/Applications/QGIS-LTR.app/Contents/Resources/python/site-packages"
+  ],
+  "xml.validation.enabled": false,
+
+  "formatFiles.excludedFolders": ["ntrrp/hires_client", ".vscode", ".git"],
+  "formatFiles.excludePattern": "**/resources_rc.py",
+  "mypy-type-checker.ignorePatterns": ["nafi/**/*.py"]
 }
