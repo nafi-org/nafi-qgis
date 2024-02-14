@@ -18,7 +18,7 @@ from .layer import Layer
 # from .segmentation_metadata import SegmentationMetadata
 
 
-class MartinLayer(QgsVectorTileLayer, Layer):
+class HiresSegmentationLayer(QgsVectorTileLayer, Layer):
     """Layer type for the current NAFI Hires mapping image."""
 
     @classmethod
@@ -27,6 +27,9 @@ class MartinLayer(QgsVectorTileLayer, Layer):
         return f"http://localhost:3000/sf_{segmentationDataset.name}/{{z}}/{{x}}/{{y}}"
 
     def __init__(self, segmentationDataset: SegmentationDatasetResponse):
+        if not segmentationDataset.published:
+            raise ValueError("Segmentation dataset is not published")
+
         Layer.__init__(self)
 
         self.xyzUri = self.xyzLayerUri(segmentationDataset)
@@ -112,11 +115,11 @@ class MartinLayer(QgsVectorTileLayer, Layer):
             Layer.addMapLayer(self)
 
             # load one of two styles based on the threshold used to segment these features
-            # if self.segmentationMetadata.threshold is not None:
-            #     if int(self.segmentationMetadata.threshold) < 200:
-            #         self.loadStyle("lower_threshold_vector_tiles")
-            #     else:
-            #         self.loadStyle("higher_threshold_vector_tiles")
+            if self.segmentationMetadata.threshold is not None:
+                if int(self.segmentationMetadata.threshold) < 200:
+                    self.loadStyle("lower_threshold_vector_tiles")
+                else:
+                    self.loadStyle("higher_threshold_vector_tiles")
         else:
             error = (
                 f"An error occurred adding the layer {self.itemName} to the map.\n"

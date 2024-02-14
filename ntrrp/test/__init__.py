@@ -1,5 +1,5 @@
-from .test_martin_layer import (
-    testMartinLayer,
+from .test_hires import (
+    testAddHiresSegmentationLayerToMap,
     testBoundary,
     getPublishedSegmentationDatasets,
 )
