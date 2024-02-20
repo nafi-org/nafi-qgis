@@ -1,10 +1,12 @@
-from typing import Any
+from typing import Any, Optional
+
 from ntrrp.hires_client.apis import AcquisitionsApi, MappingsApi, SegmentationApi
 from ntrrp.hires_client.exceptions import OpenApiException
 from ntrrp.hires_client.models import (
     AcquisitionResponse,
     ApproveSegmentationFeatures,
-    RefreshTilesResponseResponse,
+    MappingResponse,
+    RefreshTilesResponse,
     SegmentationDatasetResponse,
     UnapproveSegmentationFeatures,
 )
@@ -20,46 +22,52 @@ class ApiService:
         self.mappings = MappingsApi(self.client)
         self.segmentation = SegmentationApi(self.client)
 
-    def get_acquisitions(self, region_name: str) -> list[AcquisitionResponse]:
-        """Get Hires Acquisitions for a region."""
+    def getAcquisitions(self, region_name: str) -> list[AcquisitionResponse]:
+        """Get HiRes Acquisitions for a region."""
         try:
             return self.acquisitions.get_acquisitions_v1_acquisitions_region_name_get(
                 region_name
             )
         except OpenApiException as e:
-            print(f"Exception when calling AcquisitionsApi->get_acquisitions: {e}")
+            print(f"Exception on AcquisitionsApi->getAcquisitions: {e}")
 
-    def get_mappings(self) -> list[AcquisitionResponse]:
-        """Get Hires Mappings."""
+    def getMappings(self, region_name: str) -> list[MappingResponse]:
+        """Get HiRes Mappings."""
         try:
-            return self.mappings.get_mappings_v1_mappings_get()
+            return self.mappings.get_mappings_v1_mappings_region_name_get(region_name)
         except OpenApiException as e:
-            print(f"Exception when calling MappingsApi->get_mappings: {e}")
+            print(f"Exception on MappingsApi->getMappings: {e}")
 
-    def approve_segmentation(
+    def approveSegmentation(
         self,
-        segmentation_dataset: SegmentationDatasetResponse,
-        features: ApproveSegmentationFeatures,
+        mapping_uuid: str,
+        segmentation_dataset_uuid: str,
+        bounds: list[float],
+        feature_ids: Optional[list[int]] = [],
     ) -> Any:
         """Approve segmentation features."""
         try:
-            return self.segmentation.approve_segmentation_v1_segmentationapprove_segmentation_dataset_uuid_post(
-                segmentation_dataset.uuid, features
+            return self.segmentation.approve_segmentation_v1_segmentation_approve_mapping_uuid_segmentation_dataset_uuid_post(
+                mapping_uuid,
+                segmentation_dataset_uuid,
+                ApproveSegmentationFeatures(bounds=bounds, feature_ids=feature_ids),
             )
         except OpenApiException as e:
-            print(f"Exception when calling SegmentationApi->approve_segmentation: {e}")
+            print(f"Exception on SegmentationApi->approveSegmentation: {e}")
 
-    def unapprove_segmentation(
+    def rejectSegmentation(
         self,
-        segmentation_dataset: SegmentationDatasetResponse,
-        features: ApproveSegmentationFeatures,
+        mapping_uuid: str,
+        segmentation_dataset_uuid: str,
+        bounds: list[float],
+        feature_ids: Optional[list[int]] = [],
     ) -> Any:
-        """Unapprove segmentation features."""
+        """Reject segmentation features."""
         try:
-            return self.segmentation.unapprove_segmentation_v1_segmentationunapprove_segmentation_dataset_uuid_post(
-                segmentation_dataset.uuid, features
+            return self.segmentation.reject_segmentation_v1_segmentation_reject_mapping_uuid_segmentation_dataset_uuid_post(
+                mapping_uuid,
+                segmentation_dataset_uuid,
+                ApproveSegmentationFeatures(bounds=bounds, feature_ids=feature_ids),
             )
         except OpenApiException as e:
-            print(
-                f"Exception when calling SegmentationApi->unapprove_segmentation: {e}"
-            )
+            print(f"Exception on SegmentationApi->rejectSegmentation: {e}")

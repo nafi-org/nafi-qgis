@@ -1,7 +1,6 @@
-from typing import List
-
 import re
 from pathlib import Path
+from typing import List
 
 from qgis.core import QgsProject
 
@@ -11,7 +10,7 @@ from .workspace_metadata import WorkspaceMetadata
 
 
 class Region(Item):
-    """Represent a NAFI Hires Mapping activity for a particular time period."""
+    """Represent a NAFI HiRes Mapping activity for a particular time period."""
 
     def __init__(self, regionDirectory: Path, workspaceMetadata: WorkspaceMetadata):
         Item.__init__(self)

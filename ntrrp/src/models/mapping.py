@@ -1,5 +1,4 @@
 import re
-
 from datetime import datetime
 from pathlib import Path
 
@@ -12,7 +11,7 @@ from .working_layer import WorkingLayer
 
 
 class Mapping(Item):
-    """Represent a NAFI Hires Mapping activity for a particular time period."""
+    """Represent a NAFI HiRes Mapping activity for a particular time period."""
 
     def __init__(self, region: Item, mappingDirectory: Path):
         Item.__init__(self)

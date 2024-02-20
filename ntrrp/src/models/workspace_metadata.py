@@ -1,18 +1,14 @@
+from collections import defaultdict
 from typing import List
 
-from collections import defaultdict
-
-from qgis.PyQt.QtCore import QObject
-
-
 from owslib.map.wms111 import ContentMetadata
-
+from qgis.PyQt.QtCore import QObject
 
 from ntrrp.src.content_metadata_utils import parseContentMetadataRegion
 
 
 class WorkspaceMetadata(QObject):
-    """Class representing the WMS URL and remote WMS layers for a NAFI Hires workspace."""
+    """Class representing the WMS URL and remote WMS layers for a NAFI HiRes workspace."""
 
     def __init__(self, wmsUrl: str, owsLayers: List[ContentMetadata]):
         QObject.__init__(self)

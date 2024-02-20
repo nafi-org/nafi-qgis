@@ -4,8 +4,8 @@ from qgis.core import (
     QgsLayerTreeGroup,
     QgsLayerTreeLayer,
     QgsProject,
-    QgsVectorLayer,
     QgsRectangle,
+    QgsVectorLayer,
     QgsVectorTileLayer,
 )
 
@@ -18,8 +18,8 @@ from .layer import Layer
 # from .segmentation_metadata import SegmentationMetadata
 
 
-class HiresSegmentationLayer(QgsVectorTileLayer, Layer):
-    """Layer type for the current NAFI Hires mapping image."""
+class HiResSegmentationLayer(QgsVectorTileLayer, Layer):
+    """Layer type for the current NAFI HiRes mapping image."""
 
     @classmethod
     def xyzLayerUri(cls, segmentationDataset: SegmentationDatasetResponse) -> str:

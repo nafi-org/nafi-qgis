@@ -4,12 +4,13 @@ from qgis.core import QgsLayerTreeLayer, QgsProject, QgsRasterLayer
 
 from ntrrp.src.content_metadata_utils import parseContentMetadataDescription
 from ntrrp.src.utils import getNtrrpWmtsUrl, guiError
+
 from .layer import Layer
 from .region import Region
 
 
 class WorkspaceLayer(QgsRasterLayer, Layer):
-    """Layer type for a NAFI Hires WMTS layer hosted on GeoServer."""
+    """Layer type for a NAFI HiRes WMTS layer hosted on GeoServer."""
 
     def __init__(self, region: Region, owsLayer):
         if owsLayer.children:

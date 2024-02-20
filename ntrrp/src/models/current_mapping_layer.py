@@ -9,7 +9,7 @@ from .layer import Layer
 
 
 class CurrentMappingLayer(QgsRasterLayer, Layer):
-    """Layer type for the current NAFI Hires mapping image."""
+    """Layer type for the current NAFI HiRes mapping image."""
 
     def __init__(self, mapping: Item, rasterPath: Path):
         self.rasterPath = Path(rasterPath)

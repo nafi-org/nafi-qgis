@@ -1,9 +1,7 @@
-from typing import cast
-
-from abc import ABC, abstractproperty
-
 import uuid
+from abc import ABC, abstractproperty
 from pathlib import Path
+from typing import cast
 
 from qgis.core import QgsLayerTreeGroup, QgsLayerTreeNode, QgsProject
 
@@ -11,7 +9,7 @@ from ntrrp.src.abstract_qobject_meta import AbstractQObjectMeta
 
 
 class Item(ABC, metaclass=AbstractQObjectMeta):
-    """Abstract representation for any NAFI Hires project item, such as a Mapping,
+    """Abstract representation for any NAFI HiRes project item, such as a Mapping,
     SegmentationLayer, WorkingLayer, etc."""
 
     def __init__(self):

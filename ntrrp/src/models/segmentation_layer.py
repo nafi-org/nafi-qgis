@@ -10,7 +10,7 @@ from .segmentation_metadata import SegmentationMetadata
 
 
 class SegmentationLayer(QgsVectorLayer, Layer):
-    """Layer type for the current NAFI Hires mapping image."""
+    """Layer type for the current NAFI HiRes mapping image."""
 
     def __init__(self, mapping: Item, shapefilePath: Path):
         Layer.__init__(self)

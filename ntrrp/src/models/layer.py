@@ -1,13 +1,13 @@
 from abc import abstractmethod
-from qgis.PyQt.QtCore import pyqtSignal
 
-from qgis.core import QgsProject, QgsLayerTreeLayer
+from qgis.core import QgsLayerTreeLayer, QgsProject
+from qgis.PyQt.QtCore import pyqtSignal
 
 from .item import Item
 
 
 class Layer(Item):
-    """Abstract type for a NAFI Hires Layer within a Mapping."""
+    """Abstract type for a NAFI HiRes Layer within a Mapping."""
 
     # Emit these signals with layer ID
     layerAdded = pyqtSignal(str)
