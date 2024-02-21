@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# eg 'ntrrp', 'naficp', 'nafi' - needs to be a subdirectory of the current directory
+# eg 'nafi_hires', 'naficp', 'nafi' - needs to be a subdirectory of the current directory
 plugin_name=$1
 workingDir=$PWD
 
@@ -9,12 +9,12 @@ pythonCmd=$(which python3.9)
 
 unameOutput="$(uname -s)"
 case "${unameOutput}" in
-    Linux*)     osName=Linux;;
-    Darwin*)    osName=Mac;;
-    CYGWIN*)    osName=Cygwin;;
-    MINGW*)     osName=MinGw;;
-    MSYS_NT*)   osName=Git;;
-    *)          osName="UNKNOWN:${unameOutput}"
+Linux*) osName=Linux ;;
+Darwin*) osName=Mac ;;
+CYGWIN*) osName=Cygwin ;;
+MINGW*) osName=MinGw ;;
+MSYS_NT*) osName=Git ;;
+*) osName="UNKNOWN:${unameOutput}" ;;
 esac
 
 resourceFile="${workingDir}/${plugin_name}/resources.qrc"

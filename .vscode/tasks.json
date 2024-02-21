@@ -4,7 +4,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "mypy-all-ntrrp",
+      "label": "mypy-all-nafi_hires",
       "type": "shell",
       "command": "mypy . --show-column-numbers --show-error-codes --ignore-missing-imports",
       "presentation": {
@@ -18,8 +18,8 @@
       },
       "problemMatcher": {
         "owner": "mypy",
-        "source": "mypy-all-ntrrp",
-        "fileLocation": ["relative", "${workspaceFolder}/ntrrp"],
+        "source": "mypy-all-nafi_hires",
+        "fileLocation": ["relative", "${workspaceFolder}/nafi_hires"],
         "pattern": {
           "regexp": "^([\\w.]+):(\\d+):(\\d+): (\\w+): (.+)  \\[([\\w-]+)\\]$",
           "file": 1,

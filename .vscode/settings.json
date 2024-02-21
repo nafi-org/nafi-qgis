@@ -15,7 +15,7 @@
   ],
   "xml.validation.enabled": false,
 
-  "formatFiles.excludedFolders": ["ntrrp/hires_client", ".vscode", ".git"],
+  "formatFiles.excludedFolders": ["nafi_hires/hires_client", ".vscode", ".git"],
   "formatFiles.excludePattern": "**/resources_rc.py",
   "mypy-type-checker.ignorePatterns": ["nafi/**/*.py"]
 }
