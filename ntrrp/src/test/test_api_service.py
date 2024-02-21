@@ -38,14 +38,14 @@ class TestApiService(unittest.TestCase):
         layer = self.api.addHiResSegmentationLayer(self.datasets[0])
         self.assertTrue(layer.isValid())
         self.assertTrue(isinstance(layer, HiResSegmentationLayer))
-        QgsProject.instance().removeMapLayer(layer)
+        # QgsProject.instance().removeMapLayer(layer)
 
     def test_addHiResSegmentationLayers(self):
         layers = self.api.addHiResSegmentationLayers(self.mapping)
         self.assertTrue(len(layers) > 0)
         self.assertTrue(all([layer.isValid() for layer in layers]))
-        for layer in layers:
-            QgsProject.instance().removeMapLayer(layer)
+        # for layer in layers:
+        #     QgsProject.instance().removeMapLayer(layer)
 
     # def test_addHiResSegmentationLayers(self):
     #     approvalBounds = randomBounds(self.datasets[0].boundary)

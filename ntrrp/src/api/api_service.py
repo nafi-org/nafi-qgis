@@ -16,7 +16,7 @@ from .client import get_client
 
 
 class ApiService:
-    def __init__(self, hostUri: str):
+    def __init__(self, hostUri: str = "http://localhost:8000"):
         self.host_uri = hostUri
         self.client = get_client(hostUri)
         self.acquisitions = AcquisitionsApi(self.client)
