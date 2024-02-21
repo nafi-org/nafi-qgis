@@ -1,25 +1,17 @@
 import unittest
 from random import random
 
+from qgis.core import QgsProject
+
 from ntrrp.hires_client.models import (
     ApproveSegmentationFeatures,
     DifferenceResponse,
     MappingResponse,
+    RejectSegmentationFeatures,
     SegmentationDatasetResponse,
-    UnapproveSegmentationFeatures,
 )
 from ntrrp.src.api import ApiService
 from ntrrp.src.models import HiResSegmentationLayer
-
-
-def getPublishedSegmentationDatasets() -> list[SegmentationDatasetResponse]:
-    api = ApiService("http://localhost:8000")
-    mappings: list[MappingResponse] = api.getMappings("Darwin")
-    [mapping] = mappings
-    difference: DifferenceResponse = mapping.differences[0]
-    datasets: list[SegmentationDatasetResponse] = difference.datasets
-    assert len(datasets) > 0
-    return [sd for sd in datasets if sd.published]
 
 
 def randomBounds(bounds: list[float]) -> list[float]:
@@ -30,60 +22,39 @@ def randomBounds(bounds: list[float]) -> list[float]:
     return [min(xs), min(ys), max(xs), max(ys)]
 
 
-def addHiResSegmentationLayerToMap(
-    dataset: SegmentationDatasetResponse,
-) -> HiResSegmentationLayer:
-    layer = HiResSegmentationLayer(dataset)
-    layer.addMapLayer()
-    return layer
-
-
-def testApproveSegmentationByBounds():
-    datasets = getPublishedSegmentationDatasets()
-
-    for dataset in datasets:
-        api = ApiService("http://localhost:8000")
-
-
-def testUnapproveSegmentationByBounds():
-    datasets = getPublishedSegmentationDatasets()
-
-    for dataset in datasets:
-        api = ApiService("http://localhost:8000")
-
-        unapprovalBounds = randomBounds(dataset.boundary)
-
-        api.rejectSegmentation(
-            dataset, UnapproveSegmentationFeatures(bounds=unapprovalBounds)
-        )
-
-
 class TestApiService(unittest.TestCase):
     # Add a fixture for the published segmentation datasets
     def setUp(self):
-        self.datasets = getPublishedSegmentationDatasets()
         self.api = ApiService("http://localhost:8000")
+        self.mappings = self.api.getMappings("Darwin")
+        self.mapping = self.mappings[0]
+        self.datasets = self.api.getIngestedSegmentationDatasets(self.mapping)
 
-    def test_getPublishedSegmentationDatasets(self):
+    def test_getIngestedSegmentationDatasets(self):
         self.assertTrue(len(self.datasets) > 0)
-        self.assertTrue(all([sd.published for sd in self.datasets]))
-        self.assertTrue(
-            all([sd.boundary and len(sd.boundary) == 4 for sd in self.datasets])
-        )
+        self.assertTrue(all([sd.ingested for sd in self.datasets]))
 
-    def test_addHiResSegmentationLayerToMap(self):
-        layer = addHiResSegmentationLayerToMap(self.datasets[0])
+    def test_addHiResSegmentationLayer(self):
+        layer = self.api.addHiResSegmentationLayer(self.datasets[0])
         self.assertTrue(layer.isValid())
         self.assertTrue(isinstance(layer, HiResSegmentationLayer))
+        QgsProject.instance().removeMapLayer(layer)
 
-    def test_approveSegmentationByBounds(self):
-        approvalBounds = randomBounds(self.datasets[0].boundary)
-        self.api.approveSegmentation(
-            self.datasets[0], ApproveSegmentationFeatures(bounds=approvalBounds)
-        )
+    def test_addHiResSegmentationLayers(self):
+        layers = self.api.addHiResSegmentationLayers(self.mapping)
+        self.assertTrue(len(layers) > 0)
+        self.assertTrue(all([layer.isValid() for layer in layers]))
+        for layer in layers:
+            QgsProject.instance().removeMapLayer(layer)
 
-    def test_unapproveSegmentationByBounds(self):
-        unapprovalBounds = randomBounds(self.datasets[0].boundary)
-        self.api.rejectSegmentation(
-            self.datasets[0], UnapproveSegmentationFeatures(bounds=unapprovalBounds)
-        )
+    # def test_addHiResSegmentationLayers(self):
+    #     approvalBounds = randomBounds(self.datasets[0].boundary)
+    #     self.api.approveSegmentation(
+    #         self.datasets[0], ApproveSegmentationFeatures(bounds=approvalBounds)
+    #     )
+
+    # def test_unapproveSegmentationByBounds(self):
+    #     unapprovalBounds = randomBounds(self.datasets[0].boundary)
+    #     self.api.rejectSegmentation(
+    #         self.datasets[0], RejectSegmentationFeatures(bounds=unapprovalBounds)
+    #     )

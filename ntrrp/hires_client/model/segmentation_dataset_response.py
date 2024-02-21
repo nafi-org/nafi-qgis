@@ -91,7 +91,6 @@ class SegmentationDatasetResponse(ModelNormal):
             'subarea': (int,),  # noqa: E501
             'threshold': (int,),  # noqa: E501
             'url': (bool, date, datetime, dict, float, int, list, str, none_type,),  # noqa: E501
-            'boundary': (bool, date, datetime, dict, float, int, list, str, none_type,),  # noqa: E501
             'name': (str,),  # noqa: E501
         }
 
@@ -111,7 +110,6 @@ class SegmentationDatasetResponse(ModelNormal):
         'subarea': 'subarea',  # noqa: E501
         'threshold': 'threshold',  # noqa: E501
         'url': 'url',  # noqa: E501
-        'boundary': 'boundary',  # noqa: E501
         'name': 'name',  # noqa: E501
     }
 
@@ -123,7 +121,7 @@ class SegmentationDatasetResponse(ModelNormal):
 
     @classmethod
     @convert_js_args_to_python_args
-    def _from_openapi_data(cls, uuid, date, difference_date, code, difference_code, ingested, published, subarea, threshold, url, boundary, name, *args, **kwargs):  # noqa: E501
+    def _from_openapi_data(cls, uuid, date, difference_date, code, difference_code, ingested, published, subarea, threshold, url, name, *args, **kwargs):  # noqa: E501
         """SegmentationDatasetResponse - a model defined in OpenAPI
 
         Args:
@@ -137,7 +135,6 @@ class SegmentationDatasetResponse(ModelNormal):
             subarea (int):
             threshold (int):
             url (bool, date, datetime, dict, float, int, list, str, none_type):
-            boundary (bool, date, datetime, dict, float, int, list, str, none_type):
             name (str):
 
         Keyword Args:
@@ -208,7 +205,6 @@ class SegmentationDatasetResponse(ModelNormal):
         self.subarea = subarea
         self.threshold = threshold
         self.url = url
-        self.boundary = boundary
         self.name = name
         for var_name, var_value in kwargs.items():
             if var_name not in self.attribute_map and \
@@ -230,7 +226,7 @@ class SegmentationDatasetResponse(ModelNormal):
     ])
 
     @convert_js_args_to_python_args
-    def __init__(self, uuid, date, difference_date, code, difference_code, ingested, published, subarea, threshold, url, boundary, *args, **kwargs):  # noqa: E501
+    def __init__(self, uuid, date, difference_date, code, difference_code, ingested, published, subarea, threshold, url, *args, **kwargs):  # noqa: E501
         """SegmentationDatasetResponse - a model defined in OpenAPI
 
         Args:
@@ -244,7 +240,6 @@ class SegmentationDatasetResponse(ModelNormal):
             subarea (int):
             threshold (int):
             url (bool, date, datetime, dict, float, int, list, str, none_type):
-            boundary (bool, date, datetime, dict, float, int, list, str, none_type):
         Keyword Args:
             _check_type (bool): if True, values for parameters in openapi_types
                                 will be type checked and a TypeError will be
@@ -311,7 +306,6 @@ class SegmentationDatasetResponse(ModelNormal):
         self.subarea = subarea
         self.threshold = threshold
         self.url = url
-        self.boundary = boundary
         for var_name, var_value in kwargs.items():
             if var_name not in self.attribute_map and \
                         self._configuration is not None and \

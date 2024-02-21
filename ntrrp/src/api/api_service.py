@@ -7,49 +7,80 @@ from ntrrp.hires_client.models import (
     ApproveSegmentationFeatures,
     MappingResponse,
     RefreshTilesResponse,
+    RejectSegmentationFeatures,
     SegmentationDatasetResponse,
-    UnapproveSegmentationFeatures,
 )
+from ntrrp.src.models import HiResSegmentationLayer
 
 from .client import get_client
 
 
 class ApiService:
-    def __init__(self, host_uri: str):
-        self.host_uri = host_uri
-        self.client = get_client(host_uri)
+    def __init__(self, hostUri: str):
+        self.host_uri = hostUri
+        self.client = get_client(hostUri)
         self.acquisitions = AcquisitionsApi(self.client)
         self.mappings = MappingsApi(self.client)
         self.segmentation = SegmentationApi(self.client)
 
-    def getAcquisitions(self, region_name: str) -> list[AcquisitionResponse]:
+    def getAcquisitions(self, regionName: str) -> list[AcquisitionResponse]:
         """Get HiRes Acquisitions for a region."""
         try:
             return self.acquisitions.get_acquisitions_v1_acquisitions_region_name_get(
-                region_name
+                regionName
             )
         except OpenApiException as e:
             print(f"Exception on AcquisitionsApi->getAcquisitions: {e}")
 
-    def getMappings(self, region_name: str) -> list[MappingResponse]:
+    def getMappings(self, regionName: str) -> list[MappingResponse]:
         """Get HiRes Mappings."""
         try:
-            return self.mappings.get_mappings_v1_mappings_region_name_get(region_name)
+            return self.mappings.get_mappings_v1_mappings_region_name_get(regionName)
         except OpenApiException as e:
             print(f"Exception on MappingsApi->getMappings: {e}")
 
+    def getIngestedSegmentationDatasets(
+        self, mapping: MappingResponse
+    ) -> list[SegmentationDatasetResponse]:
+        """Get ingested Segmentation Datasets."""
+        return [
+            sd
+            for difference in mapping.differences
+            for sd in difference.segmentation_datasets
+            if sd.ingested
+        ]
+
+    def addHiResSegmentationLayer(
+        self, segmentationDataset: SegmentationDatasetResponse
+    ) -> HiResSegmentationLayer:
+        """Add a HiRes Segmentation layer to the map."""
+
+        layer = HiResSegmentationLayer(segmentationDataset)
+        layer.addMapLayer()
+        return layer
+
+    def addHiResSegmentationLayers(
+        self, mapping: MappingResponse
+    ) -> list[HiResSegmentationLayer]:
+        """Add all layers for a mapping to the map."""
+        datasets = self.getIngestedSegmentationDatasets(mapping)
+        layers = [self.addHiResSegmentationLayer(dataset) for dataset in datasets]
+        for layer in layers:
+            layer.addMapLayer()
+        return layers
+
     def approveSegmentation(
         self,
-        mapping_uuid: str,
-        segmentation_dataset_uuid: str,
+        mappingUUID: str,
+        segmentationDatasetUUID: str,
         bounds: list[float],
         feature_ids: Optional[list[int]] = [],
     ) -> Any:
         """Approve segmentation features."""
         try:
             return self.segmentation.approve_segmentation_v1_segmentation_approve_mapping_uuid_segmentation_dataset_uuid_post(
-                mapping_uuid,
-                segmentation_dataset_uuid,
+                mappingUUID,
+                segmentationDatasetUUID,
                 ApproveSegmentationFeatures(bounds=bounds, feature_ids=feature_ids),
             )
         except OpenApiException as e:
@@ -57,16 +88,16 @@ class ApiService:
 
     def rejectSegmentation(
         self,
-        mapping_uuid: str,
-        segmentation_dataset_uuid: str,
+        mappingUUID: str,
+        segmentationDatasetUUID: str,
         bounds: list[float],
         feature_ids: Optional[list[int]] = [],
     ) -> Any:
         """Reject segmentation features."""
         try:
             return self.segmentation.reject_segmentation_v1_segmentation_reject_mapping_uuid_segmentation_dataset_uuid_post(
-                mapping_uuid,
-                segmentation_dataset_uuid,
+                mappingUUID,
+                segmentationDatasetUUID,
                 ApproveSegmentationFeatures(bounds=bounds, feature_ids=feature_ids),
             )
         except OpenApiException as e:

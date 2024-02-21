@@ -12,10 +12,10 @@ from qgis.core import (
 from ntrrp.hires_client.models import SegmentationDatasetResponse
 from ntrrp.src.utils import guiError, resolveStylePath
 
+from ..utils import qgsDebug
+
 # from .item import Item
 from .layer import Layer
-
-# from .segmentation_metadata import SegmentationMetadata
 
 
 class HiResSegmentationLayer(QgsVectorTileLayer, Layer):
@@ -28,7 +28,7 @@ class HiResSegmentationLayer(QgsVectorTileLayer, Layer):
 
     def __init__(self, segmentationDataset: SegmentationDatasetResponse):
         if not segmentationDataset.published:
-            raise ValueError("Segmentation dataset is not published")
+            qgsDebug("Segmentation dataset is not published")
 
         Layer.__init__(self)
 
@@ -49,7 +49,7 @@ class HiResSegmentationLayer(QgsVectorTileLayer, Layer):
         )
 
         self.segmentationMetadata = segmentationDataset
-        self.setExtent(QgsRectangle(*segmentationDataset.boundary))
+        # self.setExtent(QgsRectangle(*segmentationDataset.boundary))
 
     @property
     def directory(self) -> Path:
