@@ -1,9 +1,6 @@
 {
+  "HIRES_API_URL": "http://localhost:8000",
   "HIRES_REGIONS": ["Darwin", "Katherine"],
   "HIRES_WMS_URL": "https://firenorth.org.au/hires/mapserver/bfnt/gwc/service/wms",
-  "HIRES_WMTS_URL": "https://firenorth.org.au/hires/mapserver/bfnt/gwc/service/wmts",
-  "HIRES_DATA_URL": "https://firenorth.org.au/hires/bfnt/downloads",
-  "HIRES_UPLOAD_URL": "https://firenorth.org.au/hires/bfnt/upload.php",
-  "HIRES_API_URL": "https://firenorth.org.au/hires/bfnt/api/",
-  "HIRES_DO_FULL_SEGMENTATION_DOWNLOAD": false
+  "HIRES_WMTS_URL": "https://firenorth.org.au/hires/mapserver/bfnt/gwc/service/wmts"
 }

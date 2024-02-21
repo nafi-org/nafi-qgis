@@ -1,6 +1,7 @@
-from nafi_hires.hires_client.models import MappingResponse
-from nafi_hires.src.utils import guiError
 from qgis.core import QgsLayerTreeGroup, QgsLayerTreeLayer, QgsProject, QgsRasterLayer
+
+from nafi_hires.src.api import MappingResponse
+from nafi_hires.src.utils import guiError
 
 from .item import Item
 from .layer import Layer
@@ -9,43 +10,39 @@ from .layer import Layer
 class CurrentMappingLayer(QgsRasterLayer, Layer):
     """Layer type for the current NAFI HiRes mapping image."""
 
-    def __init__(self, mapping: Item):
-        self.mapping = mapping
-        self.data: MappingResponse = mapping.data
+    def __init__(self, mapping: Item, data: MappingResponse):
+        self._mapping = mapping
+        self.data: MappingResponse = data
 
         QgsRasterLayer.__init__(
             self,
             self.data.current_mapping_dataset.url,
-            f"{mapping.regionName} Current Mapping",
+            f"{mapping.regionName()} Current Mapping",
             "wms",
         )
 
-    @property
+    # Layer interface
     def regionName(self) -> str:
-        return self.mapping.regionName
+        return self._mapping.regionName()
 
-    @property
     def itemName(self) -> str:
-        return f"{self.mapping.regionName} Current Mapping"
+        return f"{self._mapping.regionName()} Current Mapping"
 
-    @property
     def item(self) -> QgsLayerTreeLayer:
         return QgsProject.instance().layerTreeRoot().findLayer(self.id())
 
-    @property
     def groupName(self) -> str:
-        return self.mapping.itemName
+        return self._mapping.itemName()
 
-    @property
     def group(self) -> QgsLayerTreeGroup:
-        return self.mapping.item
+        return self._mapping.item()
 
     def addMapLayer(self) -> None:
         if self.isValid():
             Layer.addMapLayer(self)
         else:
             error = (
-                f"An error occurred adding the layer {self.itemName} to the map.\n"
+                f"An error occurred adding the layer {self.itemName()} to the map.\n"
                 f"Check your QGIS logs for details."
             )
             guiError(error)

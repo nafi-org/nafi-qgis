@@ -21,14 +21,12 @@ class Layer(Item):
         """Stub method to return the QGIS layer ID."""
         pass
 
-    @property
     def layerName(self) -> str:
-        return self.itemName
+        return self.itemName()
 
-    @property
-    def layer(self) -> QgsLayerTreeLayer:
+    def layerItem(self) -> QgsLayerTreeLayer:
         """Return the QGIS layer item (in the Layers panel) for this Item."""
-        return self.item
+        return self.item()
 
     def addMapLayer(self) -> None:
         """Add this layer to the map and layers panel, removing any existing layer with the same name."""
@@ -39,16 +37,16 @@ class Layer(Item):
         existingItem = next(
             (
                 layer
-                for layer in self.subGroup.findLayers()
-                if layer.name() == self.layerName
+                for layer in self.subGroup().findLayers()
+                if layer.name() == self.layerName()
             ),
             None,
         )
         if existingItem is not None:
-            self.subGroup.removeLayer(existingItem.layer())
-        self.subGroup.addLayer(self)  # type: ignore
+            self.subGroup().removeLayer(existingItem.layer())
+        self.subGroup().addLayer(self)  # type: ignore
         self.layerAdded.emit(self.id())
 
         # don't show legend initially
-        self.item.setExpanded(True)
-        self.item.setExpanded(False)
+        self.item().setExpanded(True)
+        self.item().setExpanded(False)

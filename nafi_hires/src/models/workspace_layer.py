@@ -14,7 +14,7 @@ class WorkspaceLayer(QgsRasterLayer, Layer):
         if owsLayer.children:
             raise ValueError("WMTS layer must be a child layer")
 
-        # weirdly true that URL-encoding of the layer ID does not work correctly
+        # Weirdly true that standard URL-encoding of the layer ID does not work correctly
         encodedLayer = owsLayer.id.replace(" ", "%20")
         wmtsUrl = getHiResWmtsUrl()
         wmtsParams = f"crs=EPSG:3577&format=image/png&layers={encodedLayer}&url={wmtsUrl}&styles&tileMatrixSet=EPSG:3577"
@@ -26,28 +26,25 @@ class WorkspaceLayer(QgsRasterLayer, Layer):
         self.owsLayer = owsLayer
         self.region = region
 
-    @property
+    # Layer interface
     def regionName(self) -> str:
-        return self.region.regionName
+        return self.region.regionName()
 
-    @property
     def itemName(self) -> str:
         return parseContentMetadataDescription(self.owsLayer)
 
-    @property
     def item(self) -> QgsLayerTreeLayer:
         return QgsProject.instance().layerTreeRoot().findLayer(self.id())
 
-    @property
     def groupName(self) -> str:
-        return self.region.regionName
+        return self.region.regionName()
 
     def addMapLayer(self) -> None:
         if self.isValid():
             Layer.addMapLayer(self)
         else:
             error = (
-                f"An error occurred adding the layer {self.itemName} to the map.\n"
+                f"An error occurred adding the layer {self.itemName()} to the map.\n"
                 f"Check your QGIS logs for details."
             )
             guiError(error)

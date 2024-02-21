@@ -1,11 +1,12 @@
 import os
 from typing import Any
 
-from nafi_hires.src.models import Mapping
-from nafi_hires.src.services import MappingService
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSignal
 from qgis.PyQt.QtWidgets import QWidget
+
+from nafi_hires.src.models import Mapping
+from nafi_hires.src.services import MappingService
 
 from .about_dialog import AboutDialog
 
@@ -28,23 +29,16 @@ class MappingWidget(QWidget, FORM_CLASS):
         self._mapping: Mapping = None
         self.mappingService = MappingService()
 
-    @property
-    def dockWidget(self):
-        return self.parent()
-
-    @property
     def mapping(self) -> Mapping:
         return self._mapping
 
-    @mapping.setter
-    def mapping(self, mapping: Mapping) -> None:
+    def setMapping(self, mapping: Mapping) -> None:
         self._mapping = mapping
-        self.segmentationLayerChooser.mapping = mapping
+        self.segmentationLayerChooser.setMapping(mapping)
 
     def updateToolBar(self):
         "Update toolbar buttons based on mapping state."
-        self.mappingToolBar.setApproveButtonEnabled(self.mapping.canApprove)
-        self.mappingToolBar.setUploadButtonEnabled(self.mapping.canUpload)
+        self.mappingToolBar.setApproveButtonEnabled(self.mapping().canApproveFeatures())
 
     def aboutButtonClicked(self) -> None:
         """Show an About … dialog."""
@@ -53,24 +47,14 @@ class MappingWidget(QWidget, FORM_CLASS):
 
     def approveButtonClicked(self):
         """Copy any segmentation features that are selected to the working layer, 'approving' them."""
-        self.mappingService.approveSelectedFeatures(self.mapping)
+        self.mappingService.approveSelectedFeatures(self.mapping())
         self.updateToolBar()
 
     def currentMappingButtonClicked(self):
         """Download the current mapping data."""
-        self.mappingService.downloadCurrentMapping(self.mapping)
-        self.updateToolBar()
-
-    def downloadButtonClicked(self):
-        """Download the segmentation data."""
-        self.mappingService.downloadSegmentationData(self.mapping)
+        self.mappingService.addCurrentMappingLayer(self.mapping())
         self.updateToolBar()
 
     def refreshButtonClicked(self):
         """Refresh the mapping data."""
-        self.parent().refreshRemoteWorkspace()  # type: ignore
-
-    def uploadButtonClicked(self):
-        """Convert the currently active working layer to a raster, attribute it and upload to NAFI."""
-        self.mappingService.processAndUploadBurntAreas(self.mapping)
-        self.updateToolBar()
+        self.parent().refreshRemoteWorkspace()

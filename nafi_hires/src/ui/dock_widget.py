@@ -25,7 +25,8 @@ class DockWidget(QDockWidget, FORM_CLASS):
         super(DockWidget, self).__init__(parent)
 
         self._region: Region = None
-        self.project: Project = None
+        self._mapping: Mapping = None
+        self._project: Project = None
 
         self.setupUi(self)
 
@@ -58,12 +59,10 @@ class DockWidget(QDockWidget, FORM_CLASS):
         self.regionComboBox.currentIndexChanged.connect(self.regionComboBoxChanged)
         self.mappingComboBox.currentIndexChanged.connect(self.mappingComboBoxChanged)
 
-    @property
     def region(self) -> Region:
         return self._region
 
-    @region.setter
-    def region(self, region: Region) -> None:
+    def setRegion(self, region: Region) -> None:
         """Set the current region."""
         if region is None:
             return
@@ -73,39 +72,37 @@ class DockWidget(QDockWidget, FORM_CLASS):
             return
 
         self._region = region
-        self.regionComboBox.setCurrentText(self._region.regionName)
+        self.regionComboBox.setCurrentText(self._region.regionName())
 
         # Update mapping combo box
         self.mappingComboBox.clear()
-        self.mappingComboBox.addItems(self._region.mappingNames)
+        self.mappingComboBox.addItems(self._region.mappingNames())
 
         # Populate tree view
-        self.treeViewModel.region = self._region
+        self.treeViewModel.setRegion(self._region)
         # Set default sort and expansion
         self.proxyModel.sort(0, Qt.AscendingOrder)
         self.expandTreeViewTopLevel()
 
         # Set first mapping in the region (if any)
-        self.mapping = next(iter(self._region.mappings), None)
+        self.setMapping(next(iter(self._region.mappings()), None))
 
         # Update item visibility in the map and layers panel
         self.updateItemVisibilities()
 
-    @property
     def mapping(self) -> Mapping:
-        return self.mappingWidget.mapping
+        return self.mappingWidget.mapping()
 
-    @mapping.setter
-    def mapping(self, mapping: Mapping) -> None:
+    def setMapping(self, mapping: Mapping) -> None:
         """Set the current mapping."""
         if mapping is None:
             return
 
         # Do not set mapping if it is already set to the same one
-        if self.mapping is not None and self.mapping.isSame(mapping):
+        if self.mapping() is not None and self.mapping().isSame(mapping):
             return
 
-        self.mappingWidget.mapping = mapping
+        self.mappingWidget.setMapping(mapping)
         self.mappingWidget.updateToolBar()
 
         # Update item visibility in the map and layers panel
@@ -115,21 +112,21 @@ class DockWidget(QDockWidget, FORM_CLASS):
         """Initialise a QStandardItemModel from the remtoe workspace."""
         # Stash the parsed capabilities and set up the mapping combobox
 
-        self.project = Project(workspaceMetadata)
+        self._project = Project(workspaceMetadata)
 
         mappingService = MappingService()
-        for mapping in self.project.mappings:
+        for mapping in self._project.mappings():
             mappingService.addMappingLayers(mapping)
 
         self.regionComboBox.clear()
-        self.regionComboBox.addItems(self.project.regionNames)
+        self.regionComboBox.addItems(self._project.regionNames())
 
-        self.region = next(iter(self.project.regions))
+        self.setRegion(next(iter(self._project.regions())))
 
     def refreshCurrentRegion(self):
         """Refresh the current region."""
-        if self._region is not None:
-            self.region = self._region
+        if self.region() is not None:
+            self.setRegion(self.region())
 
     def refreshRemoteWorkspace(self):
         """(Re)load the workspace layers."""
@@ -138,10 +135,10 @@ class DockWidget(QDockWidget, FORM_CLASS):
 
     def updateItemVisibilities(self):
         """Update the visibility of the region and mapping items basd on the current mapping."""
-        for region in self.project.regions:
-            region.visibilityChecked = region.isSame(self.region)
-            for mapping in region.mappings:
-                mapping.visibilityChecked = mapping.isSame(self.mapping)
+        for region in self._project.regions():
+            region.setVisibilityChecked(region.isSame(self.region()))
+            for mapping in region.mappings():
+                mapping.setVisibilityChecked(mapping.isSame(self.mapping()))
 
     def expandTreeViewTopLevel(self):
         """Expand top level items in the tree view."""
@@ -163,17 +160,17 @@ class DockWidget(QDockWidget, FORM_CLASS):
 
     def regionComboBoxChanged(self, regionIndex):
         if regionIndex < 0:
-            self._region = None
+            self.setRegion(None)
             return
         regionName = self.regionComboBox.itemText(regionIndex)
-        self.region = self.project.regionByName(regionName)
+        self.setRegion(self._project.regionByName(regionName))
 
     def mappingComboBoxChanged(self, mappingIndex):
         if mappingIndex < 0:
-            self.mapping = None
+            self.setMapping(None)
             return
         mappingName = self.mappingComboBox.itemText(mappingIndex)
-        self.mapping = self.region.mappingByName(mappingName)
+        self.setMapping(self.region().mappingByName(mappingName))
 
     def closeEvent(self, event):
         """Handle plug-in close."""

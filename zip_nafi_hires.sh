@@ -17,6 +17,6 @@ rm -rf nafi_hires/dev.py
 find . -name "*.qss" | xargs rm -f
 
 # zip up the NAFI HiRes plug-in directory only into a datestamped archive
-zip a -r "../nafi_hires-$(date +'%Y%m%d').zip" nafi_hires
+7z a -r "../nafi_hires-$(date +'%Y%m%d').zip" nafi_hires
 cd ..
 rm -rf deployment

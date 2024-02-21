@@ -1,1 +1,0 @@
-from .rasterise_burnt_areas import RasteriseBurntAreas

@@ -1,6 +1,7 @@
 from nafi_hires.src.api import HiResApiService, MappingResponse
 from nafi_hires.src.utils import HIRES_API_URL
 
+from .mapping import Mapping
 from .region import Region
 from .workspace_metadata import WorkspaceMetadata
 
@@ -16,20 +17,19 @@ class Project:
         self.data: list[MappingResponse] = self.api.getMappings("Darwin")
 
         regions = [Region(self.data, workspaceMetadata)]
-        self._regions = {region.regionName: region for region in regions}
+        self._regions: dict[str, Region] = {
+            region.regionName(): region for region in regions
+        }
 
-    @property
-    def mappings(self):
+    def mappings(self) -> list[Mapping]:
         """Return a flattened list of all mappings in all regions for this HiRes workspace."""
-        return [mapping for region in self.regions for mapping in region.mappings]
+        return [mapping for region in self.regions() for mapping in region.mappings()]
 
-    @property
-    def regions(self):
+    def regions(self) -> list[Region]:
         """Return a list of all regions for this HiRes workspace."""
         return list(self._regions.values())
 
-    @property
-    def regionNames(self):
+    def regionNames(self) -> list[str]:
         """Return a list of all region names for this HiRes workspace."""
         return list(self._regions.keys())
 

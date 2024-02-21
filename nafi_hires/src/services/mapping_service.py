@@ -1,3 +1,8 @@
+from qgis.core import Qgis
+from qgis.PyQt.QtCore import QObject, pyqtSignal
+from qgis.PyQt.QtWidgets import QAction
+from qgis.utils import iface
+
 from nafi_hires.src.api import HiResApiService
 from nafi_hires.src.models import (
     CurrentMappingLayer,
@@ -5,10 +10,7 @@ from nafi_hires.src.models import (
     MappingFeatureLayer,
     SegmentationLayer,
 )
-from nafi_hires.src.utils import HIRES_API_URL, guiError
-from qgis.PyQt.QtCore import QObject, pyqtSignal
-from qgis.PyQt.QtWidgets import QAction
-from qgis.utils import iface
+from nafi_hires.src.utils import HIRES_API_URL, guiError, qgsDebug
 
 
 class MappingService(QObject):
@@ -22,50 +24,55 @@ class MappingService(QObject):
 
     def addMappingFeatureLayer(self, mapping: Mapping):
         """Create a new working layer for this region."""
-        if mapping.mappingLayer is None:
-            mapping.mappingLayer = MappingFeatureLayer(mapping)
+        qgsDebug(
+            "MappingService.addMappingFeatureLayer not yet implemented",
+            level=Qgis.Critical,
+        )
+        # if mapping.mappingFeatureLayer() is None:
+        #     mapping.setMappingFeatureLayer(MappingFeatureLayer(mapping))
         # workingLayer.layerRemoved.connect(
         #     lambda layer: self.removeWorkingLayer(layer))
-        mapping.mappingLayer.addMapLayer()
-        return mapping.mappingLayer
+        # mapping.mappingFeatureLayer().addMapLayer()
+        # return mapping.mappingFeatureLayer()
 
     def addCurrentMappingLayer(self, mapping: Mapping):
         """Add the current mapping layer to the map."""
-        mapping.currentMappingLayer = CurrentMappingLayer(mapping)
-        mapping.currentMappingLayer.addMapLayer()
+        mapping.setCurrentMappingLayer(CurrentMappingLayer(mapping, mapping.data))
+        mapping.currentMappingLayer().addMapLayer()
 
     def addMappingLayers(self, mapping: Mapping):
-        self.addSegmentationLayers(mapping, mapping.segmentationDirectory)
+        self.addSegmentationLayers(mapping)
 
-        if mapping.segmentationLayers:
-            self.addMappingFeatureLayer(mapping, mapping.segmentationLayers[0])
+        if mapping.segmentationLayers():
+            self.addMappingFeatureLayer(mapping)
 
     def addSegmentationLayers(self, mapping: Mapping):
         """Add all shapefiles in a directory as data layers to the region group."""
 
-        mapping.segmentationLayers = [
-            SegmentationLayer(segmentationDataset)
-            for segmentationDataset in self.api.getIngestedSegmentationDatasets(
-                mapping.data
-            )
+        # Because we have several SegmentationDataset objects for every actual
+        # source table, we need to group them by the keys that determine the source
+        # table name to avoid creating lots of duplicate layers.
+
+        segmentationGroups = self.api.groupSegmentationDatasets(mapping.data)
+        segmentationLayers = [
+            SegmentationLayer(mapping, list(group)[0]) for group in segmentationGroups
         ]
 
-        for segmentationLayer in mapping.segmentationLayers:
-            # segmentationLayer.layerRemoved.connect(
-            #     lambda layer: self.removeSegmentationLayer(layer))
+        for segmentationLayer in segmentationLayers:
             segmentationLayer.addMapLayer()
+        mapping.setSegmentationLayers(segmentationLayers)
 
     def removeSegmentationLayer(
         self, mapping: Mapping, segmentationLayer: SegmentationLayer
     ):
         """Remove a segmentation layer and inform subscribers."""
-        mapping.segmentationLayers.remove(segmentationLayer)
+        mapping.segmentationLayers().remove(segmentationLayer)
 
     def approveSelectedFeatures(self, mapping: Mapping):
         """Add the currently selected features in the segmentation layer to the working layer."""
-        if mapping.currentSegmentationLayer is None:
+        if mapping.currentSegmentationLayer() is None:
             guiError("Error occurred: inconsistent state in segmentation layer.")
-        if mapping.mappingLayer is None:
+        if mapping.mappingFeatureLayer() is None:
             guiError("Error occurred: inconsistent state in working layer.")
         else:
             pass
@@ -73,9 +80,9 @@ class MappingService(QObject):
 
             # self.api.approveSegmentation()
 
-            # iface.setActiveLayer(mapping.currentSegmentationLayer)
+            # iface.setActiveLayer(mapping.currentSegmentationLayer())
             # iface.actionCopyFeatures().trigger()
-            # iface.setActiveLayer(mapping.mappingLayer)
+            # iface.setActiveLayer(mapping.mappingLayer())
 
             # # If not currently editing, start editing this layer
             # wasEditing = self.isEditable()

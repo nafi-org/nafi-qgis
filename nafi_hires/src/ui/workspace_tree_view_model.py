@@ -1,6 +1,7 @@
-from nafi_hires.src.models import Region
 from owslib.map.wms111 import ContentMetadata
 from qgis.PyQt.QtGui import QStandardItemModel
+
+from nafi_hires.src.models import Region
 
 from .workspace_layer_item import WorkspaceLayerItem
 
@@ -14,16 +15,13 @@ class WorkspaceTreeViewModel(QStandardItemModel):
         self.owsLayers: list[ContentMetadata] = []
         self._region: Region = None
 
-    @property
     def regionName(self) -> str:
-        return self._region.regionName
+        return self.region().regionName()
 
-    @property
     def region(self) -> Region:
         return self._region
 
-    @region.setter
-    def region(self, region: Region) -> None:
+    def setRegion(self, region: Region) -> None:
         self._region = region
         self.refresh()
 
@@ -32,8 +30,8 @@ class WorkspaceTreeViewModel(QStandardItemModel):
         self.removeRows(0, self.rowCount())
 
         # Append an item for each layer in the region
-        if self._region is None:
+        if self.region() is None:
             return
 
-        for owsLayer in self._region.owsLayers:
-            self.appendRow(WorkspaceLayerItem(self._region, owsLayer))
+        for owsLayer in self.region().owsLayers:
+            self.appendRow(WorkspaceLayerItem(self.region(), owsLayer))

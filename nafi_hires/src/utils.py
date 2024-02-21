@@ -6,12 +6,10 @@ import os.path as path
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsMessageLog, QgsProject
 from qgis.PyQt.QtWidgets import QMessageBox
 
+HIRES_API_URL = "http://localhost:8000"
 HIRES_REGIONS = ["Darwin", "Katherine"]
-
 HIRES_WMS_URL = "https://test.firenorth.org.au/mapserver/bfnt/gwc/service/wms"
 HIRES_WMTS_URL = "https://test.firenorth.org.au/mapserver/bfnt/gwc/service/wmts"
-
-HIRES_API_URL = "http://localhost:8000"
 
 
 def qgsDebug(message, level=Qgis.Info):

@@ -1,11 +1,12 @@
+from qgis.core import QgsMapLayer
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtGui import QIcon, QStandardItem
+
 from nafi_hires.src.content_metadata_utils import (
     parseContentMetadataDescription,
     parseContentMetadataRegion,
 )
 from nafi_hires.src.models.workspace_layer import WorkspaceLayer
-from qgis.core import QgsMapLayer
-from qgis.PyQt.QtCore import Qt
-from qgis.PyQt.QtGui import QIcon, QStandardItem
 
 
 class WorkspaceLayerItem(QStandardItem):

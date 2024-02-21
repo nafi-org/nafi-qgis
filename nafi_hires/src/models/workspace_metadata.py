@@ -1,9 +1,10 @@
 from collections import defaultdict
 from typing import List
 
-from nafi_hires.src.content_metadata_utils import parseContentMetadataRegion
 from owslib.map.wms111 import ContentMetadata
 from qgis.PyQt.QtCore import QObject
+
+from nafi_hires.src.content_metadata_utils import parseContentMetadataRegion
 
 
 class WorkspaceMetadata(QObject):

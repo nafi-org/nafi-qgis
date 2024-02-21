@@ -1,5 +1,3 @@
-from nafi_hires.hires_client.models import SegmentationDatasetResponse
-from nafi_hires.src.utils import guiError, resolveStylePath
 from qgis.core import (
     QgsLayerTreeGroup,
     QgsLayerTreeLayer,
@@ -7,25 +5,20 @@ from qgis.core import (
     QgsVectorTileLayer,
 )
 
-from ..utils import qgsDebug
+from nafi_hires.src.api import SegmentationDatasetResponse
+from nafi_hires.src.utils import guiError, resolveStylePath
+
+from .item import Item
 from .layer import Layer
 
 
 class SegmentationLayer(QgsVectorTileLayer, Layer):
     """Layer type for the current NAFI HiRes mapping image."""
 
-    @classmethod
-    def xyzLayerUri(cls, segmentationDataset: SegmentationDatasetResponse) -> str:
-        # url = segmentationDataset.get("uri", None)
-        return f"http://localhost:3000/sf_{segmentationDataset.name}/{{z}}/{{x}}/{{y}}"
-
-    def __init__(self, segmentationDataset: SegmentationDatasetResponse):
-        if not segmentationDataset.published:
-            qgsDebug("Segmentation dataset is not published")
-
+    def __init__(self, mapping: Item, data: SegmentationDatasetResponse):
         Layer.__init__(self)
 
-        self.xyzUri = self.xyzLayerUri(segmentationDataset)
+        self.xyzUri = SegmentationLayer.xyzLayerUri(data)
 
         params = {
             "type": "xyz",
@@ -38,64 +31,47 @@ class SegmentationLayer(QgsVectorTileLayer, Layer):
             "&".join(
                 f"{key}={val}" for key, val in params.items()
             ),  # don't URL-encode it
-            segmentationDataset.name,
+            SegmentationLayer.formattedItemName(data),
         )
-
-        self.segmentationMetadata = SegmentationDatasetResponse
+        self._mapping = mapping
+        self.data = data
         # self.setExtent(QgsRectangle(*segmentationDataset.boundary))
 
-    @property
+    def mapping(self) -> Item:
+        return self._mapping
+
+    def displayName(self) -> str:
+        # eg 'T1T2 Threshold 200'
+        return SegmentationLayer.displayName(self.data)
+
+    # Layer interface
     def regionName(self) -> str:
         return "Darwin"
 
-    @property
-    def threshold(self):
-        return self.segmentationMetadata.threshold
-
-    @property
-    def endDate(self):
-        return self.segmentationMetadata.date
-
-    @property
-    def startDate(self):
-        return self.segmentationMetadata.difference_date
-
-    @property
-    def differenceGroup(self):
-        return f"T{self.segmentationMetadata.code}T{self.segmentationMetadata.difference_code}"
-
-    @property
-    def displayName(self) -> str:
-        return f"{self.differenceGroup} Threshold {self.segmentationMetadata.threshold}"
-
-    @property
     def itemName(self) -> str:
-        return f"{self.differenceGroup} Threshold {self.segmentationMetadata.threshold}"
+        # eg 'T1T2 Differences (Oct 21–Oct 15) Threshold 200'
+        return SegmentationLayer.formattedItemName(self.data)
 
-    @property
     def item(self) -> QgsLayerTreeLayer:
         return QgsProject.instance().layerTreeRoot().findLayer(self.id())
 
-    @property
     def groupName(self) -> str:
-        return "Test"
+        # eg 'Mapping (Oct 21)'
+        return self.mapping().itemName()
 
-    @property
     def group(self) -> QgsLayerTreeGroup:
-        return QgsProject.instance().layerTreeRoot()
+        return self.mapping().item()
 
-    @property
     def subGroupName(self) -> str:
-        """dMIRBI difference group name for this workspace layer."""
-        return self.differenceGroup
+        """Difference group name for this segmentation layer."""
+        return SegmentationLayer.differenceGroup(self.data)
 
-    @property
     def subGroup(self):
-        """dMIRBI difference group for this workspace layer."""
-        subGroup = self.group.findGroup(self.subGroupName)
+        """Difference group for this segmentation layer."""
+        subGroup = self.group().findGroup(self.subGroupName())
         if subGroup is None:
-            self.group.insertGroup(0, self.subGroupName)
-            subGroup = self.group.findGroup(self.subGroupName)
+            self.group().insertGroup(0, self.subGroupName())
+            subGroup = self.group().findGroup(self.subGroupName())
         return subGroup
 
     def addMapLayer(self) -> None:
@@ -103,14 +79,13 @@ class SegmentationLayer(QgsVectorTileLayer, Layer):
             Layer.addMapLayer(self)
 
             # load one of two styles based on the threshold used to segment these features
-            if self.segmentationMetadata.threshold is not None:
-                if int(self.segmentationMetadata.threshold) < 200:
-                    self.loadStyle("lower_threshold_vector_tiles")
-                else:
-                    self.loadStyle("higher_threshold_vector_tiles")
+            if self.data.threshold < 200:
+                self.loadStyle("lower_threshold_vector_tiles")
+            else:
+                self.loadStyle("higher_threshold_vector_tiles")
         else:
             error = (
-                f"An error occurred adding the layer {self.itemName} to the map.\n"
+                f"An error occurred adding the layer {self.itemName()} to the map.\n"
                 f"Check your QGIS logs for details."
             )
             guiError(error)
@@ -119,3 +94,28 @@ class SegmentationLayer(QgsVectorTileLayer, Layer):
         """Apply a packaged style to this layer."""
         stylePath = resolveStylePath(styleName)
         self.loadNamedStyle(stylePath)
+
+    @staticmethod
+    def xyzLayerUri(data: SegmentationDatasetResponse) -> str:
+        # url = segmentationDataset.url
+        return f"http://localhost:3000/sf_{data.name}/{{z}}/{{x}}/{{y}}"
+
+    @staticmethod
+    def difference(data: SegmentationDatasetResponse) -> str:
+        # eg 'T1T2'
+        return f"T{data.code}•T{data.difference_code}"
+
+    @staticmethod
+    def differenceGroup(data: SegmentationDatasetResponse) -> str:
+        # eg 'T1T2 Differences (Oct 21–Oct 15)'
+        return f"{SegmentationLayer.difference(data)} Differences ({data.date.strftime('%b %d')}–{data.difference_date.strftime('%b %d')})"
+
+    @staticmethod
+    def displayName(data: SegmentationDatasetResponse) -> str:
+        # eg 'T1T2 Threshold 200'
+        return f"{SegmentationLayer.difference(data)} Threshold {data.threshold}"
+
+    @staticmethod
+    def formattedItemName(data: SegmentationDatasetResponse) -> str:
+        # eg 'T1T2 Differences (Oct 21–Oct 15) Threshold 200'
+        return f"{SegmentationLayer.difference(data)} Differences Threshold {data.threshold}"
