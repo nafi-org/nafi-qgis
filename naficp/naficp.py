@@ -10,7 +10,13 @@ from .resources_rc import *
 
 # Import the code for the DockWidget
 from .src.naficp_dockwidget import NafiCpDockWidget
-from .src.utils import getConfiguredHotKey, guiWarning, NAFICP_NAME
+from .src.utils import (
+    NAFICP_NAME,
+    getConfiguredPasteFeaturesHotKey,
+    getConfiguredSetActiveLayerAsSourceLayerHotKey,
+    getConfiguredSetActiveLayerAsWorkingLayerHotKey,
+    guiWarning,
+)
 
 
 class NafiCp:
@@ -27,10 +33,10 @@ class NafiCp:
         # Save reference to the QGIS interface
         self.iface = iface
 
-        # initialize plugin directory
+        # Initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
 
-        # initialize locale
+        # Initialize locale
         locale = QSettings().value("locale/userLocale")[0:2]
         locale_path = os.path.join(
             self.plugin_dir, "i18n", "NafiCp_{}.qm".format(locale)
@@ -153,26 +159,58 @@ class NafiCp:
             parent=self.iface.mainWindow(),
         )
 
-        self.hotkey = getConfiguredHotKey()
+        self.pasteFeaturesHotKey = getConfiguredPasteFeaturesHotKey()
+        self.pasteFeaturesAction = QAction("Paste Features", QgsInterface.mainWindow())
 
-        self.pasteAction = QAction("Paste Features", QgsInterface.mainWindow())
-        QgsInterface.registerMainWindowAction(self.pasteAction, self.hotkey)
-        # won't work without calling this method?
-        QgsInterface.addPluginToVectorMenu(NAFICP_NAME, self.pasteAction)
+        self.setActiveLayerAsSourceLayerHotKey = (
+            getConfiguredSetActiveLayerAsSourceLayerHotKey()
+        )
+        self.setActiveLayerAsSourceLayerAction = QAction(
+            "Set Active Layer as Source Layer", QgsInterface.mainWindow()
+        )
+
+        self.setActiveLayerAsWorkingLayerHotKey = (
+            getConfiguredSetActiveLayerAsWorkingLayerHotKey()
+        )
+        self.setActiveLayerAsWorkingLayerAction = QAction(
+            "Set Active Layer as Working Layer", QgsInterface.mainWindow()
+        )
+
+        QgsInterface.registerMainWindowAction(
+            self.pasteFeaturesAction, self.pasteFeaturesHotKey
+        )
+
+        QgsInterface.registerMainWindowAction(
+            self.setActiveLayerAsSourceLayerAction,
+            self.setActiveLayerAsSourceLayerHotKey,
+        )
+
+        QgsInterface.registerMainWindowAction(
+            self.setActiveLayerAsWorkingLayerAction,
+            self.setActiveLayerAsWorkingLayerHotKey,
+        )
+
+        # Won't work without calling this method?
+        QgsInterface.addPluginToVectorMenu(NAFICP_NAME, self.pasteFeaturesAction)
+        QgsInterface.addPluginToVectorMenu(
+            NAFICP_NAME, self.setActiveLayerAsSourceLayerAction
+        )
+        QgsInterface.addPluginToVectorMenu(
+            NAFICP_NAME, self.setActiveLayerAsWorkingLayerAction
+        )
 
     # --------------------------------------------------------------------------
 
     def onClosePlugin(self):
         """Cleanup necessary items here when plugin dockwidget is closed"""
 
-        # print "** CLOSING NafiCp"
-
-        # disconnects
+        # Disconnect the closingPlugin signal from the dockwidget to this method
         self.dockwidget.closingPlugin.disconnect(self.onClosePlugin)
 
-        # remove this statement if dockwidget is to remain
+        # Remove this statement if dockwidget is to remain
         # for reuse if plugin is reopened
-        # Commented next statement since it causes QGIS crashe
+
+        # Commented next statement since it causes QGIS crash
         # when closing the docked window:
         # self.dockwidget = None
 
@@ -181,19 +219,28 @@ class NafiCp:
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
 
-        # Remove 'Paste Features' action
-        nafiCpMenu = next(
+        # Remove all 'Easy Copy and Paste' actions
+        nafiCpMenuActions = [
             a for a in QgsInterface.vectorMenu().actions() if NAFICP_NAME in a.text()
-        )
-        QgsInterface.vectorMenu().removeAction(nafiCpMenu)
+        ]
 
-        if not QgsInterface.unregisterMainWindowAction(self.pasteAction):
-            guiWarning("Error unregistering 'Paste Features' action.")
+        for menuAction in nafiCpMenuActions:
+            QgsInterface.vectorMenu().removeAction(menuAction)
 
+        for mainWindowAction in [
+            self.pasteFeaturesAction,
+            self.setActiveLayerAsSourceLayerAction,
+            self.setActiveLayerAsWorkingLayerAction,
+        ]:
+            if not QgsInterface.unregisterMainWindowAction(mainWindowAction):
+                guiWarning(f"Error unregistering '{mainWindowAction.text()}' action.")
+
+        # Remove all plug-in actions
         for action in self.actions:
             self.iface.removePluginMenu(self.tr(NAFICP_NAME), action)
             self.iface.removeToolBarIcon(action)
-        # remove the toolbar
+
+        # Remove the toolbar
         del self.toolbar
 
     # --------------------------------------------------------------------------
@@ -204,19 +251,21 @@ class NafiCp:
         if not self.pluginIsActive:
             self.pluginIsActive = True
 
-            # print "** STARTING NafiCp"
-
-            # dockwidget may not exist if:
-            #    first run of plugin
-            #    removed on close (see self.onClosePlugin method)
+            # Dockwidget may not exist if:
+            #    First run of plugin
+            #    Removed on close (see self.onClosePlugin method)
             if self.dockwidget == None:
                 # Create the dockwidget (after translation) and keep reference
-                self.dockwidget = NafiCpDockWidget(self.hotkey, self.pasteAction)
+                self.dockwidget = NafiCpDockWidget(
+                    self.pasteFeaturesHotKey,
+                    self.pasteFeaturesAction,
+                    self.setActiveLayerAsSourceLayerAction,
+                    self.setActiveLayerAsWorkingLayerAction,
+                )
 
-            # connect to provide cleanup on closing of dockwidget
+            # Connect to provide cleanup on closing of dockwidget
             self.dockwidget.closingPlugin.connect(self.onClosePlugin)
 
-            # show the dockwidget
-            # TODO: fix to allow choice of dock location
+            # Show the dockwidget
             self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.dockwidget)
             self.dockwidget.show()
