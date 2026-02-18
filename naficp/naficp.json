@@ -1,3 +1,5 @@
 {
-    "hotkey": "Ctrl+Z"
+  "pasteFeaturesHotKey": "Ctrl+Z",
+  "setActiveLayerAsSourceLayerHotKey": "Shift+A",
+  "setActiveLayerAsWorkingLayerHotKey": "Shift+S"
 }

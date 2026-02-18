@@ -62,6 +62,11 @@ def deriveWorkingDirectory():
     return path.dirname(projectFilePath)
 
 
+def doFullSegmentationDownload() -> bool:
+    """Return whether to download the full segmentation."""
+    return bool(getSetting("NTRRP_DO_FULL_SEGMENTATION_DOWNLOAD", False))
+
+
 def getSetting(setting, default=None):
     """Retrieve an NTRRP setting."""
     try:

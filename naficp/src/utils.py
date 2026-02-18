@@ -6,7 +6,9 @@ from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtWidgets import QMessageBox
 
 NAFICP_NAME = "Easy Copy and Paste"
-NAFICP_DEFAULT_HOTKEY = "Ctrl+Z"
+NAFICP_DEFAULT_PASTE_FEATURES_HOTKEY = "Ctrl+Z"
+NAFICP_DEFAULT_SET_ACTIVE_LAYER_AS_SOURCE_LAYER_HOTKEY = "Ctrl+Shift+S"
+NAFICP_DEFAULT_SET_ACTIVE_LAYER_AS_WORKING_LAYER_HOTKEY = "Ctrl+Shift+D"
 NAFICP_CONFIG_FILENAME = "naficp.json"
 
 
@@ -50,6 +52,22 @@ def getSetting(setting, default=None):
         return default
 
 
-def getConfiguredHotKey():
-    """Get the configured hot key."""
-    return getSetting("hotkey", NAFICP_DEFAULT_HOTKEY)
+def getConfiguredPasteFeaturesHotKey():
+    """Get the configured 'Paste Features' hot key."""
+    return getSetting("hotkey", NAFICP_DEFAULT_PASTE_FEATURES_HOTKEY)
+
+
+def getConfiguredSetActiveLayerAsSourceLayerHotKey():
+    """Get the configured 'Set Active Layer as Source Layer' hot key."""
+    return getSetting(
+        "setActiveLayerAsSourceLayerHotKey",
+        NAFICP_DEFAULT_SET_ACTIVE_LAYER_AS_SOURCE_LAYER_HOTKEY,
+    )
+
+
+def getConfiguredSetActiveLayerAsWorkingLayerHotKey():
+    """Get the configured 'Set Active Layer as Working Layer' hot key."""
+    return getSetting(
+        "setActiveLayerAsWorkingLayerHotKey",
+        NAFICP_DEFAULT_SET_ACTIVE_LAYER_AS_WORKING_LAYER_HOTKEY,
+    )

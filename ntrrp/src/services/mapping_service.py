@@ -18,6 +18,7 @@ from ntrrp.src.models import (
 )
 from ntrrp.src.utils import (
     NTRRP_REGIONS,
+    doFullSegmentationDownload,
     deriveWorkingDirectory,
     ensureDirectory,
     qgsDebug,
@@ -64,20 +65,28 @@ class MappingService(QObject):
 
     def downloadSegmentationData(self, mapping: Mapping):
         """Download segmentation features from NAFI and call back to add them to the map."""
-        # if deriveWorkingDirectory() is None:
-        #     return None
+        if doFullSegmentationDownload():
+            if deriveWorkingDirectory() is None:
+                return None
 
-        # params = {
-        #     'Region': NTRRP_REGIONS.index(self.region)
-        # }
-        # dialog = processing.createAlgorithmDialog(
-        #     'BurntAreas:DownloadSegmentationData', params)
-        # dialog.algorithmFinished.connect(lambda _: self.addSegmentationLayers(mapping,
-        #     dialog.results()['SegmentationDataDirectory']))
-        # for signal in [dialog.algorithmFinished, dialog.accepted, dialog.rejected, dialog.destroyed]:
-        #     signal.connect(lambda: self.dataDownloadFinished.emit())
-        # dialog.show()
-        # dialog.runButton().click()
+            params = {"Region": NTRRP_REGIONS.index(self.region)}
+            dialog = processing.createAlgorithmDialog(
+                "BurntAreas:DownloadSegmentationData", params
+            )
+            dialog.algorithmFinished.connect(
+                lambda _: self.addSegmentationLayers(
+                    mapping, dialog.results()["SegmentationDataDirectory"]
+                )
+            )
+            for signal in [
+                dialog.algorithmFinished,
+                dialog.accepted,
+                dialog.rejected,
+                dialog.destroyed,
+            ]:
+                signal.connect(lambda: self.dataDownloadFinished.emit())
+            dialog.show()
+            dialog.runButton().click()
 
         self.addMappingLayers(mapping)
 

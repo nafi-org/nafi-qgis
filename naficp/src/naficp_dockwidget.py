@@ -1,5 +1,5 @@
-from typing import Any
 import os
+from typing import Any
 
 from qgis.core import QgsMapLayerProxyModel
 from qgis.PyQt import QtWidgets, uic
@@ -8,7 +8,7 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 from qgis.utils import iface as QgsInterface
 
-from .utils import getConfiguredHotKey, guiError, NAFICP_NAME, guiWarning
+from .utils import guiError, guiWarning
 
 FORM_CLASS: Any
 FORM_CLASS, _ = uic.loadUiType(
@@ -21,18 +21,27 @@ FORM_CLASS, _ = uic.loadUiType(
 class NafiCpDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
     closingPlugin = pyqtSignal()
 
-    def __init__(self, hotkey, pasteAction, parent=None):
+    def __init__(
+        self,
+        pasteFeaturesHotKey,
+        pasteFeaturesAction,
+        setActiveLayerAsSourceLayerAction,
+        setActiveLayerAsWorkingLayerAction,
+        parent=None,
+    ):
         super(NafiCpDockWidget, self).__init__(parent)
 
         self.setupUi(self)
 
-        self.hotkey = hotkey
-        self.pasteAction = pasteAction
+        self.pasteFeaturesHotKey = pasteFeaturesHotKey
+        self.pasteFeaturesAction = pasteFeaturesAction
+        self.setActiveLayerAsSourceLayerAction = setActiveLayerAsSourceLayerAction
+        self.setActiveLayerAsWorkingLayerAction = setActiveLayerAsWorkingLayerAction
 
-        # was having trouble getting this to lay out correctly, so have commented for now
+        # Was having trouble getting this to lay out correctly, so have commented for now
         # self.pasteFeaturesButton.setIcon(QIcon(":/plugins/naficp/images/paintbrush.png"))
         # self.pasteFeaturesButton.updateGeometry()
-        self.pasteFeaturesButton.setText(f"Paste Features ({self.hotkey})")
+        self.pasteFeaturesButton.setText(f"Paste Features ({self.pasteFeaturesHotKey})")
 
         self.sourceLayerComboBox.setFilters(QgsMapLayerProxyModel.VectorLayer)
         self.sourceLayerComboBox.setShowCrs(True)
@@ -40,13 +49,21 @@ class NafiCpDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.workingLayerComboBox.setFilters(QgsMapLayerProxyModel.VectorLayer)
         self.workingLayerComboBox.setShowCrs(True)
 
-        self.pasteAction.triggered.connect(self.copySelectedFeaturesFromSourceLayer)
-
+        self.pasteFeaturesAction.triggered.connect(
+            self.copySelectedFeaturesFromSourceLayer
+        )
         self.pasteFeaturesButton.clicked.connect(
             self.copySelectedFeaturesFromSourceLayer
         )
 
-    # miscellaneous sanity checks
+        self.setActiveLayerAsSourceLayerAction.triggered.connect(
+            self.setActiveLayerAsSourceLayer
+        )
+        self.setActiveLayerAsWorkingLayerAction.triggered.connect(
+            self.setActiveLayerAsWorkingLayer
+        )
+
+    # Miscellaneous sanity checks
     def checkLayersSelected(self, sourceLayer, workingLayer):
         if sourceLayer is None or workingLayer is None:
             guiError(
@@ -87,21 +104,37 @@ class NafiCpDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         QgsInterface.actionCopyFeatures().trigger()
         QgsInterface.setActiveLayer(workingLayer)
 
-        # if not currently editing, start editing this layer
+        # If not currently editing, start editing this layer
         wasEditing = workingLayer.isEditable()
         if not wasEditing:
             workingLayer.startEditing()
 
         QgsInterface.actionPasteFeatures().trigger()
 
-        # commit the changes, and stop editing if we weren't before
+        # Commit the changes, and stop editing if we weren't before
         workingLayer.commitChanges(stopEditing=(not wasEditing))
 
         QgsInterface.mainWindow().findChild(QAction, "mActionDeselectAll").trigger()
         QgsInterface.setActiveLayer(sourceLayer)
 
-        # repopulate the clipboard with no features to avoid re-pasting
+        # Repopulate the clipboard with no features to avoid re-pasting
         QgsInterface.actionCopyFeatures().trigger()
+
+    def setActiveLayerAsSourceLayer(self):
+        """Set the currently active layer as the source layer."""
+        activeLayer = QgsInterface.activeLayer()
+        if activeLayer is None:
+            guiWarning("Set Active Layer As Source Layer: no layer added")
+        else:
+            self.sourceLayerComboBox.setLayer(activeLayer)
+
+    def setActiveLayerAsWorkingLayer(self):
+        """Set the currently active layer as the working layer."""
+        activeLayer = QgsInterface.activeLayer()
+        if activeLayer is None:
+            guiWarning("Set Active Layer As Working Layer: no layer added")
+        else:
+            self.workingLayerComboBox.setLayer(activeLayer)
 
     def closeEvent(self, event):
         self.closingPlugin.emit()
