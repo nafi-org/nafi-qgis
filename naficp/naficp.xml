@@ -1,0 +1,6 @@
+<!DOCTYPE shortcuts>
+<qgsshortcuts locale="en_AU" version="1.1">
+    <action setting="/shortcuts/Easy Cut and Paste Features" name="Paste Features" shortcut="Ctrl+Z"/>
+    <action setting="/shortcuts/Set Active Layer as Source Layer" name="Set Active Layer as Source Layer" shortcut="Shift+!"/>
+    <action setting="/shortcuts/Set Active Layer as Working Layer" name="Set Active Layer as Working Layer" shortcut="Shift+@"/>
+</qgsshortcuts>

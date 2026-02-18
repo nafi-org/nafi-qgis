@@ -122,23 +122,19 @@ class NafiCpDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
     def setActiveLayerAsSourceLayer(self):
         """Set the currently active layer as the source layer."""
-        guiWarning("Setting active layer as source layer.")
-
-        # activeLayer = QgsInterface.activeLayer()
-        # if activeLayer is None:
-        #     guiWarning("No active layer to set as source layer.")
-        #     return
-        # self.sourceLayerComboBox.setCurrentLayer(activeLayer)
+        activeLayer = QgsInterface.activeLayer()
+        if activeLayer is None:
+            guiWarning("Set Active Layer As Source Layer: no layer added")
+        else:
+            self.sourceLayerComboBox.setLayer(activeLayer)
 
     def setActiveLayerAsWorkingLayer(self):
         """Set the currently active layer as the working layer."""
-        guiWarning("Setting active layer as working layer.")
-
-        # activeLayer = QgsInterface.activeLayer()
-        # if activeLayer is None:
-        #     guiWarning("No active layer to set as working layer.")
-        #     return
-        # self.workingLayerComboBox.setCurrentLayer(activeLayer)
+        activeLayer = QgsInterface.activeLayer()
+        if activeLayer is None:
+            guiWarning("Set Active Layer As Working Layer: no layer added")
+        else:
+            self.workingLayerComboBox.setLayer(activeLayer)
 
     def closeEvent(self, event):
         self.closingPlugin.emit()
