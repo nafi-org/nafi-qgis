@@ -259,7 +259,9 @@ class NafiCp:
                 self.dockwidget = NafiCpDockWidget(
                     self.pasteFeaturesHotKey,
                     self.pasteFeaturesAction,
+                    self.setActiveLayerAsSourceLayerHotKey,
                     self.setActiveLayerAsSourceLayerAction,
+                    self.setActiveLayerAsWorkingLayerHotKey,
                     self.setActiveLayerAsWorkingLayerAction,
                 )
 

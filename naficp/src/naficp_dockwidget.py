@@ -25,7 +25,9 @@ class NafiCpDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self,
         pasteFeaturesHotKey,
         pasteFeaturesAction,
+        setActiveLayerAsSourceLayerHotKey,
         setActiveLayerAsSourceLayerAction,
+        setActiveLayerAsWorkingLayerHotKey,
         setActiveLayerAsWorkingLayerAction,
         parent=None,
     ):
@@ -35,13 +37,21 @@ class NafiCpDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
         self.pasteFeaturesHotKey = pasteFeaturesHotKey
         self.pasteFeaturesAction = pasteFeaturesAction
+        self.setActiveLayerAsSourceLayerHotKey = setActiveLayerAsSourceLayerHotKey
         self.setActiveLayerAsSourceLayerAction = setActiveLayerAsSourceLayerAction
+        self.setActiveLayerAsWorkingLayerHotKey = setActiveLayerAsWorkingLayerHotKey
         self.setActiveLayerAsWorkingLayerAction = setActiveLayerAsWorkingLayerAction
 
         # Was having trouble getting this to lay out correctly, so have commented for now
         # self.pasteFeaturesButton.setIcon(QIcon(":/plugins/naficp/images/paintbrush.png"))
         # self.pasteFeaturesButton.updateGeometry()
         self.pasteFeaturesButton.setText(f"Paste Features ({self.pasteFeaturesHotKey})")
+        self.sourceLayerLabel.setText(
+            f"Select source layer ({self.setActiveLayerAsSourceLayerHotKey})"
+        )
+        self.workingLayerLabel.setText(
+            f"Select working layer ({self.setActiveLayerAsWorkingLayerHotKey})"
+        )
 
         self.sourceLayerComboBox.setFilters(QgsMapLayerProxyModel.VectorLayer)
         self.sourceLayerComboBox.setShowCrs(True)

@@ -18,7 +18,7 @@
         </property>
         <property name="minimumSize">
             <size>
-                <width>416</width>
+                <width>180</width>
                 <height>148</height>
             </size>
         </property>
@@ -79,151 +79,70 @@
                     </layout>
                 </item>
                 <item row="0" column="0">
-                    <layout class="QHBoxLayout" name="layersLayout">
-                        <item>
-                            <layout class="QVBoxLayout" name="labelsLayout">
-                                <property name="sizeConstraint">
-                                    <enum>QLayout::SetMinimumSize</enum>
+                    <layout class="QFormLayout" name="layersLayout">
+                        <property name="rowWrapPolicy">
+                            <enum>QFormLayout::WrapLongRows</enum>
+                        </property>
+                        <property name="labelAlignment">
+                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                        <item row="0" column="0">
+                            <widget class="QLabel" name="sourceLayerLabel">
+                                <property name="text">
+                                    <string>Select source layer</string>
                                 </property>
-                                <item>
-                                    <layout class="QHBoxLayout" name="sourceLayerLayout">
-                                        <item>
-                                            <spacer name="sourceLayerSpacer">
-                                                <property name="orientation">
-                                                    <enum>Qt::Horizontal</enum>
-                                                </property>
-                                                <property name="sizeType">
-                                                    <enum>QSizePolicy::Minimum</enum>
-                                                </property>
-                                                <property name="sizeHint" stdset="0">
-                                                    <size>
-                                                        <width>40</width>
-                                                        <height>20</height>
-                                                    </size>
-                                                </property>
-                                            </spacer>
-                                        </item>
-                                        <item>
-                                            <widget class="QLabel" name="sourceLayerLabel">
-                                                <property name="sizePolicy">
-                                                    <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-                                                        <horstretch>0</horstretch>
-                                                        <verstretch>0</verstretch>
-                                                    </sizepolicy>
-                                                </property>
-                                                <property name="maximumSize">
-                                                    <size>
-                                                        <width>150</width>
-                                                        <height>16777215</height>
-                                                    </size>
-                                                </property>
-                                                <property name="font">
-                                                    <font>
-                                                        <weight>75</weight>
-                                                        <bold>true</bold>
-                                                    </font>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Select source layer</string>
-                                                </property>
-                                            </widget>
-                                        </item>
-                                    </layout>
-                                </item>
-                                <item>
-                                    <layout class="QHBoxLayout" name="workingLayerLayout">
-                                        <item>
-                                            <spacer name="workingLayerSpacer">
-                                                <property name="orientation">
-                                                    <enum>Qt::Horizontal</enum>
-                                                </property>
-                                                <property name="sizeType">
-                                                    <enum>QSizePolicy::Minimum</enum>
-                                                </property>
-                                                <property name="sizeHint" stdset="0">
-                                                    <size>
-                                                        <width>40</width>
-                                                        <height>20</height>
-                                                    </size>
-                                                </property>
-                                            </spacer>
-                                        </item>
-                                        <item>
-                                            <widget class="QLabel" name="workingLayerLabel">
-                                                <property name="sizePolicy">
-                                                    <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-                                                        <horstretch>0</horstretch>
-                                                        <verstretch>0</verstretch>
-                                                    </sizepolicy>
-                                                </property>
-                                                <property name="maximumSize">
-                                                    <size>
-                                                        <width>150</width>
-                                                        <height>16777215</height>
-                                                    </size>
-                                                </property>
-                                                <property name="font">
-                                                    <font>
-                                                        <weight>75</weight>
-                                                        <bold>true</bold>
-                                                    </font>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Select working layer</string>
-                                                </property>
-                                            </widget>
-                                        </item>
-                                    </layout>
-                                </item>
-                            </layout>
+                            </widget>
                         </item>
-                        <item>
-                            <layout class="QVBoxLayout" name="mapLayerComboBoxLayout">
-                                <item>
-                                    <widget class="QgsMapLayerComboBox" name="sourceLayerComboBox">
-                                        <property name="sizePolicy">
-                                            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                                                <horstretch>0</horstretch>
-                                                <verstretch>0</verstretch>
-                                            </sizepolicy>
-                                        </property>
-                                        <property name="minimumSize">
-                                            <size>
-                                                <width>200</width>
-                                                <height>0</height>
-                                            </size>
-                                        </property>
-                                        <property name="maximumSize">
-                                            <size>
-                                                <width>400</width>
-                                                <height>16777215</height>
-                                            </size>
-                                        </property>
-                                    </widget>
-                                </item>
-                                <item>
-                                    <widget class="QgsMapLayerComboBox" name="workingLayerComboBox">
-                                        <property name="sizePolicy">
-                                            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                                                <horstretch>0</horstretch>
-                                                <verstretch>0</verstretch>
-                                            </sizepolicy>
-                                        </property>
-                                        <property name="minimumSize">
-                                            <size>
-                                                <width>200</width>
-                                                <height>0</height>
-                                            </size>
-                                        </property>
-                                        <property name="maximumSize">
-                                            <size>
-                                                <width>400</width>
-                                                <height>16777215</height>
-                                            </size>
-                                        </property>
-                                    </widget>
-                                </item>
-                            </layout>
+                        <item row="0" column="1">
+                            <widget class="QgsMapLayerComboBox" name="sourceLayerComboBox">
+                                <property name="sizePolicy">
+                                    <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="minimumSize">
+                                    <size>
+                                        <width>80</width>
+                                        <height>0</height>
+                                    </size>
+                                </property>
+                                <property name="maximumSize">
+                                    <size>
+                                        <width>400</width>
+                                        <height>16777215</height>
+                                    </size>
+                                </property>
+                            </widget>
+                        </item>
+                        <item row="1" column="0">
+                            <widget class="QLabel" name="workingLayerLabel">
+                                <property name="text">
+                                    <string>Select working layer</string>
+                                </property>
+                            </widget>
+                        </item>
+                        <item row="1" column="1">
+                            <widget class="QgsMapLayerComboBox" name="workingLayerComboBox">
+                                <property name="sizePolicy">
+                                    <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="minimumSize">
+                                    <size>
+                                        <width>80</width>
+                                        <height>0</height>
+                                    </size>
+                                </property>
+                                <property name="maximumSize">
+                                    <size>
+                                        <width>400</width>
+                                        <height>16777215</height>
+                                    </size>
+                                </property>
+                            </widget>
                         </item>
                     </layout>
                 </item>
