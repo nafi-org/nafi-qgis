@@ -88,12 +88,6 @@
                         </property>
                         <item row="0" column="0">
                             <widget class="QLabel" name="sourceLayerLabel">
-                                <property name="font">
-                                    <font>
-                                        <weight>75</weight>
-                                        <bold>true</bold>
-                                    </font>
-                                </property>
                                 <property name="text">
                                     <string>Select source layer</string>
                                 </property>
@@ -123,12 +117,6 @@
                         </item>
                         <item row="1" column="0">
                             <widget class="QLabel" name="workingLayerLabel">
-                                <property name="font">
-                                    <font>
-                                        <weight>75</weight>
-                                        <bold>true</bold>
-                                    </font>
-                                </property>
                                 <property name="text">
                                     <string>Select working layer</string>
                                 </property>
