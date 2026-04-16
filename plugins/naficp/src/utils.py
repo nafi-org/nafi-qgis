@@ -54,7 +54,7 @@ def getSetting(setting, default=None):
 
 def getConfiguredPasteFeaturesHotKey():
     """Get the configured 'Paste Features' hot key."""
-    return getSetting("hotkey", NAFICP_DEFAULT_PASTE_FEATURES_HOTKEY)
+    return getSetting("pasteFeaturesHotKey", NAFICP_DEFAULT_PASTE_FEATURES_HOTKEY)
 
 
 def getConfiguredSetActiveLayerAsSourceLayerHotKey():
