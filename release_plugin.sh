@@ -5,40 +5,35 @@ plugin_name=$1
 
 workingDir=$PWD
 
-unameOutput="$(uname -s)"
-case "${unameOutput}" in
-    Linux*)     osName=Linux;;
-    Darwin*)    osName=Mac;;
-    CYGWIN*)    osName=Cygwin;;
-    MINGW*)     osName=MinGw;;
-    MSYS_NT*)   osName=Git;;
-    *)          osName="UNKNOWN:${unameOutput}"
-esac
+version=$(grep '^version=' "plugins/${plugin_name}/metadata.txt" | cut -d= -f2)
+archiveName="${workingDir}/${plugin_name}-${version}.zip"
 
-archiveName="${workingDir}/${plugin_name}-$(date +'%Y%m%d').zip"
+if [ -f "${archiveName}" ]; then
+    read -rp "${archiveName} already exists. Overwrite? [y/N] " answer
+    if [ "$answer" != "y" ] && [ "$answer" != "Y" ]; then
+        echo "Aborted."
+        exit 1
+    fi
+    rm "${archiveName}"
+fi
 
-echo Creating a release package for ${plugin_name}
-echo Detected OS ${osName}, using zip command ${zipCmd} to create ${archiveName}
+echo "Creating a release package for ${plugin_name} v${version}"
 
 mkdir deployment
 
 # get a clean copy of the current branch in a subdirectory `deployment`
 git archive HEAD | tar -x -C deployment
-cd deployment
+cd deployment/plugins || exit
 
 # remove any bare image files—these are encoded in resources_rc anyway
-cp ${plugin_name}/images/icon.png ${plugin_name}/icon.png
-# rm -rf ${plugin_name}/images
+cp "${plugin_name}/images/icon.png" "${plugin_name}/icon.png"
+# rm -rf "${plugin_name}/images"
 
 
-# zip up the ${plugin_name} directory only into a datestamped archive
-if [ ${osName} == "Mac" ]; then
-    zip -rq "../${plugin_name}-$(date +'%Y%m%d').zip" ${plugin_name}
-else
-    7z a -r "../${plugin_name}-$(date +'%Y%m%d').zip" ${plugin_name}
-fi
+# zip up the ${plugin_name} directory only into a versioned archive
+zip -rq "${archiveName}" "${plugin_name}"
 
-cd ..
+cd "${workingDir}" || exit
 rm -rf deployment
 
-echo Created ${archiveName}
+echo "Created ${archiveName}"
