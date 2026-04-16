@@ -1,0 +1,46 @@
+
+[tool.ruff]
+line-length = 120
+target-version = "py313"
+extend-exclude = ["templates"]
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "F",      # pyflakes
+    "W",      # pycodestyle warnings
+    "I",      # isort
+    "N",      # pep8-naming
+    "UP",     # pyupgrade
+    "B",      # flake8-bugbear
+    "A",      # flake8-builtins
+    "C4",     # flake8-comprehensions
+    "PIE",    # flake8-pie
+    "RSE",    # flake8-raise
+    "RET",    # flake8-return
+    "SIM",    # flake8-simplify
+    "PERF",   # perflint
+    "RUF",    # ruff-specific
+]
+ignore = [
+    "E501",   # line too long (formatter handles this)
+]
+
+[tool.ruff.lint.per-file-ignores]
+# classFactory, initGui, closingPlugin are QGIS/Qt API conventions, not our naming choices.
+"plugins/*/__init__.py" = ["N802"]
+"plugins/*/*.py" = ["N802", "N815"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+[tool.pytest.ini_options]
+testpaths = ["plugins"]
+addopts = "--qgis_disable_gui -v"
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+filterwarnings = [
+    # Plugin main module may contain a class that looks like a test class to pytest.
+    "ignore::pytest.PytestCollectionWarning",
+]

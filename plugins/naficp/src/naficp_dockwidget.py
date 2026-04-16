@@ -45,12 +45,14 @@ class NafiCpDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # Was having trouble getting this to lay out correctly, so have commented for now
         # self.pasteFeaturesButton.setIcon(QIcon(":/plugins/naficp/images/paintbrush.png"))
         # self.pasteFeaturesButton.updateGeometry()
-        self.pasteFeaturesButton.setText(f"Paste Features ({self.pasteFeaturesHotKey})")
+        self.pasteFeaturesButton.setText(
+            f"Paste Features ({self.pasteFeaturesAction.shortcut().toString()})"
+        )
         self.sourceLayerLabel.setText(
-            f"Select source layer ({self.setActiveLayerAsSourceLayerHotKey})"
+            f"Select source layer ({self.setActiveLayerAsSourceLayerAction.shortcut().toString()})"
         )
         self.workingLayerLabel.setText(
-            f"Select working layer ({self.setActiveLayerAsWorkingLayerHotKey})"
+            f"Select working layer ({self.setActiveLayerAsWorkingLayerAction.shortcut().toString()})"
         )
 
         self.sourceLayerComboBox.setFilters(QgsMapLayerProxyModel.VectorLayer)
