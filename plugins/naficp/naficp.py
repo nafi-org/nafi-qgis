@@ -36,8 +36,9 @@ class NafiCp:
         # Initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
 
-        # Initialize locale
-        locale = QSettings().value("locale/userLocale")[0:2]
+        # Initialize locale. QSettings().value() may return None headless or on a
+        # fresh profile, so fall back to English before slicing.
+        locale = (QSettings().value("locale/userLocale") or "en")[0:2]
         locale_path = os.path.join(
             self.plugin_dir, "i18n", "NafiCp_{}.qm".format(locale)
         )
@@ -159,38 +160,20 @@ class NafiCp:
             parent=self.iface.mainWindow(),
         )
 
-        self.pasteFeaturesHotKey = getConfiguredPasteFeaturesHotKey()
         self.pasteFeaturesAction = QAction("Paste Features", QgsInterface.mainWindow())
-
-        self.setActiveLayerAsSourceLayerHotKey = (
-            getConfiguredSetActiveLayerAsSourceLayerHotKey()
-        )
         self.setActiveLayerAsSourceLayerAction = QAction(
             "Set Active Layer as Source Layer", QgsInterface.mainWindow()
-        )
-
-        self.setActiveLayerAsWorkingLayerHotKey = (
-            getConfiguredSetActiveLayerAsWorkingLayerHotKey()
         )
         self.setActiveLayerAsWorkingLayerAction = QAction(
             "Set Active Layer as Working Layer", QgsInterface.mainWindow()
         )
 
-        QgsInterface.registerMainWindowAction(
-            self.pasteFeaturesAction, self.pasteFeaturesHotKey
-        )
+        self.pasteFeaturesHotKey = None
+        self.setActiveLayerAsSourceLayerHotKey = None
+        self.setActiveLayerAsWorkingLayerHotKey = None
+        self.refreshHotKeys()
 
-        QgsInterface.registerMainWindowAction(
-            self.setActiveLayerAsSourceLayerAction,
-            self.setActiveLayerAsSourceLayerHotKey,
-        )
-
-        QgsInterface.registerMainWindowAction(
-            self.setActiveLayerAsWorkingLayerAction,
-            self.setActiveLayerAsWorkingLayerHotKey,
-        )
-
-        # Won't work without calling this method?
+        # Vector-menu registration happens once; shortcuts are refreshed per-run.
         QgsInterface.addPluginToVectorMenu(NAFICP_NAME, self.pasteFeaturesAction)
         QgsInterface.addPluginToVectorMenu(
             NAFICP_NAME, self.setActiveLayerAsSourceLayerAction
@@ -199,21 +182,55 @@ class NafiCp:
             NAFICP_NAME, self.setActiveLayerAsWorkingLayerAction
         )
 
+    def refreshHotKeys(self):
+        """Re-read naficp.json and re-register any action whose shortcut changed.
+
+        Called from initGui() on startup and from run() on each open, so edits to
+        naficp.json are picked up without needing a full plugin reload.
+        """
+        desired = [
+            (self.pasteFeaturesAction, getConfiguredPasteFeaturesHotKey()),
+            (
+                self.setActiveLayerAsSourceLayerAction,
+                getConfiguredSetActiveLayerAsSourceLayerHotKey(),
+            ),
+            (
+                self.setActiveLayerAsWorkingLayerAction,
+                getConfiguredSetActiveLayerAsWorkingLayerHotKey(),
+            ),
+        ]
+
+        for action, shortcut in desired:
+            if action.shortcut().toString() != shortcut:
+                # Unregister is safe even if the action was never registered.
+                QgsInterface.unregisterMainWindowAction(action)
+                QgsInterface.registerMainWindowAction(action, shortcut)
+
+        self.pasteFeaturesHotKey = desired[0][1]
+        self.setActiveLayerAsSourceLayerHotKey = desired[1][1]
+        self.setActiveLayerAsWorkingLayerHotKey = desired[2][1]
+
     # --------------------------------------------------------------------------
 
     def onClosePlugin(self):
-        """Cleanup necessary items here when plugin dockwidget is closed"""
+        """Tear down the dockwidget so the next run() builds a fresh one."""
 
-        # Disconnect the closingPlugin signal from the dockwidget to this method
         self.dockwidget.closingPlugin.disconnect(self.onClosePlugin)
 
-        # Remove this statement if dockwidget is to remain
-        # for reuse if plugin is reopened
+        # Drop triggered-signal connections so the old dockwidget can be GC'd.
+        for action, slot_name in (
+            (self.pasteFeaturesAction, "copySelectedFeaturesFromSourceLayer"),
+            (self.setActiveLayerAsSourceLayerAction, "setActiveLayerAsSourceLayer"),
+            (self.setActiveLayerAsWorkingLayerAction, "setActiveLayerAsWorkingLayer"),
+        ):
+            try:
+                action.triggered.disconnect(getattr(self.dockwidget, slot_name))
+            except TypeError:
+                pass  # not connected — nothing to do
 
-        # Commented next statement since it causes QGIS crash
-        # when closing the docked window:
-        # self.dockwidget = None
-
+        self.iface.removeDockWidget(self.dockwidget)
+        self.dockwidget.deleteLater()
+        self.dockwidget = None
         self.pluginIsActive = False
 
     def unload(self):
@@ -248,26 +265,25 @@ class NafiCp:
     def run(self):
         """Run method that loads and starts the plugin"""
 
-        if not self.pluginIsActive:
-            self.pluginIsActive = True
+        if self.pluginIsActive:
+            return
 
-            # Dockwidget may not exist if:
-            #    First run of plugin
-            #    Removed on close (see self.onClosePlugin method)
-            if self.dockwidget == None:
-                # Create the dockwidget (after translation) and keep reference
-                self.dockwidget = NafiCpDockWidget(
-                    self.pasteFeaturesHotKey,
-                    self.pasteFeaturesAction,
-                    self.setActiveLayerAsSourceLayerHotKey,
-                    self.setActiveLayerAsSourceLayerAction,
-                    self.setActiveLayerAsWorkingLayerHotKey,
-                    self.setActiveLayerAsWorkingLayerAction,
-                )
+        self.pluginIsActive = True
 
-            # Connect to provide cleanup on closing of dockwidget
-            self.dockwidget.closingPlugin.connect(self.onClosePlugin)
+        # Re-read naficp.json on every open so edits to hotkeys take effect
+        # without a full plugin reload.
+        self.refreshHotKeys()
 
-            # Show the dockwidget
-            self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.dockwidget)
-            self.dockwidget.show()
+        # Always build a fresh dockwidget — the shortcut text is baked into the
+        # label at construction time, so a stale widget would show stale labels.
+        self.dockwidget = NafiCpDockWidget(
+            self.pasteFeaturesHotKey,
+            self.pasteFeaturesAction,
+            self.setActiveLayerAsSourceLayerHotKey,
+            self.setActiveLayerAsSourceLayerAction,
+            self.setActiveLayerAsWorkingLayerHotKey,
+            self.setActiveLayerAsWorkingLayerAction,
+        )
+        self.dockwidget.closingPlugin.connect(self.onClosePlugin)
+        self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.dockwidget)
+        self.dockwidget.show()
