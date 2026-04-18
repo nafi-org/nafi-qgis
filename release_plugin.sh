@@ -29,6 +29,8 @@ cd deployment/plugins || exit
 cp "${plugin_name}/images/icon.png" "${plugin_name}/icon.png"
 # rm -rf "${plugin_name}/images"
 
+# include the repository LICENSE alongside the plugin
+cp "../LICENSE" "${plugin_name}/LICENSE"
 
 # zip up the ${plugin_name} directory only into a versioned archive
 zip -rq "${archiveName}" "${plugin_name}"
