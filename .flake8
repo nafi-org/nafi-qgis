@@ -1,0 +1,11 @@
+[flake8]
+# Matches the rules enforced by the QGIS plugins repository upload check
+# (pyflakes + pycodestyle E/W). Line length bumped to 120 to align with the
+# repo's ruff config in pyproject.toml.
+max-line-length = 120
+extend-exclude =
+    */resources_rc.py,
+    __pycache__,
+    .venv,
+    deployment,
+    templates

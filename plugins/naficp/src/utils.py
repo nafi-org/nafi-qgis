@@ -47,7 +47,7 @@ def getSetting(setting, default=None):
         with open(resolvePluginPath("naficp.json")) as settingsFile:
             settings = json.load(settingsFile)
             return settings.get(setting, default)
-    except:
+    except (OSError, json.JSONDecodeError):
         qgsDebug(f"Error reading {NAFICP_NAME} settings file.")
         return default
 
