@@ -50,8 +50,8 @@ class FsidService(QObject):
                     raise Exception()
                 except BaseException:
                     raise FsidServiceError(
-                        f"Error parsing the retrieved NAFI FSID data!\n"
-                        f"Check the QGIS NAFI Burnt Areas Mapping message log for details.",
+                        "Error parsing the retrieved NAFI FSID data!\n"
+                        "Check the QGIS NAFI Burnt Areas Mapping message log for details.",
                         f"NAFI FSID data retrieved: {html.escape(responseContent)}",
                     )
             elif statusCode == 400:
@@ -59,9 +59,10 @@ class FsidService(QObject):
                 raise FsidServiceError(responseContent)
             else:
                 raise FsidServiceError(
-                    f"Error connecting to NAFI services!\n"
-                    f"Check the QGIS NAFI Burnt Areas Mapping message log for details.",
-                    f"Unexpected HTTP status code {statusCode} returned from server with response content {responseContent}",
+                    "Error connecting to NAFI services!\n"
+                    "Check the QGIS NAFI Burnt Areas Mapping message log for details.",
+                    f"Unexpected HTTP status code {statusCode} returned from server "
+                    f"with response content {responseContent}",
                 )
         except FsidServiceError:
             raise

@@ -12,7 +12,10 @@ from qgis.core import (
     QgsProcessingParameterVectorLayer,
     QgsProject,
 )
-import processing
+try:
+    import processing
+except ImportError:  # headless QGIS init without Processing plugin
+    processing = None  # type: ignore[assignment]
 
 from ntrrp.src.utils import (
     ensureDirectory,
@@ -26,7 +29,8 @@ from ntrrp.src.utils import (
 
 class UploadBurntAreas(QgsProcessingAlgorithm):
     def initAlgorithm(self, config=None):
-        processing.ProcessingConfig.setSettingValue("IGNORE_INVALID_FEATURES", 1)
+        if processing is not None:
+            processing.ProcessingConfig.setSettingValue("IGNORE_INVALID_FEATURES", 1)
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 "AttributedBurntAreas",
@@ -59,7 +63,8 @@ class UploadBurntAreas(QgsProcessingAlgorithm):
         feedback = QgsProcessingMultiStepFeedback(1, model_feedback)
 
         feedback.pushInfo(
-            f"Rasterised Burnt Areas: {type(parameters['RasterisedBurntAreas'])} {str(parameters['RasterisedBurntAreas'])}"
+            f"Rasterised Burnt Areas: {type(parameters['RasterisedBurntAreas'])} "
+            f"{str(parameters['RasterisedBurntAreas'])}"
         )
 
         # Derive region string from enum parameter
@@ -118,7 +123,7 @@ class UploadBurntAreas(QgsProcessingAlgorithm):
         os.chdir(archiveDir)
         shutil.make_archive(archive, "zip", archiveDir)
 
-        feedback.pushInfo(f"Starting NAFI upload …")
+        feedback.pushInfo("Starting NAFI upload …")
 
         # try to upload the lot!
         try:
@@ -143,7 +148,7 @@ class UploadBurntAreas(QgsProcessingAlgorithm):
             feedback.pushInfo(f"Upload script command line: {commandLine}")
 
             # mojo from Patrice
-            returnCode = subprocess.run(args, shell=True)
+            subprocess.run(args, shell=True)
 
             # return code handling commented here because the UNIX 0=success convention is not respected
             # if returnCode == 0:
@@ -151,11 +156,12 @@ class UploadBurntAreas(QgsProcessingAlgorithm):
             # else:
             #   feedback.reportError("NAFI upload failed.", fatalError=True)
 
-        except Exception as err:
+        except Exception:
             raise RuntimeError(
-                r"""Exception occurred spawning external NAFI upload script …
-                                   check you can run scripts of the form
-                                   'python.exe upload.py -u https://test.firenorth.org.au/bfnt -f examples\bfnt_darwin_current_sr3577_tif.zip -cs 409600 -v'"""
+                "Exception occurred spawning external NAFI upload script … "
+                "check you can run scripts of the form 'python.exe upload.py "
+                "-u https://test.firenorth.org.au/bfnt "
+                r"-f examples\bfnt_darwin_current_sr3577_tif.zip -cs 409600 -v'"
             )
 
         # we need to return something to processing engine or it records a failure

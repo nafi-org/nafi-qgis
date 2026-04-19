@@ -9,3 +9,17 @@ from .segmentation_metadata import SegmentationMetadata
 from .working_layer import WorkingLayer
 from .workspace_metadata import WorkspaceMetadata
 from .workspace_layer import WorkspaceLayer
+
+__all__ = [
+    "CurrentMappingLayer",
+    "Item",
+    "Layer",
+    "Mapping",
+    "Project",
+    "Region",
+    "SegmentationLayer",
+    "SegmentationMetadata",
+    "WorkingLayer",
+    "WorkspaceMetadata",
+    "WorkspaceLayer",
+]

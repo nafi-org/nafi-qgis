@@ -14,7 +14,7 @@ NTRRP_REGIONS = ["Darwin", "Katherine"]
 
 NTRRP_WMS_URL = "https://test.firenorth.org.au/mapserver/bfnt/gwc/service/wms"
 NTRRP_WMTS_URL = "https://test.firenorth.org.au/mapserver/bfnt/gwc/service/wmts"
-NTRRP_DATA_URL = f"https://test.firenorth.org.au/bfnt/downloads"
+NTRRP_DATA_URL = "https://test.firenorth.org.au/bfnt/downloads"
 NTRRP_UPLOAD_URL = "https://test.firenorth.org.au/bfnt/upload.php"
 NTRRP_API_URL = "https://test.firenorth.org.au/bfnt/api"
 
@@ -163,21 +163,11 @@ def setDefaultProjectCrs(project):
 
 def connectionError(logMessage):
     """Raise a connection error."""
-    error = (
-        f"Error connecting to NAFI services!\n"
-        f"Check the QGIS NAFI Burnt Areas Mapping message log for details."
-    )
-    # guiError(error)
     qgsDebug(logMessage, Qgis.Critical)
 
 
 def capabilitiesError(errorString, capsXml):
     """Raise an error parsing the WMS capabilities file."""
-    error = (
-        f"Error parsing the retrieved NAFI WMS capabilities!\n"
-        f"Check the QGIS NAFI Burnt Areas Mapping message log for details."
-    )
-    # guiError(error)
     logMessage = f"NAFI WMS capabilities XML parse failure: {errorString}"
     qgsDebug(logMessage, Qgis.Critical)
     logMessage = f"NAFI WMS capabilities XML: {html.escape(capsXml)}"

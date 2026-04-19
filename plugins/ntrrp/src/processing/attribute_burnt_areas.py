@@ -8,7 +8,10 @@ from qgis.core import (
     QgsProcessingParameterString,
     QgsProcessingParameterVectorLayer,
 )
-import processing
+try:
+    import processing
+except ImportError:  # headless QGIS init without Processing plugin
+    processing = None  # type: ignore[assignment]
 
 from ntrrp.src.utils import NTRRP_REGIONS
 
@@ -17,7 +20,8 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
     nextFsid = -1
 
     def initAlgorithm(self, config=None):
-        processing.ProcessingConfig.setSettingValue("IGNORE_INVALID_FEATURES", 1)
+        if processing is not None:
+            processing.ProcessingConfig.setSettingValue("IGNORE_INVALID_FEATURES", 1)
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 "DissolvedBurntAreas",
@@ -102,7 +106,8 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
         nextFsid = parameters["NextFsid"]
 
         feedback.pushInfo(
-            "Adding FSID, Mapping Period, Month, Region, Upload Date, Curent, and Comments attributes to your burnt areas …"
+            "Adding FSID, Mapping Period, Month, Region, Upload Date, Curent, and Comments "
+            "attributes to your burnt areas …"
         )
 
         # add FSID
@@ -188,7 +193,7 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
             "FIELD_NAME": "up_date",
             "FIELD_PRECISION": 0,
             "FIELD_TYPE": 2,
-            "FORMULA": f"value = today",
+            "FORMULA": "value = today",
             "GLOBAL": 'from datetime import date\n\ntoday = date.today().strftime(r"%Y-%m-%d")',
             "INPUT": outputs["AddRegion"]["OUTPUT"],
             "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
@@ -207,7 +212,7 @@ class AttributeBurntAreas(QgsProcessingAlgorithm):
             "FIELD_NAME": "current",
             "FIELD_PRECISION": 0,
             "FIELD_TYPE": 2,
-            "FORMULA": f'value = "yes"',
+            "FORMULA": 'value = "yes"',
             "GLOBAL": "",
             "INPUT": outputs["AddUploadDate"]["OUTPUT"],
             "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,

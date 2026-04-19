@@ -1,7 +1,16 @@
 from qgis.PyQt.QtGui import QIcon
 from qgis.core import QgsProcessingProvider
 
-from .processing import *
+from .processing import (
+    AttributeBurntAreas,
+    DissolveBurntAreas,
+    DownloadCurrentMapping,
+    DownloadSegmentationData,
+    FullBurntAreasProcess,
+    RasteriseBurntAreas,
+    UploadBurntAreas,
+    ValidateFullBurntAreasProcess,
+)
 
 
 class Provider(QgsProcessingProvider):

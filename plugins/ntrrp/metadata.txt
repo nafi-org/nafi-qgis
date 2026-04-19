@@ -2,7 +2,7 @@
 name=NAFI Burnt Areas Mapping
 qgisMinimumVersion=3.18.1
 description=NAFI Burnt Areas Mapping Tools
-version=1.2.0
+version=1.2.1
 author=Tom Lynch
 email=tom@trailmarker.io
 about=This plugin is part of a project to provide high resolution burnt area mapping in northern Australia through the active fire season.
@@ -17,7 +17,10 @@ experimental=False
 deprecated=False
 category=Web
 server=False
-changelog=1.2.0
+changelog=1.2.1
+          - clean up flake8 warnings flagged by QGIS plugins repo
+          - guard module-level 'import processing' so the plugin loads in headless QGIS
+          1.2.0
           - major UI update
           - removed user handling of 'working layers'
           - reload mapping activity from filesystem

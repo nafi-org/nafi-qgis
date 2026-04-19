@@ -7,7 +7,10 @@ from owslib.map.wms111 import ContentMetadata
 
 
 def parseContentMetadataRegion(metadata: ContentMetadata) -> Optional[str]:
-    """Parse the region from a Hires WMS or WMTS layer title. The expected format is T1T2 Difference Image [Darwin_T20210628_dMIRBI_T20210623]."""
+    """Parse the region from a Hires WMS or WMTS layer title.
+
+    The expected format is T1T2 Difference Image [Darwin_T20210628_dMIRBI_T20210623].
+    """
     match = re.match("^.*\\[(.*)\\].*$", metadata.title)
     if match is not None:
         ntrrpMeta = match.group(1)
@@ -18,7 +21,10 @@ def parseContentMetadataRegion(metadata: ContentMetadata) -> Optional[str]:
 
 
 def parseContentMetadataDescription(metadata: ContentMetadata) -> str:
-    """Parse the description from a Hires WMS or WMTS layer title. The expected format is T1T2 Difference Image [Darwin_T20210628_dMIRBI_T20210623]."""
+    """Parse the description from a Hires WMS or WMTS layer title.
+
+    The expected format is T1T2 Difference Image [Darwin_T20210628_dMIRBI_T20210623].
+    """
     match = re.match("^(.*)\\[(.*)\\].*$", metadata.title)
     if match is not None:
         freeText = match.group(1) or ""

@@ -18,7 +18,10 @@ class WorkspaceLayer(QgsRasterLayer, Layer):
         # weirdly true that URL-encoding of the layer ID does not work correctly
         encodedLayer = owsLayer.id.replace(" ", "%20")
         wmtsUrl = getNtrrpWmtsUrl()
-        wmtsParams = f"crs=EPSG:3577&format=image/png&layers={encodedLayer}&url={wmtsUrl}&styles&tileMatrixSet=EPSG:3577"
+        wmtsParams = (
+            f"crs=EPSG:3577&format=image/png&layers={encodedLayer}"
+            f"&url={wmtsUrl}&styles&tileMatrixSet=EPSG:3577"
+        )
 
         QgsRasterLayer.__init__(
             self, wmtsParams, parseContentMetadataDescription(owsLayer), "wms"

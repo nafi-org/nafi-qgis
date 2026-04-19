@@ -10,7 +10,10 @@ from qgis.core import (
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterEnum,
 )
-import processing
+try:
+    import processing
+except ImportError:  # headless QGIS init without Processing plugin
+    processing = None  # type: ignore[assignment]
 
 from ntrrp.src.utils import (
     ensureDirectory,

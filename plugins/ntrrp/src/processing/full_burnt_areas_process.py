@@ -9,7 +9,10 @@ from qgis.core import (
     QgsProcessingParameterRasterLayer,
     QgsProcessingParameterVectorLayer,
 )
-import processing
+try:
+    import processing
+except ImportError:  # headless QGIS init without Processing plugin
+    processing = None  # type: ignore[assignment]
 
 from ntrrp.src.utils import NTRRP_REGIONS
 

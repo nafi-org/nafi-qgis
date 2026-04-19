@@ -1,5 +1,3 @@
-from typing import cast
-
 from pathlib import Path
 
 from qgis.core import (
@@ -27,8 +25,9 @@ class WorkingLayer(QgsVectorLayer, Layer):
 
         ensureDirectory(shapefilePath.parent)
 
-        # template SegmentationLayer sets initial attributes
-        writer = QgsVectorFileWriter(
+        # template SegmentationLayer sets initial attributes; constructing the
+        # writer writes the empty shapefile at shapefilePath as a side effect
+        QgsVectorFileWriter(
             shapefilePath.as_posix(),
             "utf-8",
             templateLayer.fields(),
@@ -52,7 +51,7 @@ class WorkingLayer(QgsVectorLayer, Layer):
 
         # Init vector layer
         QgsVectorLayer.__init__(
-            self, self.shapefilePath.as_posix(), f"Working Layer", "ogr"
+            self, self.shapefilePath.as_posix(), "Working Layer", "ogr"
         )
 
     def saveFeatures(self):
@@ -71,7 +70,7 @@ class WorkingLayer(QgsVectorLayer, Layer):
         else:
             error = (
                 f"An error occurred adding the layer {self.itemName} to the map.\n"
-                f"Check your QGIS logs for details."
+                "Check your QGIS logs for details."
             )
             guiError(error)
 
@@ -87,7 +86,7 @@ class WorkingLayer(QgsVectorLayer, Layer):
     @property
     def itemName(self):
         """Get an appropriate map layer name for this layer."""
-        return f"Working Layer"
+        return "Working Layer"
 
     @property
     def item(self) -> QgsLayerTreeLayer:

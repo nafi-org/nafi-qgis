@@ -6,3 +6,14 @@ from .full_burnt_areas_process import FullBurntAreasProcess
 from .rasterise_burnt_areas import RasteriseBurntAreas
 from .upload_burnt_areas import UploadBurntAreas
 from .validate_full_burnt_areas_process import ValidateFullBurntAreasProcess
+
+__all__ = [
+    "AttributeBurntAreas",
+    "DissolveBurntAreas",
+    "DownloadCurrentMapping",
+    "DownloadSegmentationData",
+    "FullBurntAreasProcess",
+    "RasteriseBurntAreas",
+    "UploadBurntAreas",
+    "ValidateFullBurntAreasProcess",
+]

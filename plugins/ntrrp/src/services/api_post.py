@@ -1,7 +1,4 @@
-from typing import Optional, cast
-
 from qgis.PyQt.QtCore import QByteArray, QUrl, QJsonDocument
-from qgis.PyQt.QtNetwork import QNetworkRequest
 from qgis.PyQt.QtNetwork import QNetworkRequest, QNetworkProxy
 
 from qgis.core import QgsSettings, QgsNetworkAccessManager
