@@ -23,4 +23,7 @@ class SegmentationMetadata:
         # the sixth segment will be eg 'T100'
         self.threshold = int(segments[5][1:])
 
-        self.differenceGroup = f"{self.difference} Differences ({self.endDate.strftime('%b %d')}–{self.startDate.strftime('%b %d')})"
+        self.differenceGroup = (
+            f"{self.difference} Differences "
+            f"({self.endDate.strftime('%b %d')}–{self.startDate.strftime('%b %d')})"
+        )

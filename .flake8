@@ -3,6 +3,9 @@
 # (pyflakes + pycodestyle E/W). Line length bumped to 120 to align with the
 # repo's ruff config in pyproject.toml.
 max-line-length = 120
+# W503 (line break before binary operator) is the modern PEP 8 preference;
+# the companion W504 (break after) covers the same formatting choice.
+extend-ignore = W503
 extend-exclude =
     */resources_rc.py,
     __pycache__,

@@ -8,7 +8,7 @@ class FsidRecord:
 
         if self.fsid is None:
             raise FsidServiceError(
-                f"No valid fire scar ID found in the retrieved JSON data", fsidJson
+                "No valid fire scar ID found in the retrieved JSON data", fsidJson
             )
 
         self.startDate = fsidJson.get("start_date", None)

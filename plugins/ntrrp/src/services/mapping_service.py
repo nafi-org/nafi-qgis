@@ -7,7 +7,10 @@ from qgis.PyQt.QtCore import QObject, pyqtSignal
 from qgis.PyQt.QtWidgets import QAction
 from qgis.utils import iface
 
-import processing
+try:
+    import processing
+except ImportError:  # headless QGIS init without Processing plugin
+    processing = None  # type: ignore[assignment]
 
 from ntrrp.src.models import (
     CurrentMappingLayer,

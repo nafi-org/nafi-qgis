@@ -1,9 +1,4 @@
-import os.path as path
 import unittest
-
-from src.processing.dissolve_burnt_areas import DissolveBurntAreas
-from src.processing.attribute_burnt_areas import AttributeBurntAreas
-from src.processing.rasterise_burnt_areas import RasteriseBurntAreas
 
 
 class TestUpload(unittest.TestCase):

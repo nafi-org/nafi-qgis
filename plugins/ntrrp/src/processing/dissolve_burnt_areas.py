@@ -5,7 +5,10 @@ from qgis.core import (
     QgsProcessingParameterFeatureSink,
     QgsProcessingParameterVectorLayer,
 )
-import processing
+try:
+    import processing
+except ImportError:  # headless QGIS init without Processing plugin
+    processing = None  # type: ignore[assignment]
 
 
 class DissolveBurntAreas(QgsProcessingAlgorithm):

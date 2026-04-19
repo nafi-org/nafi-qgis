@@ -161,7 +161,6 @@ def is_valid_url(url):
 
 def main(argv):
     script_name = os.path.basename(argv[0])
-    logname = os.path.splitext(script_name)[0]
 
     parser = argparse.ArgumentParser(prog=script_name, description=DESC)
     mainGroup = parser.add_argument_group(title="Main Parameters")
@@ -261,7 +260,7 @@ def main(argv):
         if client.upload_file(archive, debug):
             print("\n ===>  %s: upload successful..." % archive)
 
-    except ProcessingException as err:
+    except ProcessingException:
         raise RuntimeError("script terminated due to processing errors...")
 
     return
