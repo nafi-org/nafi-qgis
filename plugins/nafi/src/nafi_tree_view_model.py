@@ -7,7 +7,7 @@ from qgis.PyQt.QtGui import QIcon, QStandardItem, QStandardItemModel
 from owslib.etree import etree
 from owslib.map.wms111 import ContentMetadata
 
-from .utils import capabilitiesError, qgsDebug
+from .utils import capabilitiesError
 from .wms_item import WmsItem
 
 UNWANTED_LAYERS = ["NODATA_RASTER"]
@@ -46,7 +46,8 @@ class NafiTreeViewModel(QStandardItemModel):
             # recursively gather content metadata for all layer elements, this is stolen
             # from OWSLib because it won't let us configure the parser the way we need to
             # to avoid unwanted network activity, entity resolutions etc
-            # see https://github.com/geopython/OWSLib/blob/8a94500c2137082dfc4e59acd15389312bcb63fb/owslib/map/wms111.py#L113
+            # see https://github.com/geopython/OWSLib/blob/8a94500c2137082dfc4e59acd15389312bcb63fb
+            # /owslib/map/wms111.py#L113
 
             # TODO merge this gather with the other tree manipulation functions below
 
@@ -101,8 +102,8 @@ class NafiTreeViewModel(QStandardItemModel):
 
     @staticmethod
     def addOwsLayerToTreeViewModel(model, wmsUrl, owsLayer, unwantedLayers=[]):
-        """Add an OWSLib layer to a QStandardItemModel based structure, potentially with descendant layers and
-        using a list of 'blacklisted' layer names."""
+        """Add an OWSLib layer to a QStandardItemModel based structure, potentially with descendant layers
+        and using a list of 'blacklisted' layer names."""
         assert isinstance(model, QStandardItem) or isinstance(model, QStandardItemModel)
         assert isinstance(owsLayer, ContentMetadata)
 
@@ -137,7 +138,7 @@ class NafiTreeViewModel(QStandardItemModel):
                 parents[layer.title] = layer
 
         # if all parents are root layers, return
-        if all(map(lambda l: l.parent is None, parents.values())):
+        if all(map(lambda layer: layer.parent is None, parents.values())):
             return list(parents.values())
         # otherwise recurse
         else:

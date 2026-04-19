@@ -1,10 +1,10 @@
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon, QStandardItem
-from owslib.map.wms111 import ContentMetadata, WebMapService_1_1_1
+from owslib.map.wms111 import ContentMetadata
 
-from qgis.core import QgsCoordinateReferenceSystem, QgsProject, QgsRasterLayer
+from qgis.core import QgsProject, QgsRasterLayer
 
-from .utils import guiError, guiWarning, setDefaultProjectCrs
+from .utils import guiError, setDefaultProjectCrs
 
 
 class WmsItem(QStandardItem):
@@ -76,6 +76,6 @@ class WmsItem(QStandardItem):
             else:
                 error = (
                     f"An error occurred adding the layer {self.owsLayer.title} to the map.\n"
-                    f"Check your QGIS logs for details."
+                    "Check your QGIS logs for details."
                 )
                 guiError(error)

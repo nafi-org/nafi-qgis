@@ -36,7 +36,7 @@ class GoogleXyzItem(QStandardItem):
             QgsProject.instance().addMapLayer(tmsLayer)
         else:
             error = (
-                f"An error occurred adding the layer title to the map.\n"
-                f"Check your QGIS logs for details."
+                "An error occurred adding the layer title to the map.\n"
+                "Check your QGIS logs for details."
             )
             guiError(error)

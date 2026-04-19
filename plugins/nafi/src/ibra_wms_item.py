@@ -2,7 +2,6 @@ from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon, QStandardItem
 
 from owslib.wms import WebMapService
-from owslib.map.wms111 import ContentMetadata, WebMapService_1_1_1
 
 from qgis.core import QgsProject, QgsRasterLayer
 
@@ -37,6 +36,6 @@ class IbraWmsItem(QStandardItem):
         else:
             error = (
                 f"An error occurred adding the layer {self.owsLayer.title} to the map.\n"
-                f"Check your QGIS logs for details."
+                "Check your QGIS logs for details."
             )
             guiError(error)
