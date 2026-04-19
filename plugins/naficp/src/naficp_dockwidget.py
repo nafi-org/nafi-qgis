@@ -4,7 +4,6 @@ from typing import Any
 from qgis.core import QgsMapLayerProxyModel
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal
-from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 from qgis.utils import iface as QgsInterface
 

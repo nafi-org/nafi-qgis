@@ -27,8 +27,8 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 from qgis.core import QgsApplication
 
-# initialize Qt resources from file resources.py
-from .resources_rc import *
+# Side-effect import — registers Qt resources compiled from resources.qrc
+from . import resources_rc  # noqa: F401
 
 # import the code for the DockWidget and provided algorithms
 from ntrrp.src.ui import DockWidget

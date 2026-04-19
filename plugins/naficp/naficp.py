@@ -5,8 +5,8 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 from qgis.utils import iface as QgsInterface
 
-# Initialize Qt resources from file resources.py
-from .resources_rc import *
+# Side-effect import — registers Qt resources compiled from resources.qrc
+from . import resources_rc  # noqa: F401
 
 # Import the code for the DockWidget
 from .src.naficp_dockwidget import NafiCpDockWidget
