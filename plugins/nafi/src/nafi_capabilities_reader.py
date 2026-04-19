@@ -3,7 +3,7 @@ from qgis.PyQt.QtNetwork import QNetworkReply, QNetworkRequest, QSslSocket
 
 from qgis.core import QgsBlockingNetworkRequest
 
-from .utils import connectionError, guiError, qgsDebug
+from .utils import connectionError
 
 
 class NafiCapabilitiesReader(QObject):

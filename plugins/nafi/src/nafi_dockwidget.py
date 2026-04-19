@@ -21,11 +21,9 @@
  ***************************************************************************/
 """
 
-import os
 import webbrowser
-from urllib import parse
 
-from qgis.PyQt import QtGui, QtWidgets, uic
+from qgis.PyQt import QtWidgets
 from qgis.PyQt.QtCore import (
     pyqtSignal,
     QRegExp,
@@ -34,10 +32,6 @@ from qgis.PyQt.QtCore import (
     Qt,
     QModelIndex,
 )
-from qgis.PyQt.QtGui import QFont, QIcon, QPixmap, QStandardItem, QStandardItemModel
-from qgis.PyQt.QtWidgets import QApplication
-
-from qgis.core import Qgis, QgsRasterLayer, QgsProject
 
 from .google_xyz_item import GoogleXyzItem
 from .ibra_wms_item import IbraWmsItem
@@ -47,7 +41,7 @@ from .nafi_about_dialog import NafiAboutDialog
 from .nafi_capabilities_reader import NafiCapabilitiesReader
 from .nafi_dockwidget_base import Ui_NafiDockWidgetBase
 from .nafi_tree_view_model import NafiTreeViewModel
-from .utils import getNafiDataUrl, getNafiUrl, qgsDebug
+from .utils import getNafiDataUrl, getNafiUrl
 from .wms_item import WmsItem
 
 

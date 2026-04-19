@@ -4,7 +4,7 @@ from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon, QStandardItem
 from qgis.core import QgsProject, QgsRasterLayer
 
-from .utils import getOzTopoParams, guiError, qgsDebug
+from .utils import getOzTopoParams, guiError
 
 WMTS_LABEL = "Australian Topographic Base Map"
 
@@ -29,6 +29,6 @@ class OzTopoWmtsItem(QStandardItem):
         else:
             error = (
                 f"An error occurred adding the layer {WMTS_LABEL} to the map.\n"
-                f"Check your QGIS logs for details."
+                "Check your QGIS logs for details."
             )
             guiError(error)

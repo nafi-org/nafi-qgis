@@ -1,5 +1,4 @@
-from qgis.PyQt import QtGui, QtWidgets, uic
-from qgis.PyQt.QtWidgets import QLayout
+from qgis.PyQt import QtWidgets
 
 from .nafi_about_dialog_base import Ui_NafiAboutDialogBase
 

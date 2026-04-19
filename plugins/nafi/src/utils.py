@@ -6,7 +6,10 @@ from qgis.core import Qgis, QgsMessageLog, QgsCoordinateReferenceSystem
 IBRA_URL = "http://www.environment.gov.au/mapping/services/ogc_services/IBRA7_Subregions/MapServer/WMSServer"
 NAFI_DATA_URL = "https://firenorth.org.au/nafi3/views/data/Download.html"
 NAFI_URL = "https://www.firenorth.org.au/public"
-OZ_TOPO_URL = "https://services.ga.gov.au/gis/rest/services/Topographic_Base_Map/MapServer/WMTS/1.0.0/WMTSCapabilities.xml"
+OZ_TOPO_URL = (
+    "https://services.ga.gov.au/gis/rest/services/Topographic_Base_Map"
+    "/MapServer/WMTS/1.0.0/WMTSCapabilities.xml"
+)
 
 
 def qgsDebug(message, level=Qgis.Info):
@@ -75,8 +78,8 @@ def setDefaultProjectCrs(project):
 def connectionError(logMessage):
     """Raise a connection error."""
     error = (
-        f"Error connecting to NAFI services!\n"
-        f"Check the QGIS NAFI Fire Maps message log for details."
+        "Error connecting to NAFI services!\n"
+        "Check the QGIS NAFI Fire Maps message log for details."
     )
     guiError(error)
     qgsDebug(logMessage, Qgis.Critical)
@@ -85,8 +88,8 @@ def connectionError(logMessage):
 def capabilitiesError(errorString, capsXml):
     """Raise an error parsing the WMS capabilities file."""
     error = (
-        f"Error parsing the retrieved NAFI WMS capabilities!\n"
-        f"Check the QGIS NAFI Fire Maps message log for details."
+        "Error parsing the retrieved NAFI WMS capabilities!\n"
+        "Check the QGIS NAFI Fire Maps message log for details."
     )
     guiError(error)
     logMessage = f"NAFI WMS capabilities XML parse failure: {errorString}"
