@@ -12,7 +12,7 @@ OZ_TOPO_URL = (
 )
 
 
-def qgsDebug(message, level=Qgis.Info):
+def qgsDebug(message, level=Qgis.MessageLevel.Info):
     """Print a debug message."""
     QgsMessageLog.logMessage(message, tag="NAFI Fire Maps", level=level)
 
@@ -82,7 +82,7 @@ def connectionError(logMessage):
         "Check the QGIS NAFI Fire Maps message log for details."
     )
     guiError(error)
-    qgsDebug(logMessage, Qgis.Critical)
+    qgsDebug(logMessage, Qgis.MessageLevel.Critical)
 
 
 def capabilitiesError(errorString, capsXml):
@@ -93,6 +93,6 @@ def capabilitiesError(errorString, capsXml):
     )
     guiError(error)
     logMessage = f"NAFI WMS capabilities XML parse failure: {errorString}"
-    qgsDebug(logMessage, Qgis.Critical)
+    qgsDebug(logMessage, Qgis.MessageLevel.Critical)
     logMessage = f"NAFI WMS capabilities XML: {html.escape(capsXml)}"
-    qgsDebug(logMessage, Qgis.Critical)
+    qgsDebug(logMessage, Qgis.MessageLevel.Critical)

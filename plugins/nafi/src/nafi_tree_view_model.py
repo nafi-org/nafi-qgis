@@ -90,7 +90,7 @@ class NafiTreeViewModel(QStandardItemModel):
     def loadAdditionalItems(self, items):
         """Add some additional layers to this NafiTreeViewModel."""
         additionalItemsGroup = QStandardItem()
-        additionalItemsGroup.setFlags(Qt.ItemIsEnabled)
+        additionalItemsGroup.setFlags(Qt.ItemFlag.ItemIsEnabled)
         additionalItemsGroup.setText("Additional layers")
         additionalItemsGroup.setIcon(QIcon(":/plugins/nafi/images/folder.png"))
 

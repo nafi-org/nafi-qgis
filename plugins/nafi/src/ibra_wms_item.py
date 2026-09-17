@@ -16,7 +16,7 @@ class IbraWmsItem(QStandardItem):
         ibraOwsLayer = ibra.contents["IBRA7 subregions"]
 
         self.wmsUrl = getIbraUrl()
-        self.setFlags(Qt.ItemIsEnabled)
+        self.setFlags(Qt.ItemFlag.ItemIsEnabled)
         self.setText(ibraOwsLayer.title)
         self.owsLayer = ibraOwsLayer
         self.setIcon(QIcon(":/plugins/nafi/images/globe.png"))

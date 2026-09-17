@@ -16,7 +16,7 @@ class WmsItem(QStandardItem):
         self.unsetLayer()
 
         self.wmsUrl = wmsUrl
-        self.setFlags(Qt.ItemIsEnabled)
+        self.setFlags(Qt.ItemFlag.ItemIsEnabled)
         self.setText(owsLayer.title)
         self.owsLayer = owsLayer
         self.setCheckable(False)

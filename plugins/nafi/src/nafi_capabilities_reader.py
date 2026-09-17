@@ -21,15 +21,15 @@ class NafiCapabilitiesReader(QObject):
 
         # suppress errors from SSL for the capabilities request (NTG network is dodgy)
         sslConfig = request.sslConfiguration()
-        sslConfig.setPeerVerifyMode(QSslSocket.VerifyNone)
+        sslConfig.setPeerVerifyMode(QSslSocket.PeerVerifyMode.VerifyNone)
         request.setSslConfiguration(sslConfig)
 
         # use a blocking request here
         blockingRequest = QgsBlockingNetworkRequest()
         result = blockingRequest.get(request)
-        if result == QgsBlockingNetworkRequest.NoError:  # type: ignore
+        if result == QgsBlockingNetworkRequest.ErrorCode.NoError:  # type: ignore
             reply = blockingRequest.reply()
-            if reply.error() == QNetworkReply.NoError:
+            if reply.error() == QNetworkReply.NetworkError.NoError:
                 xml = bytes(reply.content()).decode()
                 self.capabilitiesDownloaded.emit(xml)
             else:
