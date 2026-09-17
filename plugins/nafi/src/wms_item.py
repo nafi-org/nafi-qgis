@@ -11,7 +11,8 @@ class WmsItem(QStandardItem):
     def __init__(self, wmsUrl, owsLayer):
         super(QStandardItem, self).__init__()
 
-        assert isinstance(owsLayer, ContentMetadata)
+        if not isinstance(owsLayer, ContentMetadata):
+            raise TypeError("owsLayer is not a ContentMetadata")
 
         self.unsetLayer()
 

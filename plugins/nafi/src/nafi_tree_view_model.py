@@ -77,7 +77,8 @@ class NafiTreeViewModel(QStandardItemModel):
         # the OWSLib structure is not properly organised via its "children" properties, need to fix it up
         owsLayers = [contents[layerName] for layerName in list(contents)]
         # check we've got at least one layer
-        assert len(owsLayers) > 0
+        if len(owsLayers) <= 0:
+            raise ValueError("expected len(owsLayers) > 0")
         # calculate our root layer
         rootLayer = NafiTreeViewModel.groupByRootLayers(owsLayers)[0]
         # add layer hierarchy to our tree model
@@ -95,7 +96,8 @@ class NafiTreeViewModel(QStandardItemModel):
         additionalItemsGroup.setIcon(QIcon(":/plugins/nafi/images/folder.png"))
 
         for item in items:
-            assert isinstance(item, QStandardItem)
+            if not isinstance(item, QStandardItem):
+                raise TypeError("item is not a QStandardItem")
             additionalItemsGroup.appendRow(item)
 
         self.appendRow(additionalItemsGroup)
@@ -104,8 +106,10 @@ class NafiTreeViewModel(QStandardItemModel):
     def addOwsLayerToTreeViewModel(model, wmsUrl, owsLayer, unwantedLayers=[]):
         """Add an OWSLib layer to a QStandardItemModel based structure, potentially with descendant layers
         and using a list of 'blacklisted' layer names."""
-        assert isinstance(model, QStandardItem) or isinstance(model, QStandardItemModel)
-        assert isinstance(owsLayer, ContentMetadata)
+        if not (isinstance(model, QStandardItem) or isinstance(model, QStandardItemModel)):
+            raise TypeError("model is not a QStandardItem or QStandardItemModel")
+        if not isinstance(owsLayer, ContentMetadata):
+            raise TypeError("owsLayer is not a ContentMetadata")
 
         if owsLayer.title not in unwantedLayers:
             node = WmsItem(wmsUrl, owsLayer)

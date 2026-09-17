@@ -117,7 +117,8 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
 
     def treeViewPressed(self, index):
         """Load a NAFI WMS layer given an index in the tree view."""
-        assert isinstance(index, QModelIndex), "Supplied parameter is not a QModelIndex"
+        if not isinstance(index, QModelIndex):
+            raise TypeError("Supplied parameter is not a QModelIndex")
 
         realIndex = self.proxyModel.mapToSource(index)
         modelNode = self.treeViewModel.itemFromIndex(realIndex)
