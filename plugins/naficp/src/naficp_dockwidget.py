@@ -54,10 +54,10 @@ class NafiCpDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             f"Select working layer ({self.setActiveLayerAsWorkingLayerAction.shortcut().toString()})"
         )
 
-        self.sourceLayerComboBox.setFilters(QgsMapLayerProxyModel.VectorLayer)
+        self.sourceLayerComboBox.setFilters(QgsMapLayerProxyModel.Filter.VectorLayer)
         self.sourceLayerComboBox.setShowCrs(True)
 
-        self.workingLayerComboBox.setFilters(QgsMapLayerProxyModel.VectorLayer)
+        self.workingLayerComboBox.setFilters(QgsMapLayerProxyModel.Filter.VectorLayer)
         self.workingLayerComboBox.setShowCrs(True)
 
         self.pasteFeaturesAction.triggered.connect(
