@@ -13,7 +13,7 @@ class OzTopoWmtsItem(QStandardItem):
     def __init__(self):
         super(QStandardItem, self).__init__()
 
-        self.setFlags(Qt.ItemIsEnabled)
+        self.setFlags(Qt.ItemFlag.ItemIsEnabled)
         self.setText(WMTS_LABEL)
         self.setIcon(QIcon(":/plugins/nafi/images/globe.png"))
 

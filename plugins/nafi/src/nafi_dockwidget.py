@@ -26,7 +26,7 @@ import webbrowser
 from qgis.PyQt import QtWidgets
 from qgis.PyQt.QtCore import (
     pyqtSignal,
-    QRegExp,
+    QRegularExpression,
     QSize,
     QSortFilterProxyModel,
     Qt,
@@ -56,7 +56,7 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
         # set up QTreeView
         self.treeView.setHeaderHidden(True)
         self.treeView.setSortingEnabled(True)
-        self.treeView.setFocusPolicy(Qt.NoFocus)
+        self.treeView.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.treeView.pressed.connect(self.treeViewPressed)
 
         # set up search signal
@@ -107,7 +107,7 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
         )
 
         # set default sort and expansion
-        self.proxyModel.sort(0, Qt.AscendingOrder)
+        self.proxyModel.sort(0, Qt.SortOrder.AscendingOrder)
         self.expandTopLevel()
 
     def expandTopLevel(self):
@@ -133,8 +133,8 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
         """Process a change in the search filter text."""
         # user adding characters and has exceeded 3 or more, or is removing characters
         if len(text) >= 3 or len(self.searchText) > len(text):
-            regex = QRegExp(text, Qt.CaseInsensitive, QRegExp.RegExp)
-            self.proxyModel.setFilterRegExp(regex)
+            regex = QRegularExpression(text, QRegularExpression.PatternOption.CaseInsensitiveOption)
+            self.proxyModel.setFilterRegularExpression(regex)
             self.treeView.expandAll()
 
         # update last search text state
@@ -151,7 +151,7 @@ class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
     def showAboutDialog(self):
         """Show an About … dialog."""
         aboutDialog = NafiAboutDialog()
-        aboutDialog.exec_()
+        aboutDialog.exec()
 
     def closeEvent(self, event):
         """Handle plug-in close."""
