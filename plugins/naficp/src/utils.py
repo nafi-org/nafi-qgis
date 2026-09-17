@@ -12,7 +12,7 @@ NAFICP_DEFAULT_SET_ACTIVE_LAYER_AS_WORKING_LAYER_HOTKEY = "Ctrl+Shift+D"
 NAFICP_CONFIG_FILENAME = "naficp.json"
 
 
-def qgsDebug(message, level=Qgis.Info):
+def qgsDebug(message, level=Qgis.MessageLevel.Info):
     """Print a debug message."""
     QgsMessageLog.logMessage(message, tag=NAFICP_NAME, level=level)
 
