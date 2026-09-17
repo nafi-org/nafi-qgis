@@ -12,7 +12,7 @@ class Ui_NafiAboutDialogBase(object):
         NafiAboutDialogBase.setObjectName("NafiAboutDialogBase")
         NafiAboutDialogBase.resize(1414, 830)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+            QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Preferred
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -23,32 +23,32 @@ class Ui_NafiAboutDialogBase(object):
         icon = QtGui.QIcon()
         icon.addPixmap(
             QtGui.QPixmap(":/plugins/nafi/images/icon.png"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
+            QtGui.QIcon.Mode.Normal,
+            QtGui.QIcon.State.Off,
         )
         NafiAboutDialogBase.setWindowIcon(icon)
         self.outerVerticalLayout = QtWidgets.QVBoxLayout(NafiAboutDialogBase)
-        self.outerVerticalLayout.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
+        self.outerVerticalLayout.setSizeConstraint(QtWidgets.QLayout.SizeConstraint.SetFixedSize)
         self.outerVerticalLayout.setObjectName("outerVerticalLayout")
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setSpacing(10)
         self.verticalLayout.setObjectName("verticalLayout")
         self.iconLabel = QtWidgets.QLabel(NafiAboutDialogBase)
         self.iconLabel.setScaledContents(True)
-        self.iconLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.iconLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.iconLabel.setObjectName("iconLabel")
         self.verticalLayout.addWidget(self.iconLabel)
         self.aboutLabel = QtWidgets.QLabel(NafiAboutDialogBase)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
+            QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.aboutLabel.sizePolicy().hasHeightForWidth())
         self.aboutLabel.setSizePolicy(sizePolicy)
-        self.aboutLabel.setTextFormat(QtCore.Qt.RichText)
+        self.aboutLabel.setTextFormat(QtCore.Qt.TextFormat.RichText)
         self.aboutLabel.setAlignment(
-            QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop
+            QtCore.Qt.AlignmentFlag.AlignLeading | QtCore.Qt.AlignmentFlag.AlignLeft | QtCore.Qt.AlignmentFlag.AlignTop
         )
         self.aboutLabel.setWordWrap(True)
         self.aboutLabel.setOpenExternalLinks(True)
@@ -56,7 +56,7 @@ class Ui_NafiAboutDialogBase(object):
         self.verticalLayout.addWidget(self.aboutLabel)
         self.firescarLabel = QtWidgets.QLabel(NafiAboutDialogBase)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum
+            QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Minimum
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -66,12 +66,12 @@ class Ui_NafiAboutDialogBase(object):
         self.firescarLabel.setSizePolicy(sizePolicy)
         self.firescarLabel.setMaximumSize(QtCore.QSize(16777215, 400))
         self.firescarLabel.setScaledContents(True)
-        self.firescarLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.firescarLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.firescarLabel.setObjectName("firescarLabel")
         self.verticalLayout.addWidget(self.firescarLabel)
         self.buttonBox = QtWidgets.QDialogButtonBox(NafiAboutDialogBase)
-        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Ok)
+        self.buttonBox.setOrientation(QtCore.Qt.Orientation.Horizontal)
+        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.StandardButton.Ok)
         self.buttonBox.setObjectName("buttonBox")
         self.verticalLayout.addWidget(self.buttonBox)
         self.outerVerticalLayout.addLayout(self.verticalLayout)

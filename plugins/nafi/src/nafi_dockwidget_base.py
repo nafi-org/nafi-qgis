@@ -13,13 +13,13 @@ class Ui_NafiDockWidgetBase(object):
         NafiDockWidgetBase.resize(689, 504)
         font = QtGui.QFont()
         font.setBold(True)
-        font.setWeight(75)
+        font.setWeight(QtGui.QFont.Weight.Bold)
         NafiDockWidgetBase.setFont(font)
         icon = QtGui.QIcon()
         icon.addPixmap(
             QtGui.QPixmap(":/plugins/nafi/images/icon.png"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
+            QtGui.QIcon.Mode.Normal,
+            QtGui.QIcon.State.Off,
         )
         NafiDockWidgetBase.setWindowIcon(icon)
         self.dockWidgetContents = QtWidgets.QWidget()
@@ -29,13 +29,13 @@ class Ui_NafiDockWidgetBase(object):
         self.lineEdit = QtWidgets.QLineEdit(self.dockWidgetContents)
         font = QtGui.QFont()
         font.setBold(False)
-        font.setWeight(50)
+        font.setWeight(QtGui.QFont.Weight.Normal)
         self.lineEdit.setFont(font)
         self.lineEdit.setObjectName("lineEdit")
         self.gridLayout.addWidget(self.lineEdit, 0, 1, 1, 2)
         self.searchLabel = QtWidgets.QLabel(self.dockWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -45,10 +45,12 @@ class Ui_NafiDockWidgetBase(object):
         self.searchLabel.setMaximumSize(QtCore.QSize(200, 16777215))
         font = QtGui.QFont()
         font.setBold(True)
-        font.setWeight(75)
+        font.setWeight(QtGui.QFont.Weight.Bold)
         self.searchLabel.setFont(font)
         self.searchLabel.setAlignment(
-            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter
+            QtCore.Qt.AlignmentFlag.AlignRight
+            | QtCore.Qt.AlignmentFlag.AlignTrailing
+            | QtCore.Qt.AlignmentFlag.AlignVCenter
         )
         self.searchLabel.setObjectName("searchLabel")
         self.gridLayout.addWidget(self.searchLabel, 0, 0, 1, 1)
@@ -57,7 +59,7 @@ class Ui_NafiDockWidgetBase(object):
         self.gridLayout.addWidget(self.treeView, 1, 0, 1, 4)
         self.clearSearchButton = QtWidgets.QPushButton(self.dockWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -69,15 +71,15 @@ class Ui_NafiDockWidgetBase(object):
         icon1 = QtGui.QIcon()
         icon1.addPixmap(
             QtGui.QPixmap(":/plugins/nafi/images/backspace.png"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
+            QtGui.QIcon.Mode.Normal,
+            QtGui.QIcon.State.Off,
         )
         self.clearSearchButton.setIcon(icon1)
         self.clearSearchButton.setObjectName("clearSearchButton")
         self.gridLayout.addWidget(self.clearSearchButton, 0, 3, 1, 1)
         self.aboutButton = QtWidgets.QPushButton(self.dockWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -87,15 +89,15 @@ class Ui_NafiDockWidgetBase(object):
         icon2 = QtGui.QIcon()
         icon2.addPixmap(
             QtGui.QPixmap(":/plugins/nafi/images/info.png"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
+            QtGui.QIcon.Mode.Normal,
+            QtGui.QIcon.State.Off,
         )
         self.aboutButton.setIcon(icon2)
         self.aboutButton.setObjectName("aboutButton")
         self.gridLayout.addWidget(self.aboutButton, 2, 3, 1, 1)
         self.dataButton = QtWidgets.QPushButton(self.dockWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -105,8 +107,8 @@ class Ui_NafiDockWidgetBase(object):
         icon3 = QtGui.QIcon()
         icon3.addPixmap(
             QtGui.QPixmap(":/plugins/nafi/images/greenglobe.png"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
+            QtGui.QIcon.Mode.Normal,
+            QtGui.QIcon.State.Off,
         )
         self.dataButton.setIcon(icon3)
         self.dataButton.setObjectName("dataButton")
