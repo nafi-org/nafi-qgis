@@ -1,3 +1,4 @@
+import configparser
 import html
 import json
 import os
@@ -11,6 +12,7 @@ NAFI_DATA_URL = "https://firenorth.org.au/nafi4/help/download-nafi-data"
 NAFI_SUPPORTERS_URL = "https://firenorth.org.au/nafi4/supporters"
 NAFI_URL = "https://firenorth.org.au/public"
 NAFI_CONFIG_FILENAME = "nafi.json"
+NAFI_METADATA_FILENAME = "metadata.txt"
 OZ_TOPO_URL = (
     "https://services.ga.gov.au/gis/rest/services/Topographic_Base_Map"
     "/MapServer/WMTS/1.0.0/WMTSCapabilities.xml"
@@ -39,6 +41,14 @@ def getSetting(setting, default=None):
     except (OSError, json.JSONDecodeError):
         qgsDebug("Error reading NAFI Fire Maps settings file.")
         return default
+
+
+def getPluginVersion():
+    """Retrieve the NAFI Fire Maps plug-in version."""
+    # read the plugin version directly from metadata.txt
+    metadata = configparser.ConfigParser(interpolation=None)
+    metadata.read(resolvePluginPath(NAFI_METADATA_FILENAME))
+    return metadata.get("general", "version", fallback="")
 
 
 def getNafiDataUrl():
