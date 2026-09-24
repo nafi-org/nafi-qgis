@@ -1,4 +1,3 @@
-import os
 from typing import Any
 
 from qgis.core import QgsMapLayerProxyModel
@@ -7,14 +6,10 @@ from qgis.PyQt.QtCore import pyqtSignal
 from qgis.PyQt.QtWidgets import QAction
 from qgis.utils import iface as QgsInterface
 
-from .utils import guiError, guiWarning
+from .utils import guiError, guiWarning, resolvePluginPath
 
 FORM_CLASS: Any
-FORM_CLASS, _ = uic.loadUiType(
-    os.path.join(
-        os.path.dirname(__file__), os.pardir, "ui", "naficp_dockwidget_base.ui"
-    )
-)
+FORM_CLASS, _ = uic.loadUiType(resolvePluginPath("ui/naficp_dockwidget_base.ui"))
 
 
 class NafiCpDockWidget(QtWidgets.QDockWidget, FORM_CLASS):

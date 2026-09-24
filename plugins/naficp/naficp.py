@@ -5,9 +5,6 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 from qgis.utils import iface as QgsInterface
 
-# Side-effect import — registers Qt resources compiled from resources.qrc
-from . import resources_rc  # noqa: F401
-
 # Import the code for the DockWidget
 from .src.naficp_dockwidget import NafiCpDockWidget
 from .src.utils import (
@@ -16,6 +13,7 @@ from .src.utils import (
     getConfiguredSetActiveLayerAsSourceLayerHotKey,
     getConfiguredSetActiveLayerAsWorkingLayerHotKey,
     guiWarning,
+    resolvePluginPath,
 )
 
 
@@ -151,7 +149,7 @@ class NafiCp:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_path = ":/plugins/naficp/images/icon.png"
+        icon_path = resolvePluginPath("images/icon.png")
         self.add_action(
             icon_path,
             text=self.tr(NAFICP_NAME),
