@@ -7,7 +7,7 @@ from qgis.PyQt.QtGui import QIcon, QStandardItem, QStandardItemModel
 from owslib.etree import etree
 from owslib.map.wms111 import ContentMetadata
 
-from .utils import capabilitiesError
+from .utils import capabilitiesError, resolvePluginPath
 from .wms_item import WmsItem
 
 UNWANTED_LAYERS = ["NODATA_RASTER"]
@@ -93,7 +93,7 @@ class NafiTreeViewModel(QStandardItemModel):
         additionalItemsGroup = QStandardItem()
         additionalItemsGroup.setFlags(Qt.ItemFlag.ItemIsEnabled)
         additionalItemsGroup.setText("Additional layers")
-        additionalItemsGroup.setIcon(QIcon(":/plugins/nafi/images/folder.png"))
+        additionalItemsGroup.setIcon(QIcon(resolvePluginPath("images/folder.png")))
 
         for item in items:
             if not isinstance(item, QStandardItem):

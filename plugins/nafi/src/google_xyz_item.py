@@ -5,7 +5,7 @@ from qgis.PyQt.QtGui import QIcon, QStandardItem
 
 from qgis.core import QgsProject, QgsRasterLayer
 
-from .utils import guiError
+from .utils import guiError, resolvePluginPath
 
 LABELS = {"s": "Satellite", "m": "Streets", "y": "Hybrid"}
 
@@ -20,7 +20,7 @@ class GoogleXyzItem(QStandardItem):
         self.googleMapType = googleMapType
         self.setFlags(Qt.ItemFlag.ItemIsEnabled)
         self.setText(f"Google {LABELS[googleMapType]}")
-        self.setIcon(QIcon(":/plugins/nafi/images/globe.png"))
+        self.setIcon(QIcon(resolvePluginPath("images/globe.png")))
 
     def addLayer(self):
         """Create a QgsRasterLayer from Google XYZ tiles."""

@@ -27,7 +27,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>:/plugins/nafi/images/icon.png</normaloff>:/plugins/nafi/images/icon.png</iconset>
+    <normaloff>../images/icon.png</normaloff>../images/icon.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="outerVerticalLayout">
    <item>
@@ -38,7 +38,7 @@
      <item>
       <widget class="ScaledImageLabel" name="iconLabel">
        <property name="pixmap">
-        <pixmap>:/plugins/nafi/images/logo.png</pixmap>
+        <pixmap>../images/logo.png</pixmap>
        </property>
       </widget>
      </item>
@@ -82,7 +82,7 @@
         </size>
        </property>
        <property name="pixmap">
-        <pixmap>:/plugins/nafi/images/firescar.jpg</pixmap>
+        <pixmap>../images/firescar.jpg</pixmap>
        </property>
       </widget>
      </item>
@@ -115,7 +115,7 @@
   <customwidget>
    <class>ScaledImageLabel</class>
    <extends>QLabel</extends>
-   <header>.scaled_image_label.h</header>
+   <header>nafi/src/scaled_image_label.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

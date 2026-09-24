@@ -12,13 +12,12 @@
   </property>
   <property name="font">
    <font>
-    <weight>75</weight>
     <bold>true</bold>
    </font>
   </property>
   <property name="windowIcon">
-   <iconset resource="../resources.qrc">
-    <normaloff>:/plugins/nafi/images/icon.png</normaloff>:/plugins/nafi/images/icon.png</iconset>
+   <iconset>
+    <normaloff>../images/icon.png</normaloff>../images/icon.png</iconset>
   </property>
   <property name="toolTip">
    <string>NAFI Fire Maps</string>
@@ -32,7 +31,6 @@
      <widget class="QLineEdit" name="lineEdit">
       <property name="font">
        <font>
-        <weight>50</weight>
         <bold>false</bold>
        </font>
       </property>
@@ -63,7 +61,6 @@
       </property>
       <property name="font">
        <font>
-        <weight>75</weight>
         <bold>true</bold>
        </font>
       </property>
@@ -93,8 +90,8 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="../resources.qrc">
-        <normaloff>:/plugins/nafi/images/backspace.png</normaloff>:/plugins/nafi/images/backspace.png</iconset>
+       <iconset>
+        <normaloff>../images/backspace.png</normaloff>../images/backspace.png</iconset>
       </property>
      </widget>
     </item>
@@ -113,8 +110,8 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="../resources.qrc">
-        <normaloff>:/plugins/nafi/images/info.png</normaloff>:/plugins/nafi/images/info.png</iconset>
+       <iconset>
+        <normaloff>../images/info.png</normaloff>../images/info.png</iconset>
       </property>
      </widget>
     </item>
@@ -133,8 +130,8 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="../resources.qrc">
-        <normaloff>:/plugins/nafi/images/greenglobe.png</normaloff>:/plugins/nafi/images/greenglobe.png</iconset>
+       <iconset>
+        <normaloff>../images/greenglobe.png</normaloff>../images/greenglobe.png</iconset>
       </property>
      </widget>
     </item>
