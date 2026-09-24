@@ -4,7 +4,7 @@ from owslib.map.wms111 import ContentMetadata
 
 from qgis.core import QgsProject, QgsRasterLayer
 
-from .utils import guiError, setDefaultProjectCrs
+from .utils import guiError, setDefaultProjectCrs, resolvePluginPath
 
 
 class WmsItem(QStandardItem):
@@ -23,13 +23,13 @@ class WmsItem(QStandardItem):
         self.setCheckable(False)
 
         if owsLayer.children:
-            self.setIcon(QIcon(":/plugins/nafi/images/folder.png"))
+            self.setIcon(QIcon(resolvePluginPath("images/folder.png")))
         else:
-            self.setIcon(QIcon(":/plugins/nafi/images/globe.png"))
+            self.setIcon(QIcon(resolvePluginPath("images/globe.png")))
             self.restoreLayer()
 
     def unsetLayer(self):
-        self.setIcon(QIcon(":/plugins/nafi/images/globe.png"))
+        self.setIcon(QIcon(resolvePluginPath("images/globe.png")))
         self.mapLayerId = None
 
     def restoreLayer(self):
@@ -43,7 +43,7 @@ class WmsItem(QStandardItem):
 
     def linkLayer(self, layer):
         """Associate this WMS item with an active map layer."""
-        self.setIcon(QIcon(":/plugins/nafi/images/fire.png"))
+        self.setIcon(QIcon(resolvePluginPath("images/fire.png")))
         self.mapLayerId = layer.id()
         layer.willBeDeleted.connect(self.unsetLayer)
 

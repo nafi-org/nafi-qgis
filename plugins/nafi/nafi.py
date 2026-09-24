@@ -24,11 +24,9 @@ from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 
-# Side-effect import — registers Qt resources compiled from resources.qrc
-from . import resources_rc  # noqa: F401
-
 # Import the code for the DockWidget
 from .src.nafi_dockwidget import NafiDockWidget
+from .src.utils import resolvePluginPath
 import os.path
 
 
@@ -166,7 +164,7 @@ class Nafi:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_path = ":/plugins/nafi/images/icon.png"
+        icon_path = resolvePluginPath("images/icon.png")
         self.add_action(
             icon_path,
             text=self.tr("NAFI Fire Maps"),

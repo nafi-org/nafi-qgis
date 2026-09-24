@@ -4,7 +4,7 @@ from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon, QStandardItem
 from qgis.core import QgsProject, QgsRasterLayer
 
-from .utils import getOzTopoParams, guiError
+from .utils import getOzTopoParams, guiError, resolvePluginPath
 
 WMTS_LABEL = "Australian Topographic Base Map"
 
@@ -15,7 +15,7 @@ class OzTopoWmtsItem(QStandardItem):
 
         self.setFlags(Qt.ItemFlag.ItemIsEnabled)
         self.setText(WMTS_LABEL)
-        self.setIcon(QIcon(":/plugins/nafi/images/globe.png"))
+        self.setIcon(QIcon(resolvePluginPath("images/globe.png")))
 
     def addLayer(self):
         """Create a QgsRasterLayer from this one specific WMTS endpoint."""

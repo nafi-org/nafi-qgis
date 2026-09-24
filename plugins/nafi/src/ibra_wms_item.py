@@ -5,7 +5,7 @@ from owslib.wms import WebMapService
 
 from qgis.core import QgsProject, QgsRasterLayer
 
-from .utils import getIbraUrl, guiError
+from .utils import getIbraUrl, guiError, resolvePluginPath
 
 
 class IbraWmsItem(QStandardItem):
@@ -19,7 +19,7 @@ class IbraWmsItem(QStandardItem):
         self.setFlags(Qt.ItemFlag.ItemIsEnabled)
         self.setText(ibraOwsLayer.title)
         self.owsLayer = ibraOwsLayer
-        self.setIcon(QIcon(":/plugins/nafi/images/globe.png"))
+        self.setIcon(QIcon(resolvePluginPath("images/globe.png")))
 
     def addLayer(self):
         """Create a QgsRasterLayer from WMS given an OWS ContentMetadata object."""

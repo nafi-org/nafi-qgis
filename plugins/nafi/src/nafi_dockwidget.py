@@ -23,7 +23,7 @@
 
 import webbrowser
 
-from qgis.PyQt import QtWidgets
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import (
     pyqtSignal,
     QRegularExpression,
@@ -39,13 +39,14 @@ from .oz_topo_wmts_item import OzTopoWmtsItem
 
 from .nafi_about_dialog import NafiAboutDialog
 from .nafi_capabilities_reader import NafiCapabilitiesReader
-from .nafi_dockwidget_base import Ui_NafiDockWidgetBase
 from .nafi_tree_view_model import NafiTreeViewModel
-from .utils import getNafiDataUrl, getNafiUrl
+from .utils import getNafiDataUrl, getNafiUrl, resolvePluginPath
 from .wms_item import WmsItem
 
+FORM_CLASS, _ = uic.loadUiType(resolvePluginPath("ui/nafi_dockwidget_base.ui"))
 
-class NafiDockWidget(QtWidgets.QDockWidget, Ui_NafiDockWidgetBase):
+
+class NafiDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
     closingPlugin = pyqtSignal()
 
     def __init__(self, parent=None):

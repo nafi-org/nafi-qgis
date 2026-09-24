@@ -35,7 +35,9 @@ cp "../LICENSE" "${plugin_name}/LICENSE"
 # normalise blank-line spacing in the generated resources_rc.py (E302/E305).
 # QGIS plugins repo's flake8 check flags these; we fix only the packaged copy
 # so the checked-in file stays consistent with fresh pyside6-rcc output.
-ruff check --preview --select=E302,E305 --fix --quiet "${plugin_name}/resources_rc.py"
+if [ -f "${plugin_name}/resources_rc.py" ]; then
+    ruff check --preview --select=E302,E305 --fix --quiet "${plugin_name}/resources_rc.py"
+fi
 
 # zip up the ${plugin_name} directory only into a versioned archive
 zip -rq "${archiveName}" "${plugin_name}"
