@@ -1,8 +1,0 @@
-<RCC>
-  <qresource prefix="/plugins/naficp">
-    <file>images/approve.png</file>
-    <file>images/edit.png</file>
-    <file>images/paintbrush.png</file>
-    <file>images/icon.png</file>
-  </qresource>
-</RCC>

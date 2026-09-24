@@ -3,13 +3,13 @@ name=Easy Copy and Paste
 qgisMinimumVersion=3.34
 qgisMaximumVersion=4.99
 description=Easily copy and paste features between QGIS layers
-version=1.1.0
+version=1.1.1
 author=Trailmarker
 email=tom@trailmarker.io
 about=This plug-in copies currently selected features in the map view to a target layer with a single click or Hotkey and commits them to the edit on that layer. 
    It also includes a copy-paste hot-key configuration. It's intended for intensive human moderation of feature data. 
    Originally developed for mapping burnt areas from Object-Based Image Analysis (OBIA) polygons.
-   Author: Tom Lynch (Gaia Resources), Charles Darwin University, North Australia & Rangelands Fire Information.
+   Author: Tom Lynch (Trailmarker), Charles Darwin University, North Australia & Rangelands Fire Information.
 tracker=https://github.com/nafi-org/nafi-qgis/issues
 repository=https://github.com/nafi-org/nafi-qgis
 hasProcessingProvider=no
@@ -19,7 +19,9 @@ icon=icon.png
 experimental=False
 deprecated=False
 category=Vector
-changelog=1.1.0
+changelog=1.1.1
+          - load the plugin icon from its image file, dropping compiled Qt resources
+          1.1.0
           - support QGIS 4 and require QGIS 3.34 or later
           1.0.9
           - remove obsolete Windows .bat dev scripts flagged as binaries by QGIS plugins repo
