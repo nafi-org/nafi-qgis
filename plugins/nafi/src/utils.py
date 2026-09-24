@@ -1,11 +1,16 @@
 import html
+import json
+import os
+import os.path as path
 
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.core import Qgis, QgsMessageLog, QgsCoordinateReferenceSystem
 
 IBRA_URL = "http://www.environment.gov.au/mapping/services/ogc_services/IBRA7_Subregions/MapServer/WMSServer"
-NAFI_DATA_URL = "https://firenorth.org.au/nafi3/views/data/Download.html"
-NAFI_URL = "https://www.firenorth.org.au/public"
+NAFI_DATA_URL = "https://firenorth.org.au/nafi4/help/download-nafi-data"
+NAFI_SUPPORTERS_URL = "https://firenorth.org.au/nafi4/supporters"
+NAFI_URL = "https://firenorth.org.au/public"
+NAFI_CONFIG_FILENAME = "nafi.json"
 OZ_TOPO_URL = (
     "https://services.ga.gov.au/gis/rest/services/Topographic_Base_Map"
     "/MapServer/WMTS/1.0.0/WMTSCapabilities.xml"
@@ -17,13 +22,35 @@ def qgsDebug(message, level=Qgis.MessageLevel.Info):
     QgsMessageLog.logMessage(message, tag="NAFI Fire Maps", level=level)
 
 
+def resolvePluginPath(relative, base=None):
+    """Resolve a relative path in the plug-in deployment directory."""
+    if not base:
+        base = path.dirname(os.path.realpath(__file__))
+        base = path.normpath(path.join(base, os.pardir))
+    return path.normpath(path.join(base, relative))
+
+
+def getSetting(setting, default=None):
+    """Retrieve a NAFI Fire Maps setting."""
+    try:
+        with open(resolvePluginPath(NAFI_CONFIG_FILENAME)) as settingsFile:
+            settings = json.load(settingsFile)
+            return settings.get(setting, default)
+    except (OSError, json.JSONDecodeError):
+        qgsDebug("Error reading NAFI Fire Maps settings file.")
+        return default
+
+
 def getNafiDataUrl():
-    return NAFI_DATA_URL
+    return getSetting("NAFI_DATA_URL", NAFI_DATA_URL)
+
+
+def getNafiSupportersUrl():
+    return getSetting("NAFI_SUPPORTERS_URL", NAFI_SUPPORTERS_URL)
 
 
 def getNafiUrl():
-    # TODO look in QGIS settings
-    return NAFI_URL
+    return getSetting("NAFI_URL", NAFI_URL)
 
 
 def getIbraUrl():
