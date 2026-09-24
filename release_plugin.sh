@@ -32,9 +32,9 @@ cp "${plugin_name}/images/icon.png" "${plugin_name}/icon.png"
 # include the repository LICENSE alongside the plugin
 cp "../LICENSE" "${plugin_name}/LICENSE"
 
-# normalise blank-line spacing in pyrcc5-generated resources_rc.py (E302/E305).
+# normalise blank-line spacing in the generated resources_rc.py (E302/E305).
 # QGIS plugins repo's flake8 check flags these; we fix only the packaged copy
-# so the checked-in file stays consistent with fresh pyrcc5 output.
+# so the checked-in file stays consistent with fresh pyside6-rcc output.
 ruff check --preview --select=E302,E305 --fix --quiet "${plugin_name}/resources_rc.py"
 
 # zip up the ${plugin_name} directory only into a versioned archive

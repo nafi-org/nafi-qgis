@@ -4,20 +4,12 @@
 plugin_name=$1
 workingDir=$PWD
 
-export PATH=/Applications/QGIS-LTR.app/Contents/MacOS/bin:$PATH
-pythonCmd=$(which python3.9)
-
-unameOutput="$(uname -s)"
-case "${unameOutput}" in
-    Linux*)     osName=Linux;;
-    Darwin*)    osName=Mac;;
-    CYGWIN*)    osName=Cygwin;;
-    MINGW*)     osName=MinGw;;
-    MSYS_NT*)   osName=Git;;
-    *)          osName="UNKNOWN:${unameOutput}"
-esac
-
 resourceFile="${workingDir}/${plugin_name}/resources.qrc"
 targetFile="${workingDir}/${plugin_name}/resources_rc.py"
 
-exec $pythonCmd -m PyQt5.pyrcc_main $resourceFile -o $targetFile
+# compile in the resource format QGIS 3 reads
+SOURCE_DATE_EPOCH=1 pyside6-rcc --format-version 2 --no-zstd "$resourceFile" -o "$targetFile"
+
+# import Qt through qgis.PyQt
+sed -i.bak 's/^from PySide6 import QtCore$/from qgis.PyQt import QtCore/' "$targetFile"
+rm -f "$targetFile.bak"
